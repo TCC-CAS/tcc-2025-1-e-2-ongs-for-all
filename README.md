@@ -1,13 +1,48 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/M8vuB3Dm)
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=20138902&assignment_repo_type=AssignmentRepo)
-# Desenvolvimento_TCC
-Repositório padrão para inicio do desenvovimento de TCC
+<h1 align="center"> Projeto Integrador - ONG For All </h1>
+<p align="center">Uma aplicação em nodeJS puro com integração de APIs e microsserviços</p>
 
-Ênfase no acompanhamento e desenvolvimento do projeto de TCC 1 (proposta) e 2 (aplicação.
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=js,html,css,nodejs,tailwind,prisma,&theme=light" />
+  </a>
+</p>
 
-Prezado alunos(as), Tudo bem?
+## Introdução
+O Projeto Integrador - ONG For All visa conectar potenciais doadores a ONGs que necessitam de apoio, enfrentando desafios como a baixa visibilidade das ONGs e a dificuldade dos doadores em encontrar organizações confiáveis. A solução proposta é uma plataforma digital que facilita as doações, promovendo transparência e facilitando a escolha de organizações alinhadas aos interesses dos doadores. Este projeto busca fomentar a solidariedade e aumentar o impacto social das ONGs.
 
-A partir de agora o acompanhamento do desenvolvimento de seu TCC 1 ou 2 será tanto em sala de aula como aqui, com o uso deste recurso. Vocês devem fazer um desenvolvimento contínuo, respeitando as datas das entregas previstas por seu professor.
+## Requisitos
+Antes de iniciar o projeto, você precisa ter os seguintes requisitos:
 
-## Atenção!
-Este arquivo deve ser alterado no decorrer do desenvolvimento de seu TCC.
+>- [NodeJS v20.11](https://nodejs.org/en)
+
+Certifique-se de que tudo esta instalado corretamente, estude sobre [Docker](https://youtube.com/playlist?list=PLViOsriojeLrdw5VByn96gphHFxqH3O_N&si=ESyfJ9zKaBnLt46F) pois será útil futuramente.
+
+**Verficação**
+```bash
+cd OngsForAll/OngsForAll/Projeto
+
+node -v
+
+npm -v
+```
+
+## Primeiros passos
+Após criar um clone do repositório, instale as dependencias necessárias
+
+```bash
+npm install
+```
+
+Tudo certo para iniciar! 🫡
+
+## Rodando o projeto em modo de desenvolvimento
+
+Digite no seu terminal:
+```bash
+npm run dev
+```
+Pronto, seu servidor ficará disponível em [`http://localhost:3000`](http://localhost:3000)
+
+
+# Em construção ⚙️
+>Esta é apenas uma prévia da documentação. Em breve uma mais detalhada estará disponível.
