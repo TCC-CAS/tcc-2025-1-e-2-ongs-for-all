@@ -1,0 +1,116 @@
+<section class="min-h-screen px-6 py-10">
+
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex justify-between items-center mb-6">
+
+            <h1 class="text-3xl font-bold">
+                Minhas necessidades
+            </h1>
+
+            <a href="/necessidades/nova"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-medium transition shadow">
+                Nova necessidade
+            </a>
+
+        </div>
+
+        {{#if success}}
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+            Necessidade criada com sucesso.
+        </div>
+        {{/if}}
+
+        {{#if necessidades.length}}
+
+        <div class="space-y-4">
+
+            {{#each necessidades}}
+
+            <div
+                class="bg-white dark:bg-[#1D3273]/20 border border-slate-200 dark:border-white/20 rounded-xl p-5 shadow">
+
+                <div class="flex justify-between items-start mb-3">
+
+                    <div>
+                        <h2 class="text-lg font-bold">
+                            {{titulo}}
+                        </h2>
+
+                        <p class="text-sm opacity-80 mt-1">
+                            {{descricao}}
+                        </p>
+                    </div>
+
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                        {{status}}
+                    </span>
+
+                </div>
+
+                <div class="mt-4">
+                    <div class="grid md:grid-cols-3 gap-3 text-sm mb-3">
+                        <div>
+                            <span class="font-semibold">Meta:</span>
+                            {{quantidade}}
+                        </div>
+
+                        <div>
+                            <span class="font-semibold">Recebido:</span>
+                            {{quantidade_recebida}}
+                        </div>
+
+                        <div>
+                            <span class="font-semibold">Faltam:</span>
+                            {{faltante}}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="font-semibold">Progresso</span>
+                        <span>{{percentual}}%</span>
+                    </div>
+
+                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                        <div class="bg-green-500 h-3 rounded-full" style="width: {{percentual}}%;"></div>
+                    </div>
+
+                    <p class="text-sm mt-2 opacity-80">
+                        {{quantidade_recebida}} de {{quantidade}} atendidos
+                    </p>
+                </div>
+
+                <form method="POST" action="/necessidades/{{id}}/status" class="flex gap-2 items-center flex-wrap mt-4">
+
+                    <select name="status"
+                        class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]">
+                        <option value="aberta">Aberta</option>
+                        <option value="em_andamento">Em andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        Atualizar
+                    </button>
+
+                </form>
+
+            </div>
+
+            {{/each}}
+
+        </div>
+
+        {{else}}
+
+        <div class="text-center mt-20 opacity-70">
+            Você ainda não cadastrou nenhuma necessidade.
+        </div>
+
+        {{/if}}
+
+    </div>
+
+</section>

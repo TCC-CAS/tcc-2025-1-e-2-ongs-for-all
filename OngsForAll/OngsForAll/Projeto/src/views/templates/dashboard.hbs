@@ -1,0 +1,261 @@
+<section id="dashboard"
+  class="min-h-screen px-6 py-12 bg-white text-[#1D3273] dark:bg-[#0D1B2A] dark:text-white transition-colors duration-300">
+  <div class="max-w-7xl mx-auto space-y-12">
+
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center flex-wrap gap-4">
+      <div>
+        <h1
+          class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
+          Bem-vindo, {{user.nome}}!
+        </h1>
+        <p class="mt-2 text-[#1D3273]/70 dark:text-white/80">Veja suas estatísticas e acompanhe seu impacto 💙</p>
+      </div>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-sm text-[#1D3273]/70 dark:text-white/70">Total doado</p>
+        <p class="text-3xl font-extrabold">R$ {{totalDoado}}</p>
+      </div>
+
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-sm text-[#1D3273]/70 dark:text-white/70">Tipos de doação</p>
+        <p class="text-3xl font-extrabold">{{qtdTipos}}</p>
+      </div>
+
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-sm text-[#1D3273]/70 dark:text-white/70">Meses com doação</p>
+        <p class="text-3xl font-extrabold">{{qtdMesesComDoacao}}</p>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div id="chartsWrap" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <h2 class="text-center font-semibold mb-4">ONGs apoiadas (por mês)</h2>
+        <div class="h-64">
+          <canvas id="ongsChart"></canvas>
+        </div>
+      </div>
+
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <h2 class="text-center font-semibold mb-4">Total doado (R$)</h2>
+        <div class="h-64">
+          <canvas id="graficoDoacoesMes"></canvas>
+        </div>
+      </div>
+
+      <div
+        class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <h2 class="text-center font-semibold mb-4">Doações por tipo</h2>
+        <div class="h-64">
+          <canvas id="categoriasChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dados do usuário -->
+    <div
+      class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-6 shadow-lg">
+      <h2 class="text-2xl font-bold mb-6">Seus dados</h2>
+      <ul class="space-y-2 text-[#1D3273]/80 dark:text-white/80">
+        <li><strong>Nome:</strong> {{user.nome}}</li>
+        <li><strong>Email:</strong> {{user.email}}</li>
+      </ul>
+      <div class="mt-6">
+        <a href="/perfil/editar"
+          class="inline-block bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] px-6 py-2 rounded hover:opacity-90 transition">
+          ✏️ Editar perfil
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Toast de sucesso
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('sucesso') === '1') {
+        const toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50';
+        toast.textContent = '✅ Doação realizada com sucesso!';
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+          const url = new URL(window.location.href);
+          url.searchParams.delete('sucesso');
+          window.history.replaceState({}, document.title, url.toString());
+        }, 3000);
+      }
+    })();
+
+    // Dados vindos do servidor
+    const labelsMes = {{{ labelsMes }}};
+    const valoresDoadoMes = {{{ valoresDoadoMes }}};
+    const valoresOngsMes = {{{ valoresOngsMes }}};
+    const labelsTipo = {{{ labelsTipo }}};
+    const valoresTipo = {{{ valoresTipo }}};
+
+    const hasData =
+      Array.isArray(valoresDoadoMes) &&
+      valoresDoadoMes.length > 0 &&
+      valoresDoadoMes.some(v => Number(v) > 0);
+
+    const getTextColor = () =>
+      document.documentElement.classList.contains('dark') ? '#FFFFFF' : '#1D3273';
+
+    let chartOngs = null;
+    let chartMes = null;
+    let chartTipos = null;
+
+    function destroyCharts() {
+      if (chartOngs) chartOngs.destroy();
+      if (chartMes) chartMes.destroy();
+      if (chartTipos) chartTipos.destroy();
+      chartOngs = chartMes = chartTipos = null;
+    }
+
+    function renderCharts() {
+      if (!hasData) return;
+
+      const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: getTextColor() } }
+        },
+        scales: {
+          x: { ticks: { color: getTextColor() } },
+          y: { ticks: { color: getTextColor() } }
+        }
+      };
+
+      const lineOptions = {
+        ...baseOptions,
+        scales: {
+          ...baseOptions.scales,
+          y: {
+            beginAtZero: true,
+            ticks: { color: getTextColor(), precision: 0 }
+          }
+        }
+      };
+
+      const barOptions = {
+        ...baseOptions,
+        scales: {
+          ...baseOptions.scales,
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: getTextColor(),
+              stepSize: 10,
+              callback: (value) => `R$ ${Number(value).toFixed(0)}`
+            }
+          }
+        },
+        plugins: {
+          ...baseOptions.plugins,
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const v = Number(ctx.raw || 0);
+                return `Total doado: R$ ${v.toFixed(2)}`;
+              }
+            }
+          }
+        }
+      };
+
+      const ongsCanvas = document.getElementById('ongsChart');
+      const barrasCanvas = document.getElementById('graficoDoacoesMes');
+      const tiposCanvas = document.getElementById('categoriasChart');
+
+      // segurança extra: se não achou canvas, não tenta criar
+      if (!ongsCanvas || !barrasCanvas || !tiposCanvas) return;
+
+      chartOngs = new Chart(ongsCanvas, {
+        type: 'line',
+        data: {
+          labels: labelsMes,
+          datasets: [{
+            label: 'ONGs apoiadas',
+            data: valoresOngsMes,
+            borderColor: '#3B82F6',
+            backgroundColor: '#3B82F655',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: lineOptions
+      });
+
+      chartMes = new Chart(barrasCanvas, {
+        type: 'bar',
+        data: {
+          labels: labelsMes,
+          datasets: [{
+            label: 'Total doado (R$)',
+            data: valoresDoadoMes,
+            backgroundColor: '#10B981',
+            borderRadius: 6
+          }]
+        },
+        options: barOptions
+      });
+
+      chartTipos = new Chart(tiposCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: labelsTipo,
+          datasets: [{
+            data: valoresTipo,
+            backgroundColor: ['#3B82F6', '#E83FBA', '#10B981', '#F59E0B']
+          }]
+        },
+        options: {
+          plugins: { legend: { labels: { color: getTextColor() } } }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Estado vazio
+      if (!hasData) {
+        const wrap = document.getElementById("chartsWrap");
+        if (wrap) {
+          wrap.innerHTML = `
+          <div class="md:col-span-3 bg-[#1D3273]/10 dark:bg-white/10 p-8 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow text-center">
+            <h2 class="text-xl font-bold mb-2">Sem dados ainda</h2>
+            <p class="text-[#1D3273]/70 dark:text-white/70 mb-6">
+              Faça sua primeira doação para começar a acompanhar seu impacto.
+            </p>
+            <a href="/doacoes/nova"
+              class="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold px-6 py-3 rounded-full shadow hover:opacity-90 transition">
+              💖 Fazer uma Doação
+            </a>
+          </div>
+        `;
+        }
+        return;
+      }
+
+      renderCharts();
+    });
+
+    // ✅ quando o layout trocar o tema, recria os gráficos com as novas cores
+    window.addEventListener('theme:changed', () => {
+      destroyCharts();
+      renderCharts();
+    });
+  </script>
+</section>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="bg-white text-gray-900 dark:bg-[#0D1B2A] dark:text-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}}{{#if stitle}} - {{stitle}}{{/if}}</title>
+  <link rel="stylesheet" href="/public/dist/global.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="transition-colors duration-300 bg-white text-gray-900 dark:bg-[#0D1B2A] dark:text-white">
+  {{{body}}}
+
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const html = document.documentElement;
+      const toggle = document.getElementById('toggle-theme');
+
+      const applyTheme = (theme) => {
+        if (theme === 'dark') html.classList.add('dark');
+        else html.classList.remove('dark');
+        localStorage.setItem('theme', theme);
+      };
+
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const current = html.classList.contains('dark') ? 'dark' : 'light';
+          applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

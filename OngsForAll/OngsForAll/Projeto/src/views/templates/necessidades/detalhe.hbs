@@ -1,0 +1,80 @@
+<section class="min-h-screen px-6 py-10">
+
+  <div class="max-w-3xl mx-auto">
+
+    <h1 class="text-3xl font-bold mb-6">
+      {{necessidade.titulo}}
+    </h1>
+
+    <div class="bg-white dark:bg-[#1D3273]/20 border rounded-xl p-6 shadow">
+
+      <p class="mb-4">
+        {{necessidade.descricao}}
+      </p>
+
+      <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+
+        <div>
+          <span class="font-semibold">ONG:</span>
+          {{necessidade.nome_ong}}
+        </div>
+
+        <div>
+          <span class="font-semibold">Categoria:</span>
+          {{necessidade.categoria}}
+        </div>
+
+        <div>
+          <span class="font-semibold">Meta:</span>
+          {{necessidade.quantidade}}
+        </div>
+
+        <div>
+          <span class="font-semibold">Status:</span>
+          {{necessidade.status}}
+        </div>
+
+        <div>
+          <span class="font-semibold">Recebido:</span>
+          {{necessidade.quantidade_recebida}}
+        </div>
+
+        <div>
+          <span class="font-semibold">Faltam:</span>
+          {{necessidade.faltante}}
+        </div>
+
+      </div>
+
+      <div class="mt-6">
+        <div class="flex justify-between text-sm mb-1">
+          <span class="font-semibold">Progresso</span>
+          <span>{{necessidade.percentual}}%</span>
+        </div>
+
+        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+          <div class="bg-green-500 h-3 rounded-full" style="width: {{necessidade.percentual}}%;"></div>
+        </div>
+
+        <p class="text-sm mt-2">
+          {{necessidade.quantidade_recebida}} de {{necessidade.quantidade}} atendidos
+        </p>
+      </div>
+
+      <div class="mt-6 flex gap-3 flex-wrap">
+        <a href="/doacoes/nova?necessidade_id={{necessidade.id}}"
+          class="inline-block bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg font-medium transition">
+          Doar valor
+        </a>
+
+        <a href="/interesses/nova?necessidade_id={{necessidade.id}}"
+          class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-medium transition">
+          Quero entregar este item
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

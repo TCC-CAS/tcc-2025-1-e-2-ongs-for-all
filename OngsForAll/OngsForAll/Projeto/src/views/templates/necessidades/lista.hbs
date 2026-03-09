@@ -1,0 +1,83 @@
+<section class="min-h-screen px-6 py-10">
+  <div class="max-w-6xl mx-auto">
+
+    <h1 class="text-3xl font-bold mb-8">
+      Necessidades das ONGs
+    </h1>
+
+    {{#if necessidades.length}}
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      {{#each necessidades}}
+
+      <div class="bg-white dark:bg-[#1D3273]/20 border rounded-xl p-6 shadow">
+
+        <h2 class="text-xl font-bold mb-2">
+          {{titulo}}
+        </h2>
+
+        <p class="text-sm opacity-80 mb-3">
+          ONG: {{nome_ong}}
+        </p>
+
+        <p class="text-sm mb-4">
+          {{descricao}}
+        </p>
+
+        <div class="flex justify-between text-sm mb-3">
+          <span class="font-semibold">Categoria:</span>
+          <span>{{categoria}}</span>
+        </div>
+
+        <div class="flex justify-between text-sm mb-2">
+          <span class="font-semibold">Meta:</span>
+          <span>{{quantidade}}</span>
+        </div>
+
+        <div class="flex justify-between text-sm mb-2">
+          <span class="font-semibold">Recebido:</span>
+          <span>{{quantidade_recebida}}</span>
+        </div>
+
+        <div class="flex justify-between text-sm mb-4">
+          <span class="font-semibold">Faltam:</span>
+          <span>{{faltante}}</span>
+        </div>
+
+        <div class="mt-4">
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-semibold">Progresso</span>
+            <span>{{percentual}}%</span>
+          </div>
+
+          <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+            <div class="bg-green-500 h-3 rounded-full" style="width: {{percentual}}%;"></div>
+          </div>
+
+          <p class="text-sm mt-2 opacity-80">
+            {{quantidade_recebida}} de {{quantidade}} atendidos
+          </p>
+        </div>
+
+        <a href="/necessidades/{{id}}"
+          class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mt-5">
+          Ver detalhes
+        </a>
+
+      </div>
+
+      {{/each}}
+
+    </div>
+
+    {{else}}
+
+    <div class="text-center mt-20 opacity-70">
+      Nenhuma necessidade cadastrada ainda.
+    </div>
+
+    {{/if}}
+
+  </div>
+</section>
