@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+body::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: white; /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #2D4BA6; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */ 
+  border: 1px solid #e5e5e5;
+}
+
+.about-section-bg{
+  background: url('/public/img/cccircular.svg') fixed center center/cover;
+  background-color: #2D4BA6;
+}
+
+.auth-section-bg{
+  background: url('/public/img/bg-hero.svg') fixed center center/cover;
+  background-color: #2D4BA6;
+}
+
+.parallax1 > use {
+  animation: move-forever1 12s linear infinite;
+}
+.parallax2 > use {
+  animation: move-forever2 10s linear infinite;
+}
+.parallax3 > use {
+  animation: move-forever3 8s linear infinite;
+}
+.parallax4 > use {
+  animation: move-forever4 6s linear infinite;
+}
+@keyframes move-forever1 {
+  0% {
+    transform: translate(85px, 0%);
+  }
+  100% {
+    transform: translate(-90px, 0%);
+  }
+}
+@keyframes move-forever2 {
+  0% {
+    transform: translate(-90px, 0%);
+  }
+  100% {
+    transform: translate(85px, 0%);
+  }
+}
+@keyframes move-forever3 {
+  0% {
+    transform: translate(85px, 0%);
+  }
+  100% {
+    transform: translate(-90px, 0%);
+  }
+}
+@keyframes move-forever4 {
+  0% {
+    transform: translate(-90px, 0%);
+  }
+  100% {
+    transform: translate(85px, 0%);
+  }
+}

@@ -1,0 +1,75 @@
+<section class="min-h-screen px-6 py-16 bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] transition-all">
+  <div class="max-w-md mx-auto p-8 bg-white/10 dark:bg-[#F0F4F8] backdrop-blur-lg rounded-xl shadow-lg border border-white/20 dark:border-gray-300">
+
+    <h2 class="text-3xl font-bold text-center mb-8 dark:text-[#1D3273]">
+      📦 Quero entregar este item
+    </h2>
+
+    <div class="mb-6 p-4 rounded-xl bg-white/15 dark:bg-white border border-white/20 dark:border-slate-300">
+      <h3 class="text-lg font-bold mb-3 text-white dark:text-[#1D3273]">
+        Necessidade selecionada
+      </h3>
+
+      <div class="space-y-2 text-sm text-white dark:text-[#1D3273]">
+        <p><span class="font-semibold">Título:</span> {{necessidade.titulo}}</p>
+        <p><span class="font-semibold">ONG:</span> {{necessidade.nome_ong}}</p>
+        <p><span class="font-semibold">Categoria:</span> {{necessidade.categoria}}</p>
+        <p><span class="font-semibold">Quantidade:</span> {{necessidade.quantidade}}</p>
+      </div>
+    </div>
+
+    <form action="/interesses" method="POST" class="space-y-6">
+      <input type="hidden" name="necessidade_id" value="{{formData.necessidade_id}}" />
+
+      <div>
+        <label for="quantidade" class="block mb-2 font-semibold">Quantidade que você pode entregar</label>
+        <input
+          type="number"
+          name="quantidade"
+          id="quantidade"
+          min="1"
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]"
+          placeholder="Ex.: 1"
+        />
+      </div>
+
+      <div>
+        <label for="data_prevista" class="block mb-2 font-semibold">Data prevista para entrega</label>
+        <input
+          type="date"
+          name="data_prevista"
+          id="data_prevista"
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]"
+        />
+      </div>
+
+      <div>
+        <label for="observacao" class="block mb-2 font-semibold">Observação</label>
+        <textarea
+          name="observacao"
+          id="observacao"
+          rows="4"
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]"
+          placeholder="Ex.: Posso entregar no período da tarde."
+        ></textarea>
+      </div>
+
+      <div class="flex flex-col items-center space-y-3 mt-6">
+        <button
+          type="submit"
+          class="w-64 bg-gradient-to-r from-blue-600 to-pink-500 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition"
+        >
+          Confirmar interesse
+        </button>
+
+        <a
+          href="/necessidades/{{necessidade.id}}"
+          class="w-64 text-center bg-gradient-to-r from-blue-600 to-pink-500 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition"
+        >
+          Voltar
+        </a>
+      </div>
+    </form>
+
+  </div>
+</section>

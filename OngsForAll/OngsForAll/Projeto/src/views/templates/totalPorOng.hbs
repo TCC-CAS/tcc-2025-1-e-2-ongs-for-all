@@ -1,0 +1,45 @@
+<section id="total-por-ong"
+    class="min-h-screen px-6 py-12 bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] transition-all">
+    <div class="max-w-7xl mx-auto space-y-12">
+
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-6">🧾 Total de Doações por ONG</h1>
+            <p class="text-white/80 dark:text-[#1D3273]/80">Veja quanto cada ONG recebeu até agora 💰</p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table
+                class="min-w-full bg-white/10 dark:bg-[#F0F4F8] backdrop-blur-lg rounded-xl shadow-lg border border-white/20 dark:border-gray-300">
+                <thead class="bg-white/20 dark:bg-[#D9E2EC]">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Nome da ONG</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Total Recebido (R$)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each dados}}
+                    <tr class="hover:bg-white/20 dark:hover:bg-gray-100">
+                        <td class="px-6 py-4">{{this.nome}}</td>
+                        <td class="px-6 py-4">R$ {{this.total}}</td>
+                    </tr>
+                    {{/each}}
+                    {{#unless dados.length}}
+                    <tr>
+                        <td colspan="2" class="px-6 py-4 text-center text-gray-300 dark:text-gray-500">
+                            Nenhuma ONG recebeu doações ainda.
+                        </td>
+                    </tr>
+                    {{/unless}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-center pt-6">
+            <a href="/dashboard"
+                class="bg-gradient-to-r from-blue-600 to-pink-500 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition">
+                Voltar para o Dashboard
+            </a>
+        </div>
+
+    </div>
+</section>

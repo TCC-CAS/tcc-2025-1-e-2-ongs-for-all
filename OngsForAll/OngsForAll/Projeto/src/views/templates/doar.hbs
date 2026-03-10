@@ -1,0 +1,149 @@
+<section id="nova-doacao"
+  class="min-h-screen px-6 py-16 bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] transition-all">
+  <div
+    class="max-w-md mx-auto p-8 bg-white/10 dark:bg-[#F0F4F8] backdrop-blur-lg rounded-xl shadow-lg border border-white/20 dark:border-gray-300">
+
+    <h2 class="text-3xl font-bold text-center mb-8 dark:text-[#1D3273]">❤️ Nova Doação</h2>
+
+    {{#if error}}
+    <div class="mb-6 p-3 rounded bg-red-500/20 border border-red-400 text-red-700 dark:text-red-700">
+      {{error}}
+    </div>
+    {{/if}}
+
+    {{#if necessidade}}
+    <div class="mb-6 p-4 rounded-xl bg-white/15 dark:bg-white border border-white/20 dark:border-slate-300">
+      <h3 class="text-lg font-bold mb-3 text-white dark:text-[#1D3273]">
+        Você está doando para esta necessidade
+      </h3>
+
+      <div class="space-y-2 text-sm text-white dark:text-[#1D3273]">
+        <p><span class="font-semibold">Título:</span> {{necessidade.titulo}}</p>
+        <p><span class="font-semibold">ONG:</span> {{necessidade.nome_ong}}</p>
+        <p><span class="font-semibold">Categoria:</span> {{necessidade.categoria}}</p>
+        <p><span class="font-semibold">Quantidade:</span> {{necessidade.quantidade}}</p>
+        <p><span class="font-semibold">Status:</span> {{necessidade.status}}</p>
+      </div>
+    </div>
+    {{/if}}
+
+    <form action="/doacoes" method="POST" class="space-y-6" id="formDoacao">
+      <input type="hidden" name="necessidade_id" value="{{formData.necessidade_id}}" />
+
+      <div>
+        <label for="valor" class="block mb-2 font-semibold">Valor (R$)</label>
+        <input type="text" id="valor" required placeholder="Digite o valor da doação" value="{{formData.valor}}"
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]" />
+        <input type="hidden" name="valor" id="valor_real" value="{{formData.valor}}" />
+        <p id="valorErro" class="mt-2 text-sm text-red-600 hidden">
+          Por favor, insira um valor maior que zero.
+        </p>
+      </div>
+
+      <div>
+        <label for="tipo" class="block mb-2 font-semibold">Categoria</label>
+        <select name="tipo" id="tipo" required
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+          <option value="{{formData.tipo}}">
+            {{#if formData.tipo}}{{formData.tipo}}{{else}}Selecione uma categoria{{/if}}
+          </option>
+          <option value="Educação">Educação</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Meio ambiente">Meio ambiente</option>
+          <option value="Animais">Animais</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="ong_id" class="block mb-2 font-semibold">ONG</label>
+        <select name="ong_id" id="ong_id" required
+          class="w-full px-4 py-2 rounded border border-gray-300 text-[#1D3273] bg-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+          {{#if formData.ong_id}}
+          <option value="{{formData.ong_id}}">ONG selecionada</option>
+          {{else}}
+          <option value="">Selecione uma ONG</option>
+          {{/if}}
+
+          {{#each ongs}}
+          <option value="{{this.ong_id}}">{{this.nome}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="flex flex-col items-center space-y-3 mt-6">
+        <button type="submit" id="btnSubmit"
+          class="w-64 bg-gradient-to-r from-blue-600 to-pink-500 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition flex items-center justify-center gap-2">
+          <span id="btnText">Enviar Doação</span>
+          <svg id="btnSpinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </button>
+
+        <a href="/dashboard"
+          class="w-64 text-center bg-gradient-to-r from-blue-600 to-pink-500 text-white px-6 py-3 rounded-full shadow hover:opacity-90 transition">
+          Voltar para o Dashboard
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const valorInput = document.getElementById('valor');
+    const valorRealInput = document.getElementById('valor_real');
+    const valorErro = document.getElementById('valorErro');
+
+    let valorNumerico = '';
+
+    if (valorInput.value) {
+      const valorInicial = Number(valorInput.value);
+      if (!isNaN(valorInicial) && valorInicial > 0) {
+        valorNumerico = String(Math.round(valorInicial * 100));
+        valorInput.value = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+          minimumFractionDigits: 2
+        }).format(valorInicial);
+      }
+    }
+
+    valorInput.addEventListener('input', function (e) {
+      let raw = e.target.value.replace(/\D/g, '');
+      valorNumerico = raw;
+
+      const formatado = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+      }).format(Number(raw || 0) / 100);
+
+      e.target.value = formatado;
+      valorRealInput.value = Number(raw || 0) / 100;
+      valorErro.classList.add('hidden');
+    });
+
+    const form = document.getElementById('formDoacao');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    form.addEventListener('submit', function (e) {
+      const numericValue = parseFloat(valorNumerico || '0') / 100;
+
+      if (isNaN(numericValue) || numericValue <= 0) {
+        e.preventDefault();
+        valorErro.classList.remove('hidden');
+        btnText.textContent = 'Enviar Doação';
+        btnSpinner.classList.add('hidden');
+        btnSubmit.disabled = false;
+        return;
+      }
+
+      valorErro.classList.add('hidden');
+      btnText.textContent = 'Enviando...';
+      btnSpinner.classList.remove('hidden');
+      btnSubmit.disabled = true;
+    });
+  </script>
+</section>

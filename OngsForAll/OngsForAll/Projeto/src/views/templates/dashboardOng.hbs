@@ -1,0 +1,184 @@
+<section
+  class="min-h-screen px-6 py-12 transition-colors duration-300 bg-white text-[#1D3273] dark:bg-[#0D1B2A] dark:text-white"
+>
+  <div class="max-w-7xl mx-auto space-y-12">
+
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center flex-wrap gap-4">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
+          Dashboard da ONG: {{user.nome}}
+        </h1>
+        <p class="mt-2 text-[#1D3273]/80 dark:text-white/80">
+          Acompanhe as doações recebidas e o impacto gerado 💙
+        </p>
+      </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-[#1D3273]/70 dark:text-white/70 text-sm">Total recebido</p>
+        <p class="text-3xl font-extrabold">R$ {{totalRecebido}}</p>
+      </div>
+
+      <div class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-[#1D3273]/70 dark:text-white/70 text-sm">Quantidade de doações</p>
+        <p class="text-3xl font-extrabold">{{qtdDoacoes}}</p>
+      </div>
+
+      <div class="bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <p class="text-[#1D3273]/70 dark:text-white/70 text-sm">Doadores únicos</p>
+        <p class="text-3xl font-extrabold">{{qtdDoadores}}</p>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div id="chartsWrap" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="h-72 bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <h2 class="text-center font-semibold mb-4">Total recebido por mês</h2>
+        <div class="relative h-56">
+          <canvas id="graficoRecebidoMes"></canvas>
+        </div>
+      </div>
+
+      <div class="h-72 bg-[#1D3273]/10 dark:bg-white/10 p-6 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow">
+        <h2 class="text-center font-semibold mb-4">Doações por tipo</h2>
+        <div class="relative h-56">
+          <canvas id="graficoTipos"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimas doações -->
+    <div class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-6 shadow-lg">
+      <h2 class="text-2xl font-bold">Últimas doações</h2>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-[#1D3273]/20 dark:border-white/20">
+              <th class="py-3 pr-4 font-semibold">Data</th>
+              <th class="py-3 pr-4 font-semibold">Doador</th>
+              <th class="py-3 pr-4 font-semibold">Tipo</th>
+              <th class="py-3 pr-4 font-semibold text-right">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#if ultimasDoacoes.length}}
+              {{#each ultimasDoacoes}}
+                <tr class="border-b border-[#1D3273]/10 dark:border-white/10">
+                  <td class="py-3 pr-4 whitespace-nowrap">{{this.data}}</td>
+                  <td class="py-3 pr-4">{{this.doador}}</td>
+                  <td class="py-3 pr-4">{{this.tipo}}</td>
+                  <td class="py-3 pr-4 text-right">R$ {{this.valor}}</td>
+                </tr>
+              {{/each}}
+            {{else}}
+              <tr>
+                <td class="py-6 text-center text-[#1D3273]/70 dark:text-white/70" colspan="4">
+                  Nenhuma doação encontrada ainda.
+                </td>
+              </tr>
+            {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      const labelsMes = {{{ labelsMes }}};
+      const valoresMes = {{{ valoresMes }}};
+      const labelsTipo = {{{ labelsTipo }}};
+      const valoresTipo = {{{ valoresTipo }}};
+
+      const html = document.documentElement;
+
+      const getTextColor = () => (html.classList.contains('dark') ? '#FFFFFF' : '#1D3273');
+      const getGridColor = () => (html.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(29,50,115,0.15)');
+
+      let chartMes = null;
+      let chartTipos = null;
+
+      function destroyCharts() {
+        if (chartMes) chartMes.destroy();
+        if (chartTipos) chartTipos.destroy();
+        chartMes = null;
+        chartTipos = null;
+      }
+
+      function renderCharts() {
+        destroyCharts();
+
+        const hasDataMes = Array.isArray(valoresMes) && valoresMes.length > 0 && valoresMes.some(v => Number(v) > 0);
+        const hasDataTipo = Array.isArray(valoresTipo) && valoresTipo.length > 0 && valoresTipo.some(v => Number(v) > 0);
+
+        const baseOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: getTextColor() } } },
+          scales: {
+            x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+            y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+          }
+        };
+
+        const barOptions = {
+          ...baseOptions,
+          scales: {
+            ...baseOptions.scales,
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: getTextColor(),
+                callback: (value) => `R$ ${Number(value).toFixed(0)}`
+              },
+              grid: { color: getGridColor() }
+            }
+          }
+        };
+
+        const canvasMes = document.getElementById('graficoRecebidoMes');
+        if (canvasMes && hasDataMes) {
+          chartMes = new Chart(canvasMes, {
+            type: 'bar',
+            data: {
+              labels: labelsMes,
+              datasets: [{
+                label: 'Total recebido (R$)',
+                data: valoresMes,
+                backgroundColor: '#10B981',
+                borderRadius: 6
+              }]
+            },
+            options: barOptions
+          });
+        }
+
+        const canvasTipos = document.getElementById('graficoTipos');
+        if (canvasTipos && hasDataTipo) {
+          chartTipos = new Chart(canvasTipos, {
+            type: 'doughnut',
+            data: {
+              labels: labelsTipo,
+              datasets: [{
+                data: valoresTipo,
+                backgroundColor: ['#3B82F6', '#E83FBA', '#10B981', '#F59E0B']
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { labels: { color: getTextColor() } } }
+            }
+          });
+        }
+      }
+
+      window.addEventListener('theme:changed', renderCharts);
+      document.addEventListener('DOMContentLoaded', renderCharts);
+    })();
+  </script>
+</section>

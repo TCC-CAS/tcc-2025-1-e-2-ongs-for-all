@@ -1,0 +1,54 @@
+<section class="min-h-screen px-6 py-10">
+
+    <div class="max-w-xl mx-auto">
+
+        <h1 class="text-3xl font-bold mb-6">
+            Nova necessidade
+        </h1>
+
+        {{#if error}}
+        <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
+            {{error}}
+        </div>
+        {{/if}}
+
+        <form method="POST" action="/necessidades" class="space-y-4">
+
+            <div>
+                <label class="block mb-1 font-semibold">Título</label>
+                <input type="text" name="titulo" value="{{form.titulo}}" required
+                    class="w-full rounded-lg p-3 border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]"
+                    placeholder="Digite o título da necessidade" />
+            </div>
+
+            <div>
+                <label class="block mb-1 font-semibold">Descrição</label>
+                <textarea name="descricao" rows="4" required
+                    class="w-full rounded-lg p-3 border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]"
+                    placeholder="Descreva a necessidade">{{form.descricao}}</textarea>
+            </div>
+
+            <div>
+                <label class="block mb-1 font-semibold">Categoria</label>
+                <input type="text" name="categoria" value="{{form.categoria}}" required
+                    class="w-full rounded-lg p-3 border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]"
+                    placeholder="Ex.: Alimentação, Educação, Saúde" />
+            </div>
+
+            <div>
+                <label class="block mb-1 font-semibold">Quantidade</label>
+                <input type="number" name="quantidade" value="{{form.quantidade}}" min="1" required
+                    class="w-full rounded-lg p-3 border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]"
+                    placeholder="Informe a quantidade" />
+            </div>
+
+            <button type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+                Criar necessidade
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
