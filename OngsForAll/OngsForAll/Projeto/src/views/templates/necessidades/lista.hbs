@@ -25,7 +25,7 @@
           {{descricao}}
         </p>
 
-        <div class="flex justify-between text-sm mb-3">
+        <div class="flex justify-between text-sm mb-2">
           <span class="font-semibold">Categoria:</span>
           <span>{{categoria}}</span>
         </div>
@@ -51,8 +51,9 @@
             <span>{{percentual}}%</span>
           </div>
 
-          <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-            <div class="bg-green-500 h-3 rounded-full" style="width: {{percentual}}%;"></div>
+          <div class="w-full bg-slate-200 dark:bg-white/10 rounded-full h-3 overflow-hidden">
+            <div class="bg-green-500 h-3 rounded-full transition-all duration-500" style="width: {{percentual}}%;">
+            </div>
           </div>
 
           <p class="text-sm mt-2 opacity-80">

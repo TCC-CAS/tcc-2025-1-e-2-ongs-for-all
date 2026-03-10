@@ -48,31 +48,32 @@
 
                 </div>
 
-                <div class="mt-4">
-                    <div class="grid md:grid-cols-3 gap-3 text-sm mb-3">
-                        <div>
-                            <span class="font-semibold">Meta:</span>
-                            {{quantidade}}
-                        </div>
-
-                        <div>
-                            <span class="font-semibold">Recebido:</span>
-                            {{quantidade_recebida}}
-                        </div>
-
-                        <div>
-                            <span class="font-semibold">Faltam:</span>
-                            {{faltante}}
-                        </div>
+                <div class="grid md:grid-cols-3 gap-3 text-sm mb-3">
+                    <div>
+                        <span class="font-semibold">Meta:</span>
+                        {{quantidade}}
                     </div>
 
+                    <div>
+                        <span class="font-semibold">Recebido:</span>
+                        {{quantidade_recebida}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Faltam:</span>
+                        {{faltante}}
+                    </div>
+                </div>
+
+                <div class="mt-4">
                     <div class="flex justify-between text-sm mb-1">
                         <span class="font-semibold">Progresso</span>
                         <span>{{percentual}}%</span>
                     </div>
 
-                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                        <div class="bg-green-500 h-3 rounded-full" style="width: {{percentual}}%;"></div>
+                    <div class="w-full bg-slate-200 dark:bg-white/10 rounded-full h-3 overflow-hidden">
+                        <div class="bg-green-500 h-3 rounded-full transition-all duration-500"
+                            style="width: {{percentual}}%;"></div>
                     </div>
 
                     <p class="text-sm mt-2 opacity-80">
@@ -81,7 +82,6 @@
                 </div>
 
                 <form method="POST" action="/necessidades/{{id}}/status" class="flex gap-2 items-center flex-wrap mt-4">
-
                     <select name="status"
                         class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1D3273] focus:border-[#1D3273]">
                         <option value="aberta">Aberta</option>
@@ -94,7 +94,6 @@
                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
                         Atualizar
                     </button>
-
                 </form>
 
             </div>
