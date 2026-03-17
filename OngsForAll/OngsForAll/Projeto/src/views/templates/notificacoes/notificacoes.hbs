@@ -1,0 +1,88 @@
+<section class="min-h-screen px-6 py-10">
+    <div class="max-w-4xl mx-auto">
+
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold">Notificações</h1>
+                <p class="text-sm opacity-70 mt-1">
+                    Acompanhe atualizações sobre doações, interesses e necessidades.
+                </p>
+            </div>
+
+            {{#if naoLidas}}
+            <span
+                class="inline-flex items-center justify-center min-w-[2rem] h-8 px-3 rounded-full bg-red-500 text-white text-sm font-semibold shadow">
+                {{naoLidas}} nova(s)
+            </span>
+            {{/if}}
+        </div>
+
+        {{#if notificacoes.length}}
+
+        <div class="space-y-4">
+
+            {{#each notificacoes}}
+            <div
+                class="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1D3273]/20 shadow p-5 transition">
+
+                <div class="flex items-start justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center
+        {{#ifCond tipo 'novo_interesse'}}bg-blue-100 text-blue-700{{/ifCond}}
+        {{#ifCond tipo 'interesse_confirmado'}}bg-green-100 text-green-700{{/ifCond}}
+        {{#ifCond tipo 'interesse_cancelado'}}bg-red-100 text-red-700{{/ifCond}}
+        {{#ifCond tipo 'meta_atingida'}}bg-yellow-100 text-yellow-700{{/ifCond}}
+      ">
+                            {{#ifCond tipo 'novo_interesse'}}📦{{/ifCond}}
+                            {{#ifCond tipo 'interesse_confirmado'}}✅{{/ifCond}}
+                            {{#ifCond tipo 'interesse_cancelado'}}❌{{/ifCond}}
+                            {{#ifCond tipo 'meta_atingida'}}🎯{{/ifCond}}
+                        </div>
+
+                        <div>
+                            <h2 class="font-semibold text-lg">{{titulo}}</h2>
+                            <p class="text-sm opacity-70">{{criado_em}}</p>
+                        </div>
+                    </div>
+
+                    {{#if lida}}
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                        Lida
+                    </span>
+                    {{else}}
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700">
+                        Nova
+                    </span>
+                    {{/if}}
+                </div>
+
+                <p class="text-sm leading-relaxed opacity-90 mb-4">
+                    {{mensagem}}
+                </p>
+
+                {{#unless lida}}
+                <form method="POST" action="/notificacoes/{{id}}/lida">
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        Marcar como lida
+                    </button>
+                </form>
+                {{/unless}}
+
+            </div>
+            {{/each}}
+
+        </div>
+
+        {{else}}
+
+        <div class="rounded-2xl border border-dashed border-slate-300 dark:border-white/10 p-10 text-center opacity-70">
+            <div class="text-4xl mb-3">🔔</div>
+            <p>Você ainda não possui notificações.</p>
+        </div>
+
+        {{/if}}
+
+    </div>
+</section>

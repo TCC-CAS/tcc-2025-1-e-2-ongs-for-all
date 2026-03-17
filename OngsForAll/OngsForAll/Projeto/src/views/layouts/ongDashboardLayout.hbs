@@ -71,6 +71,12 @@
           <span class="font-medium">Perfil</span>
         </a>
 
+        <a href="/notificacoes"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-[#1D3273] dark:hover:bg-white/10 dark:text-white transition">
+          <span>🔔</span>
+          <span class="font-medium">Notificações</span>
+        </a>
+
       </nav>
 
       <!-- Logout -->
@@ -102,8 +108,24 @@
             </p>
           </div>
 
-          <!-- Tema -->
-          <button id="toggle-theme"
+          <div class="flex items-center gap-2">
+            <!-- Sino de notificações -->
+            <a href="/notificacoes"
+              class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 hover:opacity-90 shadow transition"
+              title="Notificações">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#1D3273] dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {{#if naoLidas}}
+              <span class="absolute -top-1 -right-1 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                {{naoLidas}}
+              </span>
+              {{/if}}
+            </a>
+
+            <!-- Tema -->
+            <button id="toggle-theme"
             class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] shadow hover:opacity-90 transition">
             <!-- Lua -->
             <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -121,7 +143,8 @@
       M6.05 17.95l-1.414 1.414
       M12 8a4 4 0 100 8 4 4 0 000-8z" />
             </svg>
-          </button>
+            </button>
+          </div>
 
         </div>
       </header>

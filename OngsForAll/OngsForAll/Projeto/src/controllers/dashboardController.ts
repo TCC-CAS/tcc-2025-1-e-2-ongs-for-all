@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as dashboardService from "../services/dashboardService";
+import * as notificacaoService from "../services/notificacaoService";
 
 // =======================
 // DASHBOARD - USUÁRIO
@@ -22,10 +23,16 @@ export async function renderDashBoardPage(
       return reply.send({ user: sessionUser, ...data });
     }
 
+    const { naoLidas } = await notificacaoService.listarNotificacoes({
+      tipoConta: sessionUser.tipo,
+      id: Number(sessionUser.id),
+    });
+
     return reply.view(
       "/templates/dashboard.hbs",
       {
         user: sessionUser,
+        naoLidas,
 
         // cards
         totalDoado: totalDoadoNumber.toFixed(2),
@@ -69,11 +76,17 @@ export async function renderDashboardOngPage(
       return reply.send({ user: sessionUser, ...data });
     }
 
+    const { naoLidas } = await notificacaoService.listarNotificacoes({
+      tipoConta: sessionUser.tipo,
+      id: Number(sessionUser.id),
+    });
+
     return reply.view(
       "/templates/dashboardOng.hbs",
       {
         user: sessionUser,
         isOng: true,
+        naoLidas,
 
         // cards
         totalRecebido: Number(data.totalRecebido ?? 0).toFixed(2),

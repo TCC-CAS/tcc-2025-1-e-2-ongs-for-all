@@ -1,5 +1,6 @@
 import * as interesseRepo from "../repositories/interesseDoacaoRepository";
 import * as doacaoRepo from "../repositories/doacaoRepository";
+import * as notificacaoService from "../services/notificacaoService";
 
 export async function getNovaPaginaInteresse(
     userId: number,
@@ -67,6 +68,13 @@ export async function criarInteresse(params: {
         dataPrevista: params.dataPrevista || null,
     });
 
+    await notificacaoService.criarNotificacaoParaOng({
+        ongId: Number(necessidade.ong_id),
+        titulo: "Novo interesse recebido",
+        mensagem: `Um usuário demonstrou interesse em ajudar a necessidade "${necessidade.titulo}".`,
+        tipo: "novo_interesse",
+    });
+
     return { ok: true as const };
 }
 
@@ -114,6 +122,13 @@ export async function confirmarInteresse(params: {
 
     await interesseRepo.atualizarStatusInteresse(interesse.id, "confirmado");
 
+    await notificacaoService.criarNotificacaoParaUsuario({
+        usuarioId: Number(interesse.usuario_id),
+        titulo: "Interesse confirmado",
+        mensagem: "A ONG confirmou seu interesse em ajudar a necessidade.",
+        tipo: "interesse_confirmado",
+    });
+
     if (quantidade > 0) {
         await interesseRepo.atualizarQuantidadeRecebidaNecessidade({
             necessidadeId: Number(interesse.necessidade_id),
@@ -126,6 +141,8 @@ export async function confirmarInteresse(params: {
     }
 
     return { ok: true as const };
+
+
 }
 
 export async function cancelarInteresse(params: {
@@ -150,6 +167,13 @@ export async function cancelarInteresse(params: {
     }
 
     await interesseRepo.atualizarStatusInteresse(interesse.id, "cancelado");
+
+    await notificacaoService.criarNotificacaoParaUsuario({
+        usuarioId: Number(interesse.usuario_id),
+        titulo: "Interesse cancelado",
+        mensagem: "A ONG cancelou o interesse relacionado à necessidade.",
+        tipo: "interesse_cancelado",
+    });
 
     return { ok: true as const };
 }
