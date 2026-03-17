@@ -5,6 +5,20 @@
       Necessidades das ONGs
     </h1>
 
+    <div class="flex gap-2 flex-wrap mb-3">
+      {{#if meta_atingida}}
+      <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
+        Meta atingida
+      </span>
+      {{/if}}
+
+      {{#if quase_completa}}
+      <span class="inline-block bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">
+        Quase completa
+      </span>
+      {{/if}}
+    </div>
+
     {{#if necessidades.length}}
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

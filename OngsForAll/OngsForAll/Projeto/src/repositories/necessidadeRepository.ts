@@ -43,7 +43,20 @@ export async function findAllAbertas() {
       LEAST(
         ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
         100
-      ) AS percentual
+      ) AS percentual,
+      CASE
+        WHEN n.quantidade_recebida >= n.quantidade THEN 1
+        ELSE 0
+      END AS meta_atingida,
+      CASE
+        WHEN n.quantidade_recebida < n.quantidade
+          AND LEAST(
+            ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
+            100
+          ) >= 80
+        THEN 1
+        ELSE 0
+      END AS quase_completa
     FROM necessidades n
     INNER JOIN ongs o ON o.ong_id = n.ong_id
     WHERE n.status = 'aberta'
@@ -74,7 +87,20 @@ export async function findById(id: number) {
       LEAST(
         ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
         100
-      ) AS percentual
+      ) AS percentual,
+      CASE
+        WHEN n.quantidade_recebida >= n.quantidade THEN 1
+        ELSE 0
+      END AS meta_atingida,
+      CASE
+        WHEN n.quantidade_recebida < n.quantidade
+          AND LEAST(
+            ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
+            100
+          ) >= 80
+        THEN 1
+        ELSE 0
+      END AS quase_completa
     FROM necessidades n
     INNER JOIN ongs o ON o.ong_id = n.ong_id
     WHERE n.id = ?
@@ -90,23 +116,36 @@ export async function findByOngId(ongId: number) {
   const [rows]: any = await pool.query(
     `
     SELECT 
-      id,
-      titulo,
-      descricao,
-      categoria,
-      quantidade,
-      quantidade_recebida,
-      status,
-      criado_em,
-      atualizado_em,
-      GREATEST(quantidade - quantidade_recebida, 0) AS faltante,
+      n.id,
+      n.titulo,
+      n.descricao,
+      n.categoria,
+      n.quantidade,
+      n.quantidade_recebida,
+      n.status,
+      n.criado_em,
+      n.atualizado_em,
+      GREATEST(n.quantidade - n.quantidade_recebida, 0) AS faltante,
       LEAST(
-        ROUND((quantidade_recebida / NULLIF(quantidade, 0)) * 100, 0),
+        ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
         100
-      ) AS percentual
-    FROM necessidades
-    WHERE ong_id = ?
-    ORDER BY criado_em DESC
+      ) AS percentual,
+      CASE
+        WHEN n.quantidade_recebida >= n.quantidade THEN 1
+        ELSE 0
+      END AS meta_atingida,
+      CASE
+        WHEN n.quantidade_recebida < n.quantidade
+          AND LEAST(
+            ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),
+            100
+          ) >= 80
+        THEN 1
+        ELSE 0
+      END AS quase_completa
+    FROM necessidades n
+    WHERE n.ong_id = ?
+    ORDER BY n.criado_em DESC
     `,
     [ongId]
   );

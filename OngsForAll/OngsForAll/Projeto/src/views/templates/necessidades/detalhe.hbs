@@ -6,6 +6,20 @@
       {{necessidade.titulo}}
     </h1>
 
+    <div class="flex gap-2 flex-wrap mb-4">
+      {{#if necessidade.meta_atingida}}
+      <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
+        Meta atingida
+      </span>
+      {{/if}}
+
+      {{#if necessidade.quase_completa}}
+      <span class="inline-block bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">
+        Quase completa
+      </span>
+      {{/if}}
+    </div>
+
     <div class="bg-white dark:bg-[#1D3273]/20 border rounded-xl p-6 shadow">
 
       <p class="mb-4">

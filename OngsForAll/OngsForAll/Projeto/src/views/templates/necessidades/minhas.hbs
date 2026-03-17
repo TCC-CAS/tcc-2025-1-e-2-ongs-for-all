@@ -42,9 +42,23 @@
                         </p>
                     </div>
 
-                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
-                        {{status}}
-                    </span>
+                    <div class="flex gap-2 flex-wrap justify-end">
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                            {{status}}
+                        </span>
+
+                        {{#if meta_atingida}}
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
+                            Meta atingida
+                        </span>
+                        {{/if}}
+
+                        {{#if quase_completa}}
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-700">
+                            Quase completa
+                        </span>
+                        {{/if}}
+                    </div>
 
                 </div>
 
