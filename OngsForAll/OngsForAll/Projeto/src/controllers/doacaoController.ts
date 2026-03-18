@@ -1,6 +1,17 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { validateDoacao } from "../validators/doacaoValidator";
 import * as doacaoService from "../services/doacaoService";
+import * as notificacaoService from "../services/notificacaoService";
+
+const LAYOUT = "layouts/dashboardLayout";
+
+async function getNaoLidas(session: any) {
+  const { naoLidas } = await notificacaoService.contarNaoLidas({
+    tipoConta: session.tipo,
+    id: Number(session.id),
+  });
+  return naoLidas;
+}
 
 // Exibir o formulário de nova doação
 export async function renderNovaDoacaoPage(
@@ -29,10 +40,13 @@ export async function renderNovaDoacaoPage(
       return reply.send({ user, ongs, necessidade });
     }
 
+    const naoLidas = await getNaoLidas(user);
+
     return reply.view(
       "/templates/doar.hbs",
       {
         user,
+        naoLidas,
         ongs,
         necessidade,
         formData: {
@@ -41,7 +55,7 @@ export async function renderNovaDoacaoPage(
           necessidade_id: necessidade?.id ?? "",
         },
       },
-      { layout: "layouts/doarLayout" }
+      { layout: LAYOUT }
     );
   } catch (error: any) {
     console.error("Erro ao carregar página de doação:", error);
@@ -90,10 +104,13 @@ export async function criarDoacao(
         return reply.code(400).send({ error: validation.errors[0] });
       }
 
+      const naoLidas = await getNaoLidas(user);
+
       return reply.code(400).view(
         "/templates/doar.hbs",
         {
           user,
+          naoLidas,
           ongs,
           necessidade,
           error: validation.errors[0],
@@ -104,7 +121,7 @@ export async function criarDoacao(
             necessidade_id,
           },
         },
-        { layout: "layouts/doarLayout" }
+        { layout: LAYOUT }
       );
     } catch (error) {
       console.error("Erro ao recarregar formulário de doação:", error);
@@ -135,10 +152,13 @@ export async function criarDoacao(
         necessidadeIdNumber
       );
 
+      const naoLidas = await getNaoLidas(user);
+
       return reply.code(403).view(
         "/templates/doar.hbs",
         {
           user,
+          naoLidas,
           ongs,
           necessidade,
           error: result.error,
@@ -149,7 +169,7 @@ export async function criarDoacao(
             necessidade_id,
           },
         },
-        { layout: "layouts/doarLayout" }
+        { layout: LAYOUT }
       );
     }
 
@@ -173,10 +193,13 @@ export async function criarDoacao(
         necessidadeIdNumber
       );
 
+      const naoLidas = await getNaoLidas(user);
+
       return reply.code(400).view(
         "/templates/doar.hbs",
         {
           user,
+          naoLidas,
           ongs,
           necessidade,
           error: error?.message ?? "Erro ao criar doação.",
@@ -187,7 +210,7 @@ export async function criarDoacao(
             necessidade_id,
           },
         },
-        { layout: "layouts/doarLayout" }
+        { layout: LAYOUT }
       );
     } catch {
       return reply
@@ -215,10 +238,12 @@ export async function listarHistoricoDoacoes(
       return reply.send({ user, doacoes });
     }
 
+    const naoLidas = await getNaoLidas(user);
+
     return reply.view(
       "/templates/historicoDoacoes.hbs",
-      { user, doacoes },
-      { layout: "layouts/historicoLayout" }
+      { user, naoLidas, doacoes },
+      { layout: LAYOUT }
     );
   } catch (error) {
     console.error("Erro ao listar histórico de doações:", error);

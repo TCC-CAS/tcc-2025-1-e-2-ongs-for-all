@@ -57,73 +57,98 @@ export async function getTotalPorOng() {
   }));
 }
 
-export async function getTotalRecebido(ongId: number) {
+function buildDateFilter(params: any[], de?: string, ate?: string): string {
+  let clause = "";
+  if (de) {
+    clause += " AND data >= ?";
+    params.push(de);
+  }
+  if (ate) {
+    clause += " AND data <= ?";
+    params.push(ate);
+  }
+  return clause;
+}
+
+export async function getTotalRecebido(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
     `SELECT COALESCE(SUM(valor), 0) AS total
      FROM doacoes
-     WHERE ong_id = ?`,
-    [ongId]
+     WHERE ong_id = ?${dateFilter}`,
+    params
   );
   return rows[0]?.total ?? 0;
 }
 
-export async function getQtdDoacoes(ongId: number) {
+export async function getQtdDoacoes(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
     `SELECT COUNT(*) AS qtd
      FROM doacoes
-     WHERE ong_id = ?`,
-    [ongId]
+     WHERE ong_id = ?${dateFilter}`,
+    params
   );
   return rows[0]?.qtd ?? 0;
 }
 
-export async function getQtdDoadores(ongId: number) {
+export async function getQtdDoadores(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
     `SELECT COUNT(DISTINCT usuario_id) AS qtd
      FROM doacoes
-     WHERE ong_id = ?`,
-    [ongId]
+     WHERE ong_id = ?${dateFilter}`,
+    params
   );
   return rows[0]?.qtd ?? 0;
 }
 
-export async function getDoacoesPorMesOng(ongId: number) {
+export async function getDoacoesPorMesOng(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
     `SELECT MONTH(data) AS mes, SUM(valor) AS total
      FROM doacoes
-     WHERE ong_id = ?
+     WHERE ong_id = ?${dateFilter}
      GROUP BY MONTH(data)
      ORDER BY mes`,
-    [ongId]
+    params
   );
   return rows;
 }
 
-export async function getDoacoesPorTipoOng(ongId: number) {
+export async function getDoacoesPorTipoOng(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
     `SELECT tipo, SUM(valor) AS total
      FROM doacoes
-     WHERE ong_id = ?
+     WHERE ong_id = ?${dateFilter}
      GROUP BY tipo
      ORDER BY tipo`,
-    [ongId]
+    params
   );
   return rows;
 }
 
-export async function getUltimasDoacoesOng(ongId: number) {
+export async function getUltimasDoacoesOng(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate);
   const [rows]: any = await pool.query(
-    `SELECT 
+    `SELECT
         d.valor,
         d.tipo,
         DATE_FORMAT(d.data, '%d/%m/%Y') AS data,
         u.nome AS doador
      FROM doacoes d
      LEFT JOIN usuarios u ON d.usuario_id = u.id
-     WHERE d.ong_id = ?
+     WHERE d.ong_id = ?${dateFilter}
      ORDER BY d.data DESC
      LIMIT 10`,
-    [ongId]
+    params
   );
   return rows;
 }

@@ -16,7 +16,8 @@ export async function renderDashBoardPage(
       return reply.redirect("/login");
     }
 
-    const data = await dashboardService.getDashboardData(Number(sessionUser.id));
+    const { de, ate } = request.query as { de?: string; ate?: string };
+    const data = await dashboardService.getDashboardData(Number(sessionUser.id), de, ate);
     const totalDoadoNumber = Number(data.totalDoado ?? 0);
 
     if (process.env.NODE_ENV === "test") {
@@ -46,6 +47,10 @@ export async function renderDashBoardPage(
 
         labelsTipo: JSON.stringify(data.labelsTipo ?? []),
         valoresTipo: JSON.stringify(data.valoresTipo ?? []),
+
+        // filtro de período
+        filtroDe: de ?? "",
+        filtroAte: ate ?? "",
       },
       { layout: "layouts/dashboardLayout" }
     );
@@ -70,7 +75,8 @@ export async function renderDashboardOngPage(
     }
 
     const ongId = Number(sessionUser.id);
-    const data = await dashboardService.getOngDashboardData(ongId);
+    const { de, ate } = request.query as { de?: string; ate?: string };
+    const data = await dashboardService.getOngDashboardData(ongId, de, ate);
 
     if (process.env.NODE_ENV === "test") {
       return reply.send({ user: sessionUser, ...data });
@@ -102,6 +108,10 @@ export async function renderDashboardOngPage(
 
         // tabela
         ultimasDoacoes: data.ultimasDoacoes ?? [],
+
+        // filtro de período
+        filtroDe: de ?? "",
+        filtroAte: ate ?? "",
       },
       { layout: "layouts/ongDashboardLayout" }
     );

@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as interesseService from "../services/interesseDoacaoService";
+import * as notificacaoService from "../services/notificacaoService";
 
 export async function renderNovaPaginaInteresse(
     request: FastifyRequest,
@@ -23,16 +24,22 @@ export async function renderNovaPaginaInteresse(
             Number(necessidade_id)
         );
 
+        const { naoLidas } = await notificacaoService.contarNaoLidas({
+            tipoConta: user.tipo,
+            id: Number(user.id),
+        });
+
         return reply.view(
             "/templates/interesses/nova.hbs",
             {
                 user,
+                naoLidas,
                 necessidade,
                 formData: {
                     necessidade_id,
                 },
             },
-            { layout: "layouts/doarLayout" }
+            { layout: "layouts/dashboardLayout" }
         );
     } catch (error: any) {
         console.error("Erro ao carregar página de interesse:", error);

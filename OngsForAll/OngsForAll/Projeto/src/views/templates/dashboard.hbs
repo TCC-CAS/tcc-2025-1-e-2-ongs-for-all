@@ -3,14 +3,38 @@
   <div class="max-w-7xl mx-auto space-y-12">
 
     <!-- Cabeçalho -->
-    <div class="flex justify-between items-center flex-wrap gap-4">
-      <div>
-        <h1
-          class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
-          Bem-vindo, {{user.nome}}!
-        </h1>
-        <p class="mt-2 text-[#1D3273]/70 dark:text-white/80">Veja suas estatísticas e acompanhe seu impacto 💙</p>
+    <div>
+      <h1
+        class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
+        Bem-vindo, {{user.nome}}!
+      </h1>
+      <p class="mt-2 text-[#1D3273]/70 dark:text-white/80">Veja suas estatísticas e acompanhe seu impacto</p>
+    </div>
+
+    <!-- Filtro por período -->
+    <form method="GET" action="/dashboard"
+      class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-5 shadow flex flex-col sm:flex-row items-end gap-4">
+      <div class="flex flex-col flex-1 min-w-0">
+        <label class="text-sm font-semibold mb-1">De</label>
+        <input type="date" name="de" value="{{filtroDe}}"
+          class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1D3273]/30 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273] w-full" />
       </div>
+      <div class="flex flex-col flex-1 min-w-0">
+        <label class="text-sm font-semibold mb-1">Até</label>
+        <input type="date" name="ate" value="{{filtroAte}}"
+          class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1D3273]/30 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273] w-full" />
+      </div>
+      <div class="flex gap-2">
+        <button type="submit"
+          class="bg-[#1D3273] dark:bg-white text-white dark:text-[#1D3273] px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition shadow">
+          Filtrar
+        </button>
+        <a href="/dashboard"
+          class="border border-slate-300 dark:border-white/20 px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-80 transition">
+          Limpar
+        </a>
+      </div>
+    </form>
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -60,22 +84,6 @@
       </div>
     </div>
 
-    <!-- Dados do usuário -->
-    <div
-      class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-6 shadow-lg">
-      <h2 class="text-2xl font-bold mb-6">Seus dados</h2>
-      <ul class="space-y-2 text-[#1D3273]/80 dark:text-white/80">
-        <li><strong>Nome:</strong> {{user.nome}}</li>
-        <li><strong>Email:</strong> {{user.email}}</li>
-      </ul>
-      <div class="mt-6">
-        <a href="/perfil/editar"
-          class="inline-block bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] px-6 py-2 rounded hover:opacity-90 transition">
-          ✏️ Editar perfil
-        </a>
-      </div>
-    </div>
-
   </div>
 
   <script>
@@ -86,7 +94,7 @@
         const toast = document.createElement('div');
         toast.id = 'toast';
         toast.className = 'fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50';
-        toast.textContent = '✅ Doação realizada com sucesso!';
+        toast.textContent = 'Doação realizada com sucesso!';
         document.body.appendChild(toast);
 
         setTimeout(() => {
@@ -106,12 +114,12 @@
     const valoresTipo = {{{ valoresTipo }}};
 
     const hasData =
-      Array.isArray(valoresDoadoMes) &&
-      valoresDoadoMes.length > 0 &&
-      valoresDoadoMes.some(v => Number(v) > 0);
+      (Array.isArray(valoresDoadoMes) && valoresDoadoMes.length > 0 && valoresDoadoMes.some(v => Number(v) > 0)) ||
+      (Array.isArray(valoresTipo) && valoresTipo.length > 0 && valoresTipo.some(v => Number(v) > 0));
 
-    const getTextColor = () =>
-      document.documentElement.classList.contains('dark') ? '#FFFFFF' : '#1D3273';
+    const html = document.documentElement;
+    const getTextColor = () => html.classList.contains('dark') ? '#FFFFFF' : '#1D3273';
+    const getGridColor = () => html.classList.contains('dark') ? 'rgba(255,255,255,0.15)' : 'rgba(29,50,115,0.15)';
 
     let chartOngs = null;
     let chartMes = null;
@@ -125,7 +133,7 @@
     }
 
     function renderCharts() {
-      if (!hasData) return;
+      destroyCharts();
 
       const baseOptions = {
         responsive: true,
@@ -134,8 +142,8 @@
           legend: { labels: { color: getTextColor() } }
         },
         scales: {
-          x: { ticks: { color: getTextColor() } },
-          y: { ticks: { color: getTextColor() } }
+          x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+          y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
         }
       };
 
@@ -145,7 +153,8 @@
           ...baseOptions.scales,
           y: {
             beginAtZero: true,
-            ticks: { color: getTextColor(), precision: 0 }
+            ticks: { color: getTextColor(), precision: 0 },
+            grid: { color: getGridColor() }
           }
         }
       };
@@ -159,8 +168,9 @@
             ticks: {
               color: getTextColor(),
               stepSize: 10,
-              callback: (value) => `R$ ${Number(value).toFixed(0)}`
-            }
+              callback: (value) => 'R$ ' + Number(value).toFixed(0)
+            },
+            grid: { color: getGridColor() }
           }
         },
         plugins: {
@@ -169,7 +179,7 @@
             callbacks: {
               label: (ctx) => {
                 const v = Number(ctx.raw || 0);
-                return `Total doado: R$ ${v.toFixed(2)}`;
+                return 'Total doado: R$ ' + v.toFixed(2);
               }
             }
           }
@@ -180,7 +190,6 @@
       const barrasCanvas = document.getElementById('graficoDoacoesMes');
       const tiposCanvas = document.getElementById('categoriasChart');
 
-      // segurança extra: se não achou canvas, não tenta criar
       if (!ongsCanvas || !barrasCanvas || !tiposCanvas) return;
 
       chartOngs = new Chart(ongsCanvas, {
@@ -223,28 +232,23 @@
           }]
         },
         options: {
+          responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { labels: { color: getTextColor() } } }
         }
       });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Estado vazio
       if (!hasData) {
         const wrap = document.getElementById("chartsWrap");
         if (wrap) {
-          wrap.innerHTML = `
-          <div class="md:col-span-3 bg-[#1D3273]/10 dark:bg-white/10 p-8 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow text-center">
-            <h2 class="text-xl font-bold mb-2">Sem dados ainda</h2>
-            <p class="text-[#1D3273]/70 dark:text-white/70 mb-6">
-              Faça sua primeira doação para começar a acompanhar seu impacto.
-            </p>
-            <a href="/doacoes/nova"
-              class="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold px-6 py-3 rounded-full shadow hover:opacity-90 transition">
-              💖 Fazer uma Doação
-            </a>
-          </div>
-        `;
+          wrap.innerHTML =
+            '<div class="md:col-span-3 bg-[#1D3273]/10 dark:bg-white/10 p-8 rounded-xl border border-[#1D3273]/20 dark:border-white/20 shadow text-center">' +
+            '<h2 class="text-xl font-bold mb-2">Sem dados ainda</h2>' +
+            '<p class="text-[#1D3273]/70 dark:text-white/70 mb-6">Faça sua primeira doação para começar a acompanhar seu impacto.</p>' +
+            '<a href="/doacoes/nova" class="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold px-6 py-3 rounded-full shadow hover:opacity-90 transition">Fazer uma Doação</a>' +
+            '</div>';
         }
         return;
       }
@@ -252,7 +256,6 @@
       renderCharts();
     });
 
-    // ✅ quando o layout trocar o tema, recria os gráficos com as novas cores
     window.addEventListener('theme:changed', () => {
       destroyCharts();
       renderCharts();

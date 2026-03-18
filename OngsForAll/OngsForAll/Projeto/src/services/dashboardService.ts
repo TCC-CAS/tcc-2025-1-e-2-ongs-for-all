@@ -6,34 +6,45 @@ export async function getTotalPorOng() {
   return { dados };
 }
 
-export async function getDashboardData(userId: number) {
+export async function getDashboardData(userId: number, de?: string, ate?: string) {
   const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
+  function buildDateFilter(params: any[]): string {
+    let clause = "";
+    if (de) { clause += " AND data >= ?"; params.push(de); }
+    if (ate) { clause += " AND data <= ?"; params.push(ate); }
+    return clause;
+  }
+
   // 1) Total doado por mês (R$)
+  const paramsMes: any[] = [userId];
+  const dateFilterMes = buildDateFilter(paramsMes);
   const [rowsDoadoMes]: any = await pool.query(
     `
     SELECT MONTH(data) AS mes, SUM(valor) AS total
     FROM doacoes
-    WHERE usuario_id = ?
+    WHERE usuario_id = ?${dateFilterMes}
     GROUP BY MONTH(data)
     ORDER BY mes
     `,
-    [userId]
+    paramsMes
   );
 
   const labelsMes = rowsDoadoMes.map((r: any) => meses[r.mes - 1]);
   const valoresDoadoMes = rowsDoadoMes.map((r: any) => Number(r.total || 0));
 
   // 2) ONGs apoiadas por mês (contagem distinta)
+  const paramsOngs: any[] = [userId];
+  const dateFilterOngs = buildDateFilter(paramsOngs);
   const [rowsOngsMes]: any = await pool.query(
     `
     SELECT MONTH(data) AS mes, COUNT(DISTINCT ong_id) AS total_ongs
     FROM doacoes
-    WHERE usuario_id = ?
+    WHERE usuario_id = ?${dateFilterOngs}
     GROUP BY MONTH(data)
     ORDER BY mes
     `,
-    [userId]
+    paramsOngs
   );
 
   // garante alinhamento de labels com o gráfico de doado/mês
@@ -43,15 +54,17 @@ export async function getDashboardData(userId: number) {
   const valoresOngsMes = rowsDoadoMes.map((r: any) => ongsPorMesMap.get(Number(r.mes)) ?? 0);
 
   // 3) Doações por tipo (para doughnut)
+  const paramsTipo: any[] = [userId];
+  const dateFilterTipo = buildDateFilter(paramsTipo);
   const [rowsTipo]: any = await pool.query(
     `
     SELECT tipo, SUM(valor) AS total
     FROM doacoes
-    WHERE usuario_id = ?
+    WHERE usuario_id = ?${dateFilterTipo}
     GROUP BY tipo
     ORDER BY tipo
     `,
-    [userId]
+    paramsTipo
   );
 
   const labelsTipo = rowsTipo.map((r: any) => r.tipo);
@@ -74,16 +87,16 @@ export async function getDashboardData(userId: number) {
   };
 }
 
-export async function getOngDashboardData(ongId: number) {
+export async function getOngDashboardData(ongId: number, de?: string, ate?: string) {
   const [totalRecebido, qtdDoacoes, qtdDoadores] = await Promise.all([
-    dashboardRepository.getTotalRecebido(ongId),
-    dashboardRepository.getQtdDoacoes(ongId),
-    dashboardRepository.getQtdDoadores(ongId),
+    dashboardRepository.getTotalRecebido(ongId, de, ate),
+    dashboardRepository.getQtdDoacoes(ongId, de, ate),
+    dashboardRepository.getQtdDoadores(ongId, de, ate),
   ]);
 
-  const porMes = await dashboardRepository.getDoacoesPorMesOng(ongId);
-  const porTipo = await dashboardRepository.getDoacoesPorTipoOng(ongId);
-  const ultimasDoacoes = await dashboardRepository.getUltimasDoacoesOng(ongId);
+  const porMes = await dashboardRepository.getDoacoesPorMesOng(ongId, de, ate);
+  const porTipo = await dashboardRepository.getDoacoesPorTipoOng(ongId, de, ate);
+  const ultimasDoacoes = await dashboardRepository.getUltimasDoacoesOng(ongId, de, ate);
 
   const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
