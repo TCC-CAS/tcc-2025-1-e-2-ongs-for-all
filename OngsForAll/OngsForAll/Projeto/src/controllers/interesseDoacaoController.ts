@@ -110,10 +110,16 @@ export async function renderInteressesOngPage(
         status
     );
 
+    const { naoLidas } = await notificacaoService.contarNaoLidas({
+        tipoConta: sessionUser.tipo,
+        id: Number(sessionUser.id),
+    });
+
     return reply.view(
         "/templates/interesses/lista-ong.hbs",
         {
             user: sessionUser,
+            naoLidas,
             interesses: result.interesses,
             filtroAtual: result.filtroAtual,
             success: (request.query as any)?.sucesso === "1",
@@ -122,7 +128,7 @@ export async function renderInteressesOngPage(
     );
 }
 
-export async function confirmarInteresse(
+export async function aceitarInteresse(
     request: FastifyRequest,
     reply: FastifyReply
 ) {
@@ -138,7 +144,7 @@ export async function confirmarInteresse(
 
     const { id } = request.params as { id: string };
 
-    const result = await interesseService.confirmarInteresse({
+    const result = await interesseService.aceitarInteresse({
         interesseId: Number(id),
         ongId: Number(sessionUser.id),
     });
@@ -148,6 +154,34 @@ export async function confirmarInteresse(
     }
 
     return reply.redirect("/ong/interesses?status=pendente&sucesso=1");
+}
+
+export async function receberInteresse(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    const sessionUser = request.session.user;
+
+    if (!sessionUser) {
+        return reply.redirect("/login");
+    }
+
+    if (sessionUser.tipo !== "ong") {
+        return reply.redirect("/dashboard");
+    }
+
+    const { id } = request.params as { id: string };
+
+    const result = await interesseService.receberInteresse({
+        interesseId: Number(id),
+        ongId: Number(sessionUser.id),
+    });
+
+    if (!result.ok) {
+        return reply.code(400).send(result.error);
+    }
+
+    return reply.redirect("/ong/interesses?status=aceito&sucesso=1");
 }
 
 export async function cancelarInteresse(

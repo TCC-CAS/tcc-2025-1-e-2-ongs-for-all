@@ -102,6 +102,7 @@ export async function buscarInteressePorId(id: number) {
       i.status,
       i.criado_em,
       i.data_prevista,
+      n.titulo AS titulo_necessidade,
       n.quantidade AS meta,
       n.quantidade_recebida,
       n.status AS necessidade_status,
@@ -147,8 +148,8 @@ export async function atualizarQuantidadeRecebidaNecessidade(params: {
     );
 }
 
-export async function concluirNecessidadeSeMetaAtingida(necessidadeId: number) {
-    await pool.query(
+export async function concluirNecessidadeSeMetaAtingida(necessidadeId: number): Promise<boolean> {
+    const [result]: any = await pool.query(
         `
     UPDATE necessidades
     SET
@@ -156,7 +157,10 @@ export async function concluirNecessidadeSeMetaAtingida(necessidadeId: number) {
       atualizado_em = NOW()
     WHERE id = ?
       AND quantidade_recebida >= quantidade
+      AND status != 'concluida'
     `,
         [necessidadeId]
     );
+
+    return result.affectedRows > 0;
 }

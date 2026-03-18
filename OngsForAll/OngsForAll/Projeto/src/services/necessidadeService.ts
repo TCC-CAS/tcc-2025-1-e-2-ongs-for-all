@@ -1,7 +1,6 @@
 import * as necessidadeRepository from "../repositories/necessidadeRepository";
 import { notificarTodosUsuarios } from "./notificacaoService";
-
-const STATUS_VALIDOS = ["aberta", "em_andamento", "concluida", "cancelada"];
+import { validateNecessidade, validateStatus } from "../validators/necessidadeValidator";
 
 export async function criarNecessidade(params: {
   ongId: number;
@@ -10,26 +9,21 @@ export async function criarNecessidade(params: {
   categoria: string;
   quantidade: number;
 }) {
-  const titulo = params.titulo?.trim();
-  const descricao = params.descricao?.trim();
-  const categoria = params.categoria?.trim();
+  const validation = validateNecessidade({
+    titulo: params.titulo,
+    descricao: params.descricao,
+    categoria: params.categoria,
+    quantidade: params.quantidade,
+  });
+
+  if (!validation.isValid) {
+    return { ok: false as const, error: validation.errors[0] };
+  }
+
+  const titulo = params.titulo.trim();
+  const descricao = params.descricao.trim();
+  const categoria = params.categoria.trim();
   const quantidade = Number(params.quantidade);
-
-  if (!titulo || titulo.length < 3) {
-    return { ok: false as const, error: "O título deve ter pelo menos 3 caracteres." };
-  }
-
-  if (!descricao || descricao.length < 10) {
-    return { ok: false as const, error: "A descrição deve ter pelo menos 10 caracteres." };
-  }
-
-  if (!categoria) {
-    return { ok: false as const, error: "Informe a categoria." };
-  }
-
-  if (Number.isNaN(quantidade) || quantidade < 1) {
-    return { ok: false as const, error: "A quantidade deve ser maior que zero." };
-  }
 
   await necessidadeRepository.createNecessidade({
     ongId: params.ongId,
@@ -79,8 +73,9 @@ export async function alterarStatusNecessidade(params: {
   ongId: number;
   status: string;
 }) {
-  if (!STATUS_VALIDOS.includes(params.status)) {
-    return { ok: false as const, error: "Status inválido." };
+  const statusValidation = validateStatus(params.status);
+  if (!statusValidation.isValid) {
+    return { ok: false as const, error: statusValidation.error! };
   }
 
   await necessidadeRepository.updateStatus(params.id, params.ongId, params.status);

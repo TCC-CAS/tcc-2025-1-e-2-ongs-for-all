@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import * as perfilRepo from "../repositories/perfilRepository";
+import { validatePerfil } from "../validators/perfilValidator";
 
 export async function getUserProfile(userId: number) {
   const user = await perfilRepo.findUserById(userId);
@@ -13,11 +14,8 @@ export async function getOngProfile(ongId: number) {
   return { ok: true as const, user: ong };
 }
 
-async function hashPassword(password?: string) {
+async function hashPassword(password?: string): Promise<string | null> {
   if (!password || password.length === 0) return null;
-  if (password.length < 6) {
-    return { error: "A senha deve ter no mínimo 6 caracteres." };
-  }
   return await bcrypt.hash(password, 10);
 }
 
@@ -30,12 +28,14 @@ export async function updateProfile(params: {
 }) {
   const { userId, nome, email, telefone, password } = params;
 
-  const result = await hashPassword(password);
-  if (result && typeof result === "object" && "error" in result) {
-    return { ok: false as const, error: result.error };
+  const validation = validatePerfil({ nome, email, telefone, password, isOng: false });
+  if (!validation.isValid) {
+    return { ok: false as const, error: validation.errors[0] };
   }
 
-  await perfilRepo.updateUserProfile(userId, nome, email, telefone ?? null, result as string | null);
+  const passwordHash = await hashPassword(password);
+
+  await perfilRepo.updateUserProfile(userId, nome.trim(), email.trim(), telefone ?? null, passwordHash);
   return { ok: true as const };
 }
 
@@ -49,11 +49,13 @@ export async function updateOngProfile(params: {
 }) {
   const { ongId, nome, email, telefone, areaAtuacao, password } = params;
 
-  const result = await hashPassword(password);
-  if (result && typeof result === "object" && "error" in result) {
-    return { ok: false as const, error: result.error };
+  const validation = validatePerfil({ nome, email, telefone, password, areaAtuacao, isOng: true });
+  if (!validation.isValid) {
+    return { ok: false as const, error: validation.errors[0] };
   }
 
-  await perfilRepo.updateOngProfile(ongId, nome, email, telefone ?? null, areaAtuacao ?? null, result as string | null);
+  const passwordHash = await hashPassword(password);
+
+  await perfilRepo.updateOngProfile(ongId, nome.trim(), email.trim(), telefone ?? null, areaAtuacao ?? null, passwordHash);
   return { ok: true as const };
 }

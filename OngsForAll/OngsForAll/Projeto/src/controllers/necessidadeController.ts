@@ -1,5 +1,14 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as necessidadeService from "../services/necessidadeService";
+import * as notificacaoService from "../services/notificacaoService";
+
+async function getNaoLidas(user: { tipo: string; id: number }) {
+  const { naoLidas } = await notificacaoService.contarNaoLidas({
+    tipoConta: user.tipo,
+    id: Number(user.id),
+  });
+  return naoLidas;
+}
 
 export async function renderListaNecessidadesPage(
   request: FastifyRequest,
@@ -11,10 +20,14 @@ export async function renderListaNecessidadesPage(
     return reply.send(result);
   }
 
+  const user = request.session.user;
+  const naoLidas = user ? await getNaoLidas(user as any) : 0;
+
   return reply.view(
     "/templates/necessidades/lista.hbs",
     {
-      user: request.session.user,
+      user,
+      naoLidas,
       necessidades: result.necessidades,
     },
     { layout: "layouts/dashboardLayout" }
@@ -35,10 +48,13 @@ export async function renderNovaNecessidadePage(
     return reply.redirect("/dashboard");
   }
 
+  const naoLidas = await getNaoLidas(sessionUser as any);
+
   return reply.view(
     "/templates/necessidades/nova.hbs",
     {
       user: sessionUser,
+      naoLidas,
     },
     { layout: "layouts/ongDashboardLayout" }
   );
@@ -74,10 +90,13 @@ export async function criarNecessidade(
   });
 
   if (!result.ok) {
+    const naoLidas = await getNaoLidas(sessionUser as any);
+
     return reply.view(
       "/templates/necessidades/nova.hbs",
       {
         user: sessionUser,
+        naoLidas,
         error: result.error,
         form: { titulo, descricao, categoria, quantidade },
       },
@@ -100,10 +119,14 @@ export async function renderDetalheNecessidadePage(
     return reply.status(404).send({ message: result.error });
   }
 
+  const user = request.session.user;
+  const naoLidas = user ? await getNaoLidas(user as any) : 0;
+
   return reply.view(
     "/templates/necessidades/detalhe.hbs",
     {
-      user: request.session.user,
+      user,
+      naoLidas,
       necessidade: result.necessidade,
     },
     { layout: "layouts/dashboardLayout" }
@@ -131,10 +154,13 @@ export async function renderNecessidadesOngPage(
     status
   );
 
+  const naoLidas = await getNaoLidas(sessionUser as any);
+
   return reply.view(
     "/templates/necessidades/minhas.hbs",
     {
       user: sessionUser,
+      naoLidas,
       necessidades: result.necessidades,
       filtroAtual: result.filtroAtual,
       success: sucesso === "1",

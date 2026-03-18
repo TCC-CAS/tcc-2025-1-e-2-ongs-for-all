@@ -81,7 +81,7 @@ export async function criarInteresse(params: {
     return { ok: true as const };
 }
 
-const STATUS_FILTRO_VALIDOS = ["pendente", "confirmado", "cancelado", "todos"];
+const STATUS_FILTRO_VALIDOS = ["pendente", "aceito", "recebido", "cancelado", "todos"];
 
 export async function listarInteressesDaOng(
     ongId: number,
@@ -100,7 +100,7 @@ export async function listarInteressesDaOng(
     };
 }
 
-export async function confirmarInteresse(params: {
+export async function aceitarInteresse(params: {
     interesseId: number;
     ongId: number;
 }) {
@@ -117,19 +117,52 @@ export async function confirmarInteresse(params: {
     if (interesse.status !== "pendente") {
         return {
             ok: false as const,
-            error: "Somente interesses pendentes podem ser confirmados.",
+            error: "Somente interesses pendentes podem ser aceitos.",
+        };
+    }
+
+    await interesseRepo.atualizarStatusInteresse(interesse.id, "aceito");
+
+    await notificacaoService.criarNotificacaoParaUsuario({
+        usuarioId: Number(interesse.usuario_id),
+        titulo: "Interesse aceito",
+        mensagem: `${interesse.nome_ong} aceitou seu interesse em ajudar a necessidade "${interesse.titulo_necessidade}". Aguardando a entrega!`,
+        tipo: "interesse_aceito",
+    });
+
+    return { ok: true as const };
+}
+
+export async function receberInteresse(params: {
+    interesseId: number;
+    ongId: number;
+}) {
+    const interesse = await interesseRepo.buscarInteressePorId(params.interesseId);
+
+    if (!interesse) {
+        return { ok: false as const, error: "Interesse não encontrado." };
+    }
+
+    if (Number(interesse.ong_id) !== Number(params.ongId)) {
+        return { ok: false as const, error: "Você não pode alterar este interesse." };
+    }
+
+    if (interesse.status !== "aceito") {
+        return {
+            ok: false as const,
+            error: "Somente interesses aceitos podem ser marcados como recebidos.",
         };
     }
 
     const quantidade = Number(interesse.quantidade ?? 0);
 
-    await interesseRepo.atualizarStatusInteresse(interesse.id, "confirmado");
+    await interesseRepo.atualizarStatusInteresse(interesse.id, "recebido");
 
     await notificacaoService.criarNotificacaoParaUsuario({
         usuarioId: Number(interesse.usuario_id),
-        titulo: "Interesse confirmado",
-        mensagem: `${interesse.nome_ong} confirmou seu interesse em ajudar a necessidade.`,
-        tipo: "interesse_confirmado",
+        titulo: "Doação recebida",
+        mensagem: `${interesse.nome_ong} confirmou o recebimento da sua doação para "${interesse.titulo_necessidade}". Obrigado pela ajuda!`,
+        tipo: "interesse_recebido",
     });
 
     if (quantidade > 0) {
@@ -138,14 +171,21 @@ export async function confirmarInteresse(params: {
             quantidade,
         });
 
-        await interesseRepo.concluirNecessidadeSeMetaAtingida(
+        const metaAtingida = await interesseRepo.concluirNecessidadeSeMetaAtingida(
             Number(interesse.necessidade_id)
         );
+
+        if (metaAtingida) {
+            await notificacaoService.criarNotificacaoParaOng({
+                ongId: Number(interesse.ong_id),
+                titulo: "Meta atingida!",
+                mensagem: `A necessidade "${interesse.titulo_necessidade}" atingiu a meta de doações e foi concluída automaticamente!`,
+                tipo: "meta_atingida",
+            });
+        }
     }
 
     return { ok: true as const };
-
-
 }
 
 export async function cancelarInteresse(params: {
@@ -162,10 +202,10 @@ export async function cancelarInteresse(params: {
         return { ok: false as const, error: "Você não pode alterar este interesse." };
     }
 
-    if (interesse.status !== "pendente") {
+    if (interesse.status !== "pendente" && interesse.status !== "aceito") {
         return {
             ok: false as const,
-            error: "Somente interesses pendentes podem ser cancelados.",
+            error: "Somente interesses pendentes ou aceitos podem ser cancelados.",
         };
     }
 
@@ -174,7 +214,7 @@ export async function cancelarInteresse(params: {
     await notificacaoService.criarNotificacaoParaUsuario({
         usuarioId: Number(interesse.usuario_id),
         titulo: "Interesse cancelado",
-        mensagem: `${interesse.nome_ong} cancelou o interesse relacionado à necessidade.`,
+        mensagem: `${interesse.nome_ong} cancelou o interesse relacionado à necessidade "${interesse.titulo_necessidade}".`,
         tipo: "interesse_cancelado",
     });
 

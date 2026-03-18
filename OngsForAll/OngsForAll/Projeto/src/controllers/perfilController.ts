@@ -1,5 +1,14 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as perfilService from "../services/perfilService";
+import * as notificacaoService from "../services/notificacaoService";
+
+async function getNaoLidas(user: { tipo: "usuario" | "ong"; id: number }) {
+  const { naoLidas } = await notificacaoService.contarNaoLidas({
+    tipoConta: user.tipo,
+    id: Number(user.id),
+  });
+  return naoLidas;
+}
 
 function getLayout(tipo: string) {
   return tipo === "ong" ? "layouts/ongDashboardLayout" : "layouts/dashboardLayout";
@@ -20,9 +29,12 @@ export async function renderPerfilPage(request: FastifyRequest, reply: FastifyRe
 
   if (!result.ok) return reply.status(404).send({ message: "Perfil não encontrado" });
 
+  const naoLidas = await getNaoLidas(session);
+
   return reply.view("/templates/perfil.hbs", {
     user: result.user,
     isOng,
+    naoLidas,
     backUrl: getBackUrl(session.tipo),
     success: (request.query as any)?.success === "1",
   }, { layout: getLayout(session.tipo) });
@@ -66,9 +78,12 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
         ? await perfilService.getOngProfile(userId)
         : await perfilService.getUserProfile(userId);
 
+      const naoLidas = await getNaoLidas(session);
+
       return reply.view("/templates/perfil.hbs", {
         user: current.ok ? current.user : { id: userId, nome, email },
         isOng,
+        naoLidas,
         backUrl: getBackUrl(session.tipo),
         message: result.error,
       }, { layout: getLayout(session.tipo) });
@@ -89,9 +104,12 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
       ? await perfilService.getOngProfile(userId)
       : await perfilService.getUserProfile(userId);
 
+    const naoLidas = await getNaoLidas(session);
+
     return reply.view("/templates/perfil.hbs", {
       user: current.ok ? current.user : { id: userId, nome, email },
       isOng,
+      naoLidas,
       backUrl: getBackUrl(session.tipo),
       message: "Erro ao atualizar perfil",
     }, { layout: getLayout(session.tipo) });

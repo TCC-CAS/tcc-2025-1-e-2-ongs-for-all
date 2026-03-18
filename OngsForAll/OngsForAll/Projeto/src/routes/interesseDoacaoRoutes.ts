@@ -3,7 +3,8 @@ import {
     renderNovaPaginaInteresse,
     criarInteresse,
     renderInteressesOngPage,
-    confirmarInteresse,
+    aceitarInteresse,
+    receberInteresse,
     cancelarInteresse,
 } from "../controllers/interesseDoacaoController";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
@@ -30,9 +31,15 @@ export async function interesseDoacaoRoutes(fastify: FastifyInstance) {
     );
 
     fastify.post(
-        "/ong/interesses/:id/confirmar",
+        "/ong/interesses/:id/aceitar",
         { preHandler: [ensureAuthenticated, ensureOng] },
-        confirmarInteresse
+        aceitarInteresse
+    );
+
+    fastify.post(
+        "/ong/interesses/:id/receber",
+        { preHandler: [ensureAuthenticated, ensureOng] },
+        receberInteresse
     );
 
     fastify.post(

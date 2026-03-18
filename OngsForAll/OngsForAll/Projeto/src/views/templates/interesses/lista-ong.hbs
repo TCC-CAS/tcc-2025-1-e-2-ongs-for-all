@@ -5,9 +5,10 @@
             <h1 class="text-3xl font-bold">Interesses recebidos</h1>
 
             <select onchange="window.location.href='/ong/interesses?status=' + this.value"
-                class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1D3273]/30 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+                class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1a2d4a] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
                 <option value="pendente" {{#ifCond filtroAtual 'pendente'}}selected{{/ifCond}}>Pendentes</option>
-                <option value="confirmado" {{#ifCond filtroAtual 'confirmado'}}selected{{/ifCond}}>Confirmados</option>
+                <option value="aceito" {{#ifCond filtroAtual 'aceito'}}selected{{/ifCond}}>Aceitos</option>
+                <option value="recebido" {{#ifCond filtroAtual 'recebido'}}selected{{/ifCond}}>Recebidos</option>
                 <option value="cancelado" {{#ifCond filtroAtual 'cancelado'}}selected{{/ifCond}}>Cancelados</option>
                 <option value="todos" {{#ifCond filtroAtual 'todos'}}selected{{/ifCond}}>Todos</option>
             </select>
@@ -37,7 +38,8 @@
 
                     <span class="text-xs font-semibold px-3 py-1 rounded-full
             {{#ifCond status 'pendente'}}bg-yellow-100 text-yellow-700{{/ifCond}}
-            {{#ifCond status 'confirmado'}}bg-green-100 text-green-700{{/ifCond}}
+            {{#ifCond status 'aceito'}}bg-blue-100 text-blue-700{{/ifCond}}
+            {{#ifCond status 'recebido'}}bg-green-100 text-green-700{{/ifCond}}
             {{#ifCond status 'cancelado'}}bg-red-100 text-red-700{{/ifCond}}
           ">
                         {{status}}
@@ -78,9 +80,29 @@
                 </div>
                 {{/if}}
 
+                {{!-- Botões para status PENDENTE: Aceitar ou Cancelar --}}
                 {{#ifCond status 'pendente'}}
                 <div class="flex gap-2 flex-wrap">
-                    <form method="POST" action="/ong/interesses/{{id}}/confirmar">
+                    <form method="POST" action="/ong/interesses/{{id}}/aceitar">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Aceitar interesse
+                        </button>
+                    </form>
+
+                    <form method="POST" action="/ong/interesses/{{id}}/cancelar">
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+                {{/ifCond}}
+
+                {{!-- Botões para status ACEITO: Confirmar recebimento ou Cancelar --}}
+                {{#ifCond status 'aceito'}}
+                <div class="flex gap-2 flex-wrap">
+                    <form method="POST" action="/ong/interesses/{{id}}/receber">
                         <button type="submit"
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
                             Confirmar recebimento
