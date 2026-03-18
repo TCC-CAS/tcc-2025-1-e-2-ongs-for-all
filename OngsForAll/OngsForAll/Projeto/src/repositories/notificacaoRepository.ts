@@ -96,6 +96,21 @@ export async function contarNaoLidasOng(ongId: number) {
   return rows?.[0]?.total ?? 0;
 }
 
+export async function createNotificacaoParaTodosUsuarios(params: {
+  titulo: string;
+  mensagem: string;
+  tipo: string;
+}) {
+  await pool.query(
+    `
+    INSERT INTO notificacoes (usuario_id, ong_id, titulo, mensagem, tipo, lida, criado_em)
+    SELECT id, NULL, ?, ?, ?, 0, NOW()
+    FROM usuarios
+    `,
+    [params.titulo, params.mensagem, params.tipo]
+  );
+}
+
 export async function marcarComoLida(id: number) {
   await pool.query(
     `

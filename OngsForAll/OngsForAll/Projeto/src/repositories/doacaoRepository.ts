@@ -5,6 +5,14 @@ export async function listOngs() {
   return rows;
 }
 
+export async function buscarNomeUsuarioPorId(usuarioId: number) {
+  const [rows]: any = await pool.query(
+    "SELECT nome FROM usuarios WHERE id = ? LIMIT 1",
+    [usuarioId]
+  );
+  return rows?.[0] ?? null;
+}
+
 export async function userExists(userId: number) {
   const [rows]: any = await pool.query(
     "SELECT id FROM usuarios WHERE id = ? LIMIT 1",

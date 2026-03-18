@@ -4,29 +4,13 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <h1 class="text-3xl font-bold">Interesses recebidos</h1>
 
-            <div class="flex gap-2 flex-wrap">
-                <a href="/ong/interesses?status=pendente" class="px-4 py-2 rounded-lg text-sm font-medium transition
-            {{#if filtroAtual}}
-            {{/if}}
-            bg-yellow-500 text-white hover:bg-yellow-600">
-                    Pendentes
-                </a>
-
-                <a href="/ong/interesses?status=confirmado"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition bg-green-600 text-white hover:bg-green-700">
-                    Confirmados
-                </a>
-
-                <a href="/ong/interesses?status=cancelado"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition bg-red-600 text-white hover:bg-red-700">
-                    Cancelados
-                </a>
-
-                <a href="/ong/interesses?status=todos"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition bg-slate-600 text-white hover:bg-slate-700">
-                    Todos
-                </a>
-            </div>
+            <select onchange="window.location.href='/ong/interesses?status=' + this.value"
+                class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1D3273]/30 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+                <option value="pendente" {{#ifCond filtroAtual 'pendente'}}selected{{/ifCond}}>Pendentes</option>
+                <option value="confirmado" {{#ifCond filtroAtual 'confirmado'}}selected{{/ifCond}}>Confirmados</option>
+                <option value="cancelado" {{#ifCond filtroAtual 'cancelado'}}selected{{/ifCond}}>Cancelados</option>
+                <option value="todos" {{#ifCond filtroAtual 'todos'}}selected{{/ifCond}}>Todos</option>
+            </select>
         </div>
 
         {{#if success}}

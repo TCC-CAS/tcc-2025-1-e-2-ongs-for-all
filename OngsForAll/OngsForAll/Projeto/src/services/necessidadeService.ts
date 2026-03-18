@@ -1,4 +1,5 @@
 import * as necessidadeRepository from "../repositories/necessidadeRepository";
+import { notificarTodosUsuarios } from "./notificacaoService";
 
 const STATUS_VALIDOS = ["aberta", "em_andamento", "concluida", "cancelada"];
 
@@ -38,6 +39,15 @@ export async function criarNecessidade(params: {
     quantidade,
   });
 
+  const ong = await necessidadeRepository.buscarNomeOngPorId(params.ongId);
+  const nomeOng = ong?.nome ?? "Uma ONG";
+
+  await notificarTodosUsuarios({
+    titulo: "Nova necessidade cadastrada!",
+    mensagem: `${nomeOng} cadastrou uma nova necessidade: "${titulo}". Confira e veja como você pode ajudar!`,
+    tipo: "nova_necessidade",
+  });
+
   return { ok: true as const };
 }
 
@@ -56,9 +66,12 @@ export async function buscarNecessidadePorId(id: number) {
   return { ok: true as const, necessidade };
 }
 
-export async function listarNecessidadesDaOng(ongId: number) {
-  const necessidades = await necessidadeRepository.findByOngId(ongId);
-  return { ok: true as const, necessidades };
+const STATUS_FILTRO_VALIDOS = ["aberta", "em_andamento", "concluida", "cancelada", "todos"];
+
+export async function listarNecessidadesDaOng(ongId: number, status?: string) {
+  const filtro = STATUS_FILTRO_VALIDOS.includes(status || "") ? status : undefined;
+  const necessidades = await necessidadeRepository.findByOngId(ongId, filtro);
+  return { ok: true as const, necessidades, filtroAtual: filtro ?? "todos" };
 }
 
 export async function alterarStatusNecessidade(params: {

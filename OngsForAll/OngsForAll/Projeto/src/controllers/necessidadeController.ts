@@ -124,8 +124,11 @@ export async function renderNecessidadesOngPage(
     return reply.redirect("/dashboard");
   }
 
+  const { status, sucesso } = request.query as { status?: string; sucesso?: string };
+
   const result = await necessidadeService.listarNecessidadesDaOng(
-    Number(sessionUser.id)
+    Number(sessionUser.id),
+    status
   );
 
   return reply.view(
@@ -133,7 +136,8 @@ export async function renderNecessidadesOngPage(
     {
       user: sessionUser,
       necessidades: result.necessidades,
-      success: (request.query as any)?.sucesso === "1",
+      filtroAtual: result.filtroAtual,
+      success: sucesso === "1",
     },
     { layout: "layouts/ongDashboardLayout" }
   );

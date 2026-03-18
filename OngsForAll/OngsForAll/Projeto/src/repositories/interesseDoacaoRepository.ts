@@ -104,9 +104,13 @@ export async function buscarInteressePorId(id: number) {
       i.data_prevista,
       n.quantidade AS meta,
       n.quantidade_recebida,
-      n.status AS necessidade_status
+      n.status AS necessidade_status,
+      o.nome AS nome_ong,
+      u.nome AS nome_usuario
     FROM interesses_doacao i
     INNER JOIN necessidades n ON n.id = i.necessidade_id
+    INNER JOIN ongs o ON o.ong_id = i.ong_id
+    INNER JOIN usuarios u ON u.id = i.usuario_id
     WHERE i.id = ?
     LIMIT 1
     `,

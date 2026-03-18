@@ -28,6 +28,14 @@ export async function criarNotificacaoParaUsuario(params: {
     });
 }
 
+export async function notificarTodosUsuarios(params: {
+    titulo: string;
+    mensagem: string;
+    tipo: string;
+}) {
+    await notificacaoRepository.createNotificacaoParaTodosUsuarios(params);
+}
+
 export async function listarNotificacoes(params: {
     tipoConta: "usuario" | "ong";
     id: number;

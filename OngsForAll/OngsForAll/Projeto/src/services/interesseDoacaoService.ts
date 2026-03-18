@@ -68,10 +68,13 @@ export async function criarInteresse(params: {
         dataPrevista: params.dataPrevista || null,
     });
 
+    const usuario = await doacaoRepo.buscarNomeUsuarioPorId(params.userId);
+    const nomeUsuario = usuario?.nome ?? "Um usuário";
+
     await notificacaoService.criarNotificacaoParaOng({
         ongId: Number(necessidade.ong_id),
         titulo: "Novo interesse recebido",
-        mensagem: `Um usuário demonstrou interesse em ajudar a necessidade "${necessidade.titulo}".`,
+        mensagem: `${nomeUsuario} demonstrou interesse em ajudar a necessidade "${necessidade.titulo}".`,
         tipo: "novo_interesse",
     });
 
@@ -125,7 +128,7 @@ export async function confirmarInteresse(params: {
     await notificacaoService.criarNotificacaoParaUsuario({
         usuarioId: Number(interesse.usuario_id),
         titulo: "Interesse confirmado",
-        mensagem: "A ONG confirmou seu interesse em ajudar a necessidade.",
+        mensagem: `${interesse.nome_ong} confirmou seu interesse em ajudar a necessidade.`,
         tipo: "interesse_confirmado",
     });
 
@@ -171,7 +174,7 @@ export async function cancelarInteresse(params: {
     await notificacaoService.criarNotificacaoParaUsuario({
         usuarioId: Number(interesse.usuario_id),
         titulo: "Interesse cancelado",
-        mensagem: "A ONG cancelou o interesse relacionado à necessidade.",
+        mensagem: `${interesse.nome_ong} cancelou o interesse relacionado à necessidade.`,
         tipo: "interesse_cancelado",
     });
 

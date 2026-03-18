@@ -2,16 +2,27 @@
 
     <div class="max-w-6xl mx-auto">
 
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
             <h1 class="text-3xl font-bold">
                 Minhas necessidades
             </h1>
 
-            <a href="/necessidades/nova"
-                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-medium transition shadow">
-                Nova necessidade
-            </a>
+            <div class="flex gap-3 items-center">
+                <select onchange="window.location.href='/ong/necessidades?status=' + this.value"
+                    class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1D3273]/30 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+                    <option value="todos" {{#ifCond filtroAtual 'todos'}}selected{{/ifCond}}>Todas</option>
+                    <option value="aberta" {{#ifCond filtroAtual 'aberta'}}selected{{/ifCond}}>Abertas</option>
+                    <option value="em_andamento" {{#ifCond filtroAtual 'em_andamento'}}selected{{/ifCond}}>Em andamento</option>
+                    <option value="concluida" {{#ifCond filtroAtual 'concluida'}}selected{{/ifCond}}>Concluídas</option>
+                    <option value="cancelada" {{#ifCond filtroAtual 'cancelada'}}selected{{/ifCond}}>Canceladas</option>
+                </select>
+
+                <a href="/necessidades/nova"
+                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition shadow text-sm">
+                    Nova necessidade
+                </a>
+            </div>
 
         </div>
 
@@ -119,7 +130,7 @@
         {{else}}
 
         <div class="text-center mt-20 opacity-70">
-            Você ainda não cadastrou nenhuma necessidade.
+            Nenhuma necessidade encontrada para este filtro.
         </div>
 
         {{/if}}

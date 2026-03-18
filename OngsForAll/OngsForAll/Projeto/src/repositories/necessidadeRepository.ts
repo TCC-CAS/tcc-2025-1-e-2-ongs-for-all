@@ -112,10 +112,18 @@ export async function findById(id: number) {
   return rows?.[0] ?? null;
 }
 
-export async function findByOngId(ongId: number) {
+export async function findByOngId(ongId: number, status?: string) {
+  const params: any[] = [ongId];
+  let filtroClause = "";
+
+  if (status && status !== "todos") {
+    filtroClause = "AND n.status = ?";
+    params.push(status);
+  }
+
   const [rows]: any = await pool.query(
     `
-    SELECT 
+    SELECT
       n.id,
       n.titulo,
       n.descricao,
@@ -144,13 +152,21 @@ export async function findByOngId(ongId: number) {
         ELSE 0
       END AS quase_completa
     FROM necessidades n
-    WHERE n.ong_id = ?
+    WHERE n.ong_id = ? ${filtroClause}
     ORDER BY n.criado_em DESC
     `,
-    [ongId]
+    params
   );
 
   return rows;
+}
+
+export async function buscarNomeOngPorId(ongId: number) {
+  const [rows]: any = await pool.query(
+    "SELECT nome FROM ongs WHERE ong_id = ? LIMIT 1",
+    [ongId]
+  );
+  return rows?.[0] ?? null;
 }
 
 export async function updateStatus(id: number, ongId: number, status: string) {
