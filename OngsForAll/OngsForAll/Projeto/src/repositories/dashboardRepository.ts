@@ -57,14 +57,14 @@ export async function getTotalPorOng() {
   }));
 }
 
-function buildDateFilter(params: any[], de?: string, ate?: string): string {
+function buildDateFilter(params: any[], de?: string, ate?: string, col = "data"): string {
   let clause = "";
   if (de) {
-    clause += " AND data >= ?";
+    clause += ` AND ${col} >= ?`;
     params.push(de);
   }
   if (ate) {
-    clause += " AND data <= ?";
+    clause += ` AND ${col} <= ?`;
     params.push(ate);
   }
   return clause;
@@ -129,6 +129,262 @@ export async function getDoacoesPorTipoOng(ongId: number, de?: string, ate?: str
      WHERE ong_id = ?${dateFilter}
      GROUP BY tipo
      ORDER BY tipo`,
+    params
+  );
+  return rows;
+}
+
+// ==========================================
+// MÉTRICAS DE IMPACTO — USUÁRIO
+// ==========================================
+
+export async function getNecessidadesApoiadasUsuario(userId: number, de?: string, ate?: string) {
+  const params: any[] = [userId, userId];
+  let dateFilterDoacoes = "";
+  let dateFilterInteresses = "";
+  if (de) {
+    dateFilterDoacoes += " AND d.data >= ?";
+    dateFilterInteresses += " AND i.criado_em >= ?";
+    params.push(de, de);
+  }
+  if (ate) {
+    dateFilterDoacoes += " AND d.data <= ?";
+    dateFilterInteresses += " AND i.criado_em <= ?";
+    params.push(ate, ate);
+  }
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(DISTINCT necessidade_id) AS total FROM (
+       SELECT d.necessidade_id FROM doacoes d
+       WHERE d.usuario_id = ? AND d.necessidade_id IS NOT NULL${dateFilterDoacoes}
+       UNION
+       SELECT i.necessidade_id FROM interesses_doacao i
+       WHERE i.usuario_id = ? AND i.status IN ('aceito','recebido')${dateFilterInteresses}
+     ) AS apoiadas`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getOngsApoiadasUsuario(userId: number, de?: string, ate?: string) {
+  const params: any[] = [userId, userId];
+  let dateFilterDoacoes = "";
+  let dateFilterInteresses = "";
+  if (de) {
+    dateFilterDoacoes += " AND d.data >= ?";
+    dateFilterInteresses += " AND i.criado_em >= ?";
+    params.push(de, de);
+  }
+  if (ate) {
+    dateFilterDoacoes += " AND d.data <= ?";
+    dateFilterInteresses += " AND i.criado_em <= ?";
+    params.push(ate, ate);
+  }
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(DISTINCT ong_id) AS total FROM (
+       SELECT d.ong_id FROM doacoes d
+       WHERE d.usuario_id = ?${dateFilterDoacoes}
+       UNION
+       SELECT i.ong_id FROM interesses_doacao i
+       WHERE i.usuario_id = ?${dateFilterInteresses}
+     ) AS ongs_apoiadas`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getInteressesCriadosUsuario(userId: number, de?: string, ate?: string) {
+  const params: any[] = [userId];
+  const dateFilter = buildDateFilter(params, de, ate, "criado_em");
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(*) AS total FROM interesses_doacao WHERE usuario_id = ?${dateFilter}`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getInteressesRecebidosUsuario(userId: number, de?: string, ate?: string) {
+  const params: any[] = [userId];
+  const dateFilter = buildDateFilter(params, de, ate, "criado_em");
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(*) AS total FROM interesses_doacao WHERE usuario_id = ? AND status = 'recebido'${dateFilter}`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getAtividadesRecentesUsuario(userId: number, de?: string, ate?: string, limite = 10) {
+  const params: any[] = [userId, userId];
+  let dateFilterDoacoes = "";
+  let dateFilterInteresses = "";
+  if (de) {
+    dateFilterDoacoes += " AND d.data >= ?";
+    dateFilterInteresses += " AND i.criado_em >= ?";
+    params.push(de, de);
+  }
+  if (ate) {
+    dateFilterDoacoes += " AND d.data <= ?";
+    dateFilterInteresses += " AND i.criado_em <= ?";
+    params.push(ate, ate);
+  }
+  params.push(limite);
+  const [rows]: any = await pool.query(
+    `SELECT * FROM (
+       SELECT
+         'doacao' AS tipo_atividade,
+         CONCAT('Doou R$ ', FORMAT(d.valor, 2, 'pt_BR'), ' para ', o.nome) AS descricao,
+         d.data AS data_atividade
+       FROM doacoes d
+       JOIN ongs o ON d.ong_id = o.ong_id
+       WHERE d.usuario_id = ?${dateFilterDoacoes}
+
+       UNION ALL
+
+       SELECT
+         CASE i.status
+           WHEN 'pendente' THEN 'interesse_pendente'
+           WHEN 'aceito' THEN 'interesse_aceito'
+           WHEN 'recebido' THEN 'interesse_recebido'
+           WHEN 'cancelado' THEN 'interesse_cancelado'
+         END AS tipo_atividade,
+         CASE i.status
+           WHEN 'pendente' THEN CONCAT('Demonstrou interesse em entregar "', n.titulo, '"')
+           WHEN 'aceito' THEN CONCAT('Interesse aceito pela ONG em "', n.titulo, '"')
+           WHEN 'recebido' THEN CONCAT('Entrega confirmada de "', n.titulo, '"')
+           WHEN 'cancelado' THEN CONCAT('Interesse cancelado em "', n.titulo, '"')
+         END AS descricao,
+         i.criado_em AS data_atividade
+       FROM interesses_doacao i
+       JOIN necessidades n ON i.necessidade_id = n.id
+       WHERE i.usuario_id = ?${dateFilterInteresses}
+     ) AS atividades
+     ORDER BY data_atividade DESC
+     LIMIT ?`,
+    params
+  );
+  return rows;
+}
+
+// ==========================================
+// MÉTRICAS DE IMPACTO — ONG
+// ==========================================
+
+export async function getNecessidadesCriadasOng(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate, "criado_em");
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(*) AS total FROM necessidades WHERE ong_id = ?${dateFilter}`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getNecessidadesConcluidasOng(ongId: number, de?: string, ate?: string) {
+  const params: any[] = [ongId];
+  const dateFilter = buildDateFilter(params, de, ate, "atualizado_em");
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(*) AS total FROM necessidades WHERE ong_id = ? AND status = 'concluida'${dateFilter}`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getInteressesPorStatusOng(ongId: number, status: string, de?: string, ate?: string) {
+  const params: any[] = [ongId, status];
+  const dateFilter = buildDateFilter(params, de, ate, "i.criado_em");
+  const [rows]: any = await pool.query(
+    `SELECT COUNT(*) AS total FROM interesses_doacao i WHERE i.ong_id = ? AND i.status = ?${dateFilter}`,
+    params
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
+export async function getNecessidadesQuaseCompletasOng(ongId: number) {
+  const [rows]: any = await pool.query(
+    `SELECT id, titulo, quantidade, quantidade_recebida,
+       ROUND((quantidade_recebida / quantidade) * 100) AS percentual
+     FROM necessidades
+     WHERE ong_id = ? AND status != 'concluida' AND quantidade > 0
+       AND (quantidade_recebida / quantidade) >= 0.8
+       AND (quantidade_recebida / quantidade) < 1
+     ORDER BY percentual DESC`,
+    [ongId]
+  );
+  return rows;
+}
+
+export async function getNecessidadeMaisAvancadaOng(ongId: number) {
+  const [rows]: any = await pool.query(
+    `SELECT id, titulo, quantidade, quantidade_recebida,
+       ROUND((quantidade_recebida / quantidade) * 100) AS percentual
+     FROM necessidades
+     WHERE ong_id = ? AND status != 'concluida' AND quantidade > 0
+     ORDER BY (quantidade_recebida / quantidade) DESC
+     LIMIT 1`,
+    [ongId]
+  );
+  return rows[0] ?? null;
+}
+
+export async function getAtividadesRecentesOng(ongId: number, de?: string, ate?: string, limite = 10) {
+  const params: any[] = [ongId, ongId, ongId];
+  let dateFilterInteresses = "";
+  let dateFilterNecessidades = "";
+  let dateFilterDoacoes = "";
+  if (de) {
+    dateFilterInteresses += " AND i.criado_em >= ?";
+    dateFilterNecessidades += " AND n.atualizado_em >= ?";
+    dateFilterDoacoes += " AND d.data >= ?";
+    params.push(de, de, de);
+  }
+  if (ate) {
+    dateFilterInteresses += " AND i.criado_em <= ?";
+    dateFilterNecessidades += " AND n.atualizado_em <= ?";
+    dateFilterDoacoes += " AND d.data <= ?";
+    params.push(ate, ate, ate);
+  }
+  params.push(limite);
+  const [rows]: any = await pool.query(
+    `SELECT * FROM (
+       SELECT
+         CASE i.status
+           WHEN 'pendente' THEN 'interesse_pendente'
+           WHEN 'aceito' THEN 'interesse_aceito'
+           WHEN 'recebido' THEN 'interesse_recebido'
+           WHEN 'cancelado' THEN 'interesse_cancelado'
+         END AS tipo_atividade,
+         CASE i.status
+           WHEN 'pendente' THEN CONCAT(u.nome, ' demonstrou interesse em "', ne.titulo, '"')
+           WHEN 'aceito' THEN CONCAT('Interesse de ', u.nome, ' em "', ne.titulo, '" foi aceito')
+           WHEN 'recebido' THEN CONCAT('Recebimento confirmado de ', u.nome, ' em "', ne.titulo, '"')
+           WHEN 'cancelado' THEN CONCAT('Interesse de ', u.nome, ' em "', ne.titulo, '" foi cancelado')
+         END AS descricao,
+         i.criado_em AS data_atividade
+       FROM interesses_doacao i
+       JOIN usuarios u ON i.usuario_id = u.id
+       JOIN necessidades ne ON i.necessidade_id = ne.id
+       WHERE i.ong_id = ?${dateFilterInteresses}
+
+       UNION ALL
+
+       SELECT
+         'necessidade_concluida' AS tipo_atividade,
+         CONCAT('Necessidade "', n.titulo, '" foi concluída') AS descricao,
+         n.atualizado_em AS data_atividade
+       FROM necessidades n
+       WHERE n.ong_id = ? AND n.status = 'concluida'${dateFilterNecessidades}
+
+       UNION ALL
+
+       SELECT
+         'doacao_recebida' AS tipo_atividade,
+         CONCAT(u.nome, ' doou R$ ', FORMAT(d.valor, 2, 'pt_BR')) AS descricao,
+         d.data AS data_atividade
+       FROM doacoes d
+       JOIN usuarios u ON d.usuario_id = u.id
+       WHERE d.ong_id = ?${dateFilterDoacoes}
+     ) AS atividades
+     ORDER BY data_atividade DESC
+     LIMIT ?`,
     params
   );
   return rows;

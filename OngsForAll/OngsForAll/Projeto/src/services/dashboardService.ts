@@ -75,6 +75,16 @@ export async function getDashboardData(userId: number, de?: string, ate?: string
   const qtdTipos = labelsTipo.length;
   const qtdMesesComDoacao = labelsMes.length;
 
+  // Métricas de impacto
+  const [necessidadesApoiadas, ongsApoiadas, interessesCriados, interessesRecebidos, atividadesRecentes] =
+    await Promise.all([
+      dashboardRepository.getNecessidadesApoiadasUsuario(userId, de, ate),
+      dashboardRepository.getOngsApoiadasUsuario(userId, de, ate),
+      dashboardRepository.getInteressesCriadosUsuario(userId, de, ate),
+      dashboardRepository.getInteressesRecebidosUsuario(userId, de, ate),
+      dashboardRepository.getAtividadesRecentesUsuario(userId, de, ate),
+    ]);
+
   return {
     totalDoado,
     qtdTipos,
@@ -84,6 +94,11 @@ export async function getDashboardData(userId: number, de?: string, ate?: string
     valoresOngsMes,
     labelsTipo,
     valoresTipo,
+    necessidadesApoiadas,
+    ongsApoiadas,
+    interessesCriados,
+    interessesRecebidos,
+    atividadesRecentes,
   };
 }
 
@@ -106,6 +121,31 @@ export async function getOngDashboardData(ongId: number, de?: string, ate?: stri
   const labelsTipo = porTipo.map((d: any) => d.tipo);
   const valoresTipo = porTipo.map((d: any) => Number(d.total));
 
+  // Métricas de impacto da ONG
+  const [
+    necessidadesCriadas,
+    necessidadesConcluidas,
+    interessesPendentes,
+    interessesAceitos,
+    interessesRecebidos,
+    necessidadesQuaseCompletas,
+    necessidadeMaisAvancada,
+    atividadesRecentes,
+  ] = await Promise.all([
+    dashboardRepository.getNecessidadesCriadasOng(ongId, de, ate),
+    dashboardRepository.getNecessidadesConcluidasOng(ongId, de, ate),
+    dashboardRepository.getInteressesPorStatusOng(ongId, "pendente", de, ate),
+    dashboardRepository.getInteressesPorStatusOng(ongId, "aceito", de, ate),
+    dashboardRepository.getInteressesPorStatusOng(ongId, "recebido", de, ate),
+    dashboardRepository.getNecessidadesQuaseCompletasOng(ongId),
+    dashboardRepository.getNecessidadeMaisAvancadaOng(ongId),
+    dashboardRepository.getAtividadesRecentesOng(ongId, de, ate),
+  ]);
+
+  const taxaConclusao = necessidadesCriadas > 0
+    ? ((necessidadesConcluidas / necessidadesCriadas) * 100).toFixed(1)
+    : "0.0";
+
   return {
     totalRecebido: Number(totalRecebido).toFixed(2),
     qtdDoacoes: Number(qtdDoacoes),
@@ -115,5 +155,14 @@ export async function getOngDashboardData(ongId: number, de?: string, ate?: stri
     labelsTipo,
     valoresTipo,
     ultimasDoacoes,
+    necessidadesCriadas,
+    necessidadesConcluidas,
+    taxaConclusao,
+    interessesPendentes,
+    interessesAceitos,
+    interessesRecebidos,
+    necessidadesQuaseCompletas,
+    necessidadeMaisAvancada,
+    atividadesRecentes,
   };
 }

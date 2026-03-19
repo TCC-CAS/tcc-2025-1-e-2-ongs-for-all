@@ -12,8 +12,26 @@ export default async function (fastify: FastifyInstance) {
   ========================================
   */
 
-  handlebars.registerHelper('ifCond', function (this: any, a: any, b: any, options: any) {
-    return a === b ? options.fn(this) : options.inverse(this)
+  handlebars.registerHelper('ifCond', function (this: any, a: any, operator: any, b: any, options: any) {
+    // Suporta chamada com 2 args (a, b) ou 3 args (a, operator, b)
+    if (options === undefined) {
+      options = b
+      b = operator
+      return a === b ? options.fn(this) : options.inverse(this)
+    }
+    let result = false
+    switch (operator) {
+      case '==': result = a == b; break
+      case '===': result = a === b; break
+      case '!=': result = a != b; break
+      case '!==': result = a !== b; break
+      case '<': result = a < b; break
+      case '>': result = a > b; break
+      case '<=': result = a <= b; break
+      case '>=': result = a >= b; break
+      default: result = a === b
+    }
+    return result ? options.fn(this) : options.inverse(this)
   })
 
   handlebars.registerHelper('eq', function (a: any, b: any) {

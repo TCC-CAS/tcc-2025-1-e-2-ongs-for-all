@@ -48,6 +48,13 @@ export async function renderDashBoardPage(
         labelsTipo: JSON.stringify(data.labelsTipo ?? []),
         valoresTipo: JSON.stringify(data.valoresTipo ?? []),
 
+        // métricas de impacto
+        necessidadesApoiadas: data.necessidadesApoiadas ?? 0,
+        ongsApoiadas: data.ongsApoiadas ?? 0,
+        interessesCriados: data.interessesCriados ?? 0,
+        interessesRecebidos: data.interessesRecebidos ?? 0,
+        atividadesRecentes: data.atividadesRecentes ?? [],
+
         // filtro de período
         filtroDe: de ?? "",
         filtroAte: ate ?? "",
@@ -108,6 +115,17 @@ export async function renderDashboardOngPage(
 
         // tabela
         ultimasDoacoes: data.ultimasDoacoes ?? [],
+
+        // métricas de impacto
+        necessidadesCriadas: data.necessidadesCriadas ?? 0,
+        necessidadesConcluidas: data.necessidadesConcluidas ?? 0,
+        taxaConclusao: data.taxaConclusao ?? "0.0",
+        interessesPendentes: data.interessesPendentes ?? 0,
+        interessesAceitos: data.interessesAceitos ?? 0,
+        interessesRecebidos: data.interessesRecebidos ?? 0,
+        necessidadesQuaseCompletas: data.necessidadesQuaseCompletas ?? [],
+        necessidadeMaisAvancada: data.necessidadeMaisAvancada ?? null,
+        atividadesRecentes: data.atividadesRecentes ?? [],
 
         // filtro de período
         filtroDe: de ?? "",
