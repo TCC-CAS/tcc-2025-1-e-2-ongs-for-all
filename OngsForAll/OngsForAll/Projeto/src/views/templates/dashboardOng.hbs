@@ -1,0 +1,419 @@
+<section id="dashboard-ong" class="min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-10">
+
+    <!-- Cabeçalho -->
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#4886D9] to-pink-500 text-transparent bg-clip-text">
+        Dashboard: {{user.nome}}
+      </h1>
+      <p class="mt-2 text-slate-500 dark:text-white/70">
+        Acompanhe as doações recebidas e o impacto gerado
+      </p>
+    </div>
+
+    <!-- Filtro por período -->
+    <form method="GET" action="/dashboard/ong"
+      class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-end gap-4">
+      <div class="flex flex-col flex-1 min-w-0">
+        <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">De</label>
+        <input type="date" name="de" value="{{filtroDe}}"
+          class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
+      </div>
+      <div class="flex flex-col flex-1 min-w-0">
+        <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">Até</label>
+        <input type="date" name="ate" value="{{filtroAte}}"
+          class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
+      </div>
+      <div class="flex gap-2">
+        <button type="submit"
+          class="bg-[#2D4BA6] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-sm">
+          Filtrar
+        </button>
+        <a href="/dashboard/ong"
+          class="border border-slate-200 dark:border-white/15 px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-80 transition text-slate-600 dark:text-white/70">
+          Limpar
+        </a>
+      </div>
+    </form>
+
+    <!-- Cards financeiros -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <p class="text-sm text-slate-500 dark:text-white/60">Total recebido</p>
+        <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">R$ {{totalRecebido}}</p>
+      </div>
+
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <p class="text-sm text-slate-500 dark:text-white/60">Quantidade de doações</p>
+        <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">{{qtdDoacoes}}</p>
+      </div>
+
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <p class="text-sm text-slate-500 dark:text-white/60">Doadores únicos</p>
+        <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">{{qtdDoadores}}</p>
+      </div>
+    </div>
+
+    <!-- Métricas de Impacto -->
+    <div>
+      <h2 class="text-2xl font-bold mb-4">Impacto da ONG</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Necessidades criadas</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{necessidadesCriadas}}</p>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Necessidades concluídas</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{necessidadesConcluidas}}</p>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Taxa de conclusão</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{taxaConclusao}}%</p>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Interesses pendentes</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{interessesPendentes}}</p>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Interesses aceitos</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{interessesAceitos}}</p>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <p class="text-sm font-semibold text-slate-500 dark:text-white/60">Entregas recebidas</p>
+          </div>
+          <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{interessesRecebidos}}</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Necessidade mais avançada -->
+    {{#if necessidadeMaisAvancada}}
+    <div class="bg-gradient-to-r from-[#4886D9] to-pink-500 p-6 rounded-2xl shadow-lg text-white">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <p class="text-sm font-semibold opacity-80">Necessidade mais avançada</p>
+          <p class="text-xl font-bold mt-1">{{necessidadeMaisAvancada.titulo}}</p>
+          <p class="text-sm opacity-80 mt-1">
+            {{necessidadeMaisAvancada.quantidade_recebida}} de {{necessidadeMaisAvancada.quantidade}} itens recebidos
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="text-4xl font-extrabold">{{necessidadeMaisAvancada.percentual}}%</p>
+          <p class="text-xs opacity-80">concluído</p>
+        </div>
+      </div>
+      <div class="mt-4 w-full bg-white/20 rounded-full h-3">
+        <div class="bg-white rounded-full h-3 transition-all" style="width: {{necessidadeMaisAvancada.percentual}}%"></div>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Necessidades quase completas -->
+    {{#if necessidadesQuaseCompletas.length}}
+    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+      <h2 class="text-2xl font-bold mb-4">Quase completas</h2>
+      <div class="space-y-3">
+        {{#each necessidadesQuaseCompletas}}
+        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold truncate text-slate-700 dark:text-white">{{this.titulo}}</p>
+            <p class="text-sm text-slate-400 dark:text-white/50">
+              {{this.quantidade_recebida}} / {{this.quantidade}} itens
+            </p>
+          </div>
+          <div class="flex items-center gap-3 ml-4">
+            <div class="w-24 bg-slate-200 dark:bg-white/10 rounded-full h-2.5">
+              <div class="bg-gradient-to-r from-[#4886D9] to-pink-500 rounded-full h-2.5 transition-all" style="width: {{this.percentual}}%"></div>
+            </div>
+            <span class="text-sm font-bold whitespace-nowrap text-[#2D4BA6] dark:text-white">{{this.percentual}}%</span>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Gráficos -->
+    <div id="chartsWrap" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <h2 class="text-center font-semibold mb-4 text-slate-700 dark:text-white">Total recebido por mês</h2>
+        <div class="h-64">
+          <canvas id="graficoRecebidoMes"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <h2 class="text-center font-semibold mb-4 text-slate-700 dark:text-white">Doações por tipo</h2>
+        <div class="h-64">
+          <canvas id="graficoTipos"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimas doações -->
+    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+      <h2 class="text-2xl font-bold">Últimas doações</h2>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-white/10">
+              <th class="py-3 pr-4 font-semibold text-slate-600 dark:text-white/70">Data</th>
+              <th class="py-3 pr-4 font-semibold text-slate-600 dark:text-white/70">Doador</th>
+              <th class="py-3 pr-4 font-semibold text-slate-600 dark:text-white/70">Tipo</th>
+              <th class="py-3 pr-4 font-semibold text-slate-600 dark:text-white/70 text-right">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#if ultimasDoacoes.length}}
+              {{#each ultimasDoacoes}}
+                <tr class="border-b border-slate-100 dark:border-white/5">
+                  <td class="py-3 pr-4 whitespace-nowrap text-slate-700 dark:text-white">{{this.data}}</td>
+                  <td class="py-3 pr-4 text-slate-700 dark:text-white">{{this.doador}}</td>
+                  <td class="py-3 pr-4 text-slate-700 dark:text-white">{{this.tipo}}</td>
+                  <td class="py-3 pr-4 text-right font-semibold text-[#2D4BA6] dark:text-white">R$ {{this.valor}}</td>
+                </tr>
+              {{/each}}
+            {{else}}
+              <tr>
+                <td class="py-6 text-center text-slate-400 dark:text-white/50" colspan="4">
+                  Nenhuma doação encontrada ainda.
+                </td>
+              </tr>
+            {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Atividades Recentes -->
+    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+      <h2 class="text-2xl font-bold mb-4">Atividades recentes</h2>
+
+      {{#if atividadesRecentes.length}}
+      <div class="space-y-3">
+        {{#each atividadesRecentes}}
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+          <div class="shrink-0 mt-0.5">
+            {{#ifCond this.tipo_atividade '==' 'interesse_pendente'}}
+            <div class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/ifCond}}
+            {{#ifCond this.tipo_atividade '==' 'interesse_aceito'}}
+            <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+              </svg>
+            </div>
+            {{/ifCond}}
+            {{#ifCond this.tipo_atividade '==' 'interesse_recebido'}}
+            <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/ifCond}}
+            {{#ifCond this.tipo_atividade '==' 'interesse_cancelado'}}
+            <div class="w-9 h-9 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/ifCond}}
+            {{#ifCond this.tipo_atividade '==' 'necessidade_concluida'}}
+            <div class="w-9 h-9 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            {{/ifCond}}
+            {{#ifCond this.tipo_atividade '==' 'doacao_recebida'}}
+            <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/ifCond}}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-slate-700 dark:text-white">{{this.descricao}}</p>
+            <p class="text-xs text-slate-400 dark:text-white/40 mt-1">
+              {{this.data_atividade}}
+            </p>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="text-center text-slate-400 dark:text-white/50 py-6">
+        Nenhuma atividade recente encontrada.
+      </p>
+      {{/if}}
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      const labelsMes = {{{ labelsMes }}};
+      const valoresMes = {{{ valoresMes }}};
+      const labelsTipo = {{{ labelsTipo }}};
+      const valoresTipo = {{{ valoresTipo }}};
+
+      const html = document.documentElement;
+
+      const getTextColor = () => (html.classList.contains('dark') ? '#FFFFFF' : '#2D4BA6');
+      const getGridColor = () => (html.classList.contains('dark') ? 'rgba(255,255,255,0.1)' : 'rgba(45,75,166,0.1)');
+
+      const hasDataMes = Array.isArray(valoresMes) && valoresMes.length > 0 && valoresMes.some(v => Number(v) > 0);
+      const hasDataTipo = Array.isArray(valoresTipo) && valoresTipo.length > 0 && valoresTipo.some(v => Number(v) > 0);
+      const hasData = hasDataMes || hasDataTipo;
+
+      let chartMes = null;
+      let chartTipos = null;
+
+      function destroyCharts() {
+        if (chartMes) chartMes.destroy();
+        if (chartTipos) chartTipos.destroy();
+        chartMes = null;
+        chartTipos = null;
+      }
+
+      function renderCharts() {
+        destroyCharts();
+
+        const baseOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: getTextColor() } } },
+          scales: {
+            x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+            y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+          }
+        };
+
+        const barOptions = {
+          ...baseOptions,
+          scales: {
+            ...baseOptions.scales,
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: getTextColor(),
+                callback: (value) => 'R$ ' + Number(value).toFixed(0)
+              },
+              grid: { color: getGridColor() }
+            }
+          }
+        };
+
+        const canvasMes = document.getElementById('graficoRecebidoMes');
+        if (canvasMes && hasDataMes) {
+          chartMes = new Chart(canvasMes, {
+            type: 'bar',
+            data: {
+              labels: labelsMes,
+              datasets: [{
+                label: 'Total recebido (R$)',
+                data: valoresMes,
+                backgroundColor: '#2D4BA6',
+                borderRadius: 8
+              }]
+            },
+            options: barOptions
+          });
+        }
+
+        const canvasTipos = document.getElementById('graficoTipos');
+        if (canvasTipos && hasDataTipo) {
+          chartTipos = new Chart(canvasTipos, {
+            type: 'doughnut',
+            data: {
+              labels: labelsTipo,
+              datasets: [{
+                data: valoresTipo,
+                backgroundColor: ['#4886D9', '#E83FBA', '#2D4BA6', '#F59E0B']
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { labels: { color: getTextColor() } } }
+            }
+          });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!hasData) {
+          const wrap = document.getElementById('chartsWrap');
+          if (wrap) {
+            wrap.innerHTML =
+              '<div class="md:col-span-2 bg-white dark:bg-white/5 p-8 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm text-center">' +
+              '<h2 class="text-xl font-bold mb-2">Sem dados ainda</h2>' +
+              '<p class="text-slate-400 dark:text-white/50">Quando a ONG receber doações, os gráficos aparecerão aqui.</p>' +
+              '</div>';
+          }
+          return;
+        }
+        renderCharts();
+      });
+
+      window.addEventListener('theme:changed', () => {
+        destroyCharts();
+        renderCharts();
+      });
+    })();
+  </script>
+</section>

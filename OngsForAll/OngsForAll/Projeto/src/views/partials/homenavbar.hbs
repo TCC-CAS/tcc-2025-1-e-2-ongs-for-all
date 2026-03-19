@@ -1,0 +1,68 @@
+<header id="navbar"
+  class="fixed top-0 left-0 w-full z-50 bg-transparent text-[#1D3273] flex text-center justify-center transition-all duration-200 ease-in-out">
+  <nav id="navIdent" class="flex flex-row justify-between mx-4 container h-20 items-center lg:max-w-5xl">
+    <div>
+      <h1 class="text-2xl font-extrabold"><a href="/" class="flex items-center gap-2"><box-icon color="#1D3273"
+            name="world"></box-icon> ONG For All</a></h1>
+    </div>
+    <div class="hidden md:flex flex-row gap-2 align-center" id="desktopMenu">
+      <ul class="flex flex-row gap-x-8">
+        <li><a href="/#">Início</a></li>
+        <li><a href="/#sobre">Sobre</a></li>
+        <li><a href="/#precos">Preços</a></li>
+        <li><a href="/#contato">Contato</a></li>
+        <li>
+          <a href="/login" class="bg-[#1D3273] text-white px-4 py-2 rounded-lg">Entrar</a>
+        </li>
+      </ul>
+
+    </div>
+    <div id="menubutton" class="relative w-8 h-8 cursor-pointer md:hidden transition-all">
+      <box-icon class="absolute inset-0 m-auto" color="#1D3273" name="menu" size="md"></box-icon>
+      <box-icon class="absolute inset-0 m-auto hidden" color="#1D3273" name="x" size="md"></box-icon>
+    </div>
+
+  </nav>
+  <div class="hidden md:hidden z-10" id="mobileMenu">
+    <ul
+      class="backdrop-blur-lg bg-white/80 text-xl text-[#1D3273] absolute top-20 pt-10 w-full left-0 min-h-96 flex flex-col gap-y-10">
+      <li><a href="/#" class="block" onclick="closeMobileMenu()">Início</a></li>
+      <li><a href="/#sobre" class="block" onclick="closeMobileMenu()">Sobre</a></li>
+      <li><a href="/#precos" class="block" onclick="closeMobileMenu()">Preços</a></li>
+      <li><a href="/#contato" class="block" onclick="closeMobileMenu()">Contato</a></li>
+      <li>
+        <a href="/login" class="bg-[#1D3273] inline-block w-40 text-white px-4 py-3 rounded-lg"
+          onclick="closeMobileMenu()">Entrar</a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const menubtn = document.getElementById('menubutton'); const hamburguerIcon =
+    document.getElementById('menubutton').querySelector('box-icon[name="menu"]');
+  const closeIcon =
+    document.getElementById('menubutton').querySelector('box-icon[name="x"]');
+  const desktopMenu = document.getElementById('desktopMenu'); const mobileMenu =
+    document.getElementById('mobileMenu'); function closeMobileMenu() {
+      mobileMenu.classList.add('hidden'); hamburguerIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    } menubtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      hamburguerIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden'); /*if
+  (!mobileMenu.classList.contains('hidden')) { document.body.style.overflow =
+  'hidden'; // Evita a rolagem do corpo quando o menu móvel está aberto } else {
+  document.body.style.overflow = ''; // Restaura a rolagem do corpo quando o
+  menu móvel está fechado }*/ }); window.addEventListener('scroll', function () {
+        const navbar = document.getElementById('navbar'); const navIdent =
+          document.getElementById('navIdent'); const scrollTop = window.scrollY; if
+          (scrollTop > 100) {
+            navbar.classList.add('z-50', 'shadow-md',
+              "backdrop-blur-lg", "bg-white/80"); navIdent.classList.add('h-16');
+        } else {
+          navbar.classList.remove('z-50', 'shadow-md', "backdrop-blur-lg",
+            "bg-white/80"); navIdent.classList.remove('h-16');
+        }
+      });
+</script>

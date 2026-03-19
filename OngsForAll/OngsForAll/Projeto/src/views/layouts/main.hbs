@@ -1,0 +1,30 @@
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}}
+    {{#if stitle}}
+    -
+    {{stitle}}
+    {{/if}}</title>
+
+  <link rel="stylesheet" href="/public/dist/global.css" />
+</head>
+
+<body class="bg-[url('/public/img/bg-hero.svg')] bg-fixed">
+  <div class="fixed bottom-4 right-4 z-50">
+    <a href="https://wa.me/1234567890" target="_blank"
+      class="flex items-center justify-center w-16 h-16 bg-green-500 rounded-full hover:bg-green-600 transition duration-200">
+      <box-icon color="white" size="lg" type='logo' name='whatsapp'></box-icon>
+    </a>
+  </div>
+
+  {{>homenavbar}}
+
+  {{{body}}}
+
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</body>
+
+</html>

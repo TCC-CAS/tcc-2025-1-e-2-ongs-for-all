@@ -1,0 +1,135 @@
+<section class="min-h-screen px-6 py-10">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <h1 class="text-3xl font-bold">Interesses recebidos</h1>
+
+            <select onchange="window.location.href='/ong/interesses?status=' + this.value"
+                class="border border-slate-300 dark:border-white/20 rounded-lg px-3 py-2 text-sm bg-white dark:bg-[#1a2d4a] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1D3273]">
+                <option value="pendente" {{#ifCond filtroAtual 'pendente'}}selected{{/ifCond}}>Pendentes</option>
+                <option value="aceito" {{#ifCond filtroAtual 'aceito'}}selected{{/ifCond}}>Aceitos</option>
+                <option value="recebido" {{#ifCond filtroAtual 'recebido'}}selected{{/ifCond}}>Recebidos</option>
+                <option value="cancelado" {{#ifCond filtroAtual 'cancelado'}}selected{{/ifCond}}>Cancelados</option>
+                <option value="todos" {{#ifCond filtroAtual 'todos'}}selected{{/ifCond}}>Todos</option>
+            </select>
+        </div>
+
+        {{#if success}}
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+            Ação realizada com sucesso.
+        </div>
+        {{/if}}
+
+        {{#if interesses.length}}
+
+        <div class="space-y-4">
+
+            {{#each interesses}}
+            <div
+                class="bg-white dark:bg-[#1D3273]/20 border border-slate-200 dark:border-white/20 rounded-xl p-5 shadow">
+
+                <div class="flex justify-between items-start gap-4 mb-3 flex-wrap">
+                    <div>
+                        <h2 class="text-lg font-bold">{{titulo_necessidade}}</h2>
+                        <p class="text-sm opacity-80 mt-1">
+                            Usuário: {{nome_usuario}} — {{email_usuario}}
+                        </p>
+                    </div>
+
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full
+            {{#ifCond status 'pendente'}}bg-yellow-100 text-yellow-700{{/ifCond}}
+            {{#ifCond status 'aceito'}}bg-blue-100 text-blue-700{{/ifCond}}
+            {{#ifCond status 'recebido'}}bg-green-100 text-green-700{{/ifCond}}
+            {{#ifCond status 'cancelado'}}bg-red-100 text-red-700{{/ifCond}}
+          ">
+                        {{status}}
+                    </span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+                    <div>
+                        <span class="font-semibold">Quantidade oferecida:</span>
+                        {{quantidade}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Data prevista:</span>
+                        {{data_prevista}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Meta:</span>
+                        {{meta}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Recebido até agora:</span>
+                        {{quantidade_recebida}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Criado em:</span>
+                        {{criado_em}}
+                    </div>
+                </div>
+
+                {{#if observacao}}
+                <div class="mb-4 text-sm">
+                    <span class="font-semibold">Observação:</span>
+                    {{observacao}}
+                </div>
+                {{/if}}
+
+                {{!-- Botões para status PENDENTE: Aceitar ou Cancelar --}}
+                {{#ifCond status 'pendente'}}
+                <div class="flex gap-2 flex-wrap">
+                    <form method="POST" action="/ong/interesses/{{id}}/aceitar">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Aceitar interesse
+                        </button>
+                    </form>
+
+                    <form method="POST" action="/ong/interesses/{{id}}/cancelar">
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+                {{/ifCond}}
+
+                {{!-- Botões para status ACEITO: Confirmar recebimento ou Cancelar --}}
+                {{#ifCond status 'aceito'}}
+                <div class="flex gap-2 flex-wrap">
+                    <form method="POST" action="/ong/interesses/{{id}}/receber">
+                        <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Confirmar recebimento
+                        </button>
+                    </form>
+
+                    <form method="POST" action="/ong/interesses/{{id}}/cancelar">
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+                {{/ifCond}}
+
+            </div>
+            {{/each}}
+
+        </div>
+
+        {{else}}
+
+        <div class="text-center mt-20 opacity-70">
+            Nenhum interesse encontrado para este filtro.
+        </div>
+
+        {{/if}}
+
+    </div>
+</section>

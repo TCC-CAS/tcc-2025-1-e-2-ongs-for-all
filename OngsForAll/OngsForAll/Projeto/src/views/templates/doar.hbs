@@ -1,0 +1,151 @@
+<section class="min-h-screen px-6 py-12 transition-colors duration-300 bg-white text-[#1D3273] dark:bg-[#0D1B2A] dark:text-white">
+  <div class="max-w-xl mx-auto space-y-8">
+
+    <!-- Cabeçalho -->
+    <div>
+      <h1 class="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
+        Nova Doação
+      </h1>
+      <p class="mt-1 text-[#1D3273]/70 dark:text-white/70 text-sm">
+        Preencha os dados abaixo para realizar sua doação
+      </p>
+    </div>
+
+    {{#if error}}
+    <div class="p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-700 dark:text-red-300 text-sm text-center font-medium">
+      {{error}}
+    </div>
+    {{/if}}
+
+    {{#if necessidade}}
+    <div class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-5 shadow">
+      <h3 class="text-sm font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-3">
+        Doando para a necessidade
+      </h3>
+      <div class="space-y-1 text-sm">
+        <p><span class="font-semibold">Título:</span> {{necessidade.titulo}}</p>
+        <p><span class="font-semibold">ONG:</span> {{necessidade.nome_ong}}</p>
+        <p><span class="font-semibold">Categoria:</span> {{necessidade.categoria}}</p>
+        <p><span class="font-semibold">Quantidade:</span> {{necessidade.quantidade}}</p>
+        <p><span class="font-semibold">Status:</span> {{necessidade.status}}</p>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Formulário -->
+    <div class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-8 shadow-lg">
+      <form action="/doacoes" method="POST" class="space-y-5" id="formDoacao">
+        <input type="hidden" name="necessidade_id" value="{{formData.necessidade_id}}" />
+
+        <!-- Valor -->
+        <div>
+          <label for="valor" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Valor (R$)</label>
+          <input type="text" id="valor" required placeholder="R$ 0,00" value="{{formData.valor}}"
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+          <input type="hidden" name="valor" id="valor_real" value="{{formData.valor}}" />
+          <p id="valorErro" class="mt-1 text-xs text-red-600 dark:text-red-400 hidden">
+            Por favor, insira um valor maior que zero.
+          </p>
+        </div>
+
+        <!-- Categoria -->
+        <div>
+          <label for="tipo" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Categoria</label>
+          <select name="tipo" id="tipo" required
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-[#1a2d4a] text-[#1D3273] dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition">
+            <option value="{{formData.tipo}}">
+              {{#if formData.tipo}}{{formData.tipo}}{{else}}Selecione uma categoria{{/if}}
+            </option>
+            <option value="Educação">Educação</option>
+            <option value="Saúde">Saúde</option>
+            <option value="Meio ambiente">Meio ambiente</option>
+            <option value="Animais">Animais</option>
+          </select>
+        </div>
+
+        <!-- ONG -->
+        <div>
+          <label for="ong_id" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">ONG</label>
+          <select name="ong_id" id="ong_id" required
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-[#1a2d4a] text-[#1D3273] dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition">
+            {{#if formData.ong_id}}
+            <option value="{{formData.ong_id}}">ONG selecionada</option>
+            {{else}}
+            <option value="">Selecione uma ONG</option>
+            {{/if}}
+            {{#each ongs}}
+            <option value="{{this.ong_id}}">{{this.nome}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-3 pt-2">
+          <a href="/dashboard"
+            class="px-5 py-2.5 rounded-xl border border-[#1D3273]/20 dark:border-white/20 text-sm font-semibold hover:opacity-80 transition">
+            Voltar
+          </a>
+          <button type="submit" id="btnSubmit"
+            class="px-6 py-2.5 rounded-xl bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] text-sm font-semibold hover:opacity-90 transition shadow flex items-center gap-2">
+            <span id="btnText">Enviar Doação</span>
+            <svg id="btnSpinner" class="w-4 h-4 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    var valorInput = document.getElementById('valor');
+    var valorRealInput = document.getElementById('valor_real');
+    var valorErro = document.getElementById('valorErro');
+    var valorNumerico = '';
+
+    if (valorInput.value) {
+      var valorInicial = Number(valorInput.value);
+      if (!isNaN(valorInicial) && valorInicial > 0) {
+        valorNumerico = String(Math.round(valorInicial * 100));
+        valorInput.value = new Intl.NumberFormat('pt-BR', {
+          style: 'currency', currency: 'BRL', minimumFractionDigits: 2
+        }).format(valorInicial);
+      }
+    }
+
+    valorInput.addEventListener('input', function (e) {
+      var raw = e.target.value.replace(/\D/g, '');
+      valorNumerico = raw;
+      var formatado = new Intl.NumberFormat('pt-BR', {
+        style: 'currency', currency: 'BRL', minimumFractionDigits: 2
+      }).format(Number(raw || 0) / 100);
+      e.target.value = formatado;
+      valorRealInput.value = Number(raw || 0) / 100;
+      valorErro.classList.add('hidden');
+    });
+
+    var form = document.getElementById('formDoacao');
+    var btnSubmit = document.getElementById('btnSubmit');
+    var btnText = document.getElementById('btnText');
+    var btnSpinner = document.getElementById('btnSpinner');
+
+    form.addEventListener('submit', function (e) {
+      var numericValue = parseFloat(valorNumerico || '0') / 100;
+      if (isNaN(numericValue) || numericValue <= 0) {
+        e.preventDefault();
+        valorErro.classList.remove('hidden');
+        btnText.textContent = 'Enviar Doação';
+        btnSpinner.classList.add('hidden');
+        btnSubmit.disabled = false;
+        return;
+      }
+      valorErro.classList.add('hidden');
+      btnText.textContent = 'Enviando...';
+      btnSpinner.classList.remove('hidden');
+      btnSubmit.disabled = true;
+    });
+  </script>
+</section>

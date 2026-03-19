@@ -1,0 +1,139 @@
+<section class="min-h-screen px-6 py-12 transition-colors duration-300 bg-white text-[#1D3273] dark:bg-[#0D1B2A] dark:text-white">
+  <div class="max-w-2xl mx-auto space-y-8">
+
+    <!-- Cabeçalho -->
+    <div>
+      <h1 class="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
+        Meu Perfil
+      </h1>
+      <p class="mt-1 text-[#1D3273]/70 dark:text-white/70 text-sm">
+        Visualize e edite suas informações
+      </p>
+    </div>
+
+    {{#if success}}
+    <div id="toast-success"
+      class="p-3 rounded-xl bg-green-500/20 border border-green-500/30 text-green-700 dark:text-green-300 text-sm text-center font-medium">
+      Perfil atualizado com sucesso!
+    </div>
+    <script>
+      (function () {
+        var el = document.getElementById("toast-success");
+        if (!el) return;
+        setTimeout(function () { el.classList.add("opacity-0"); el.style.transition = "opacity 0.5s"; }, 2500);
+        setTimeout(function () { el.remove(); }, 3100);
+        var url = new URL(window.location.href);
+        url.searchParams.delete("success");
+        window.history.replaceState({}, document.title, url.toString());
+      })();
+    </script>
+    {{/if}}
+
+    {{#if message}}
+    <div class="p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-700 dark:text-red-300 text-sm text-center font-medium">
+      {{message}}
+    </div>
+    {{/if}}
+
+    <!-- Card de informações -->
+    <div class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-8 shadow-lg">
+
+      <!-- Avatar e nome -->
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow">
+          {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
+        </div>
+        <div>
+          <p class="text-xl font-bold">{{user.nome}}</p>
+          <p class="text-sm text-[#1D3273]/60 dark:text-white/60">
+            {{#if isOng}}Conta ONG{{else}}Conta pessoal{{/if}}
+          </p>
+        </div>
+      </div>
+
+      <hr class="border-[#1D3273]/20 dark:border-white/20 mb-6" />
+
+      <!-- Formulário de edição -->
+      <form action="/perfil/editar" method="POST" class="space-y-5">
+
+        <!-- Nome -->
+        <div>
+          <label for="nome" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Nome</label>
+          <input type="text" id="nome" name="nome" value="{{user.nome}}" required
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">E-mail</label>
+          <input type="email" id="email" name="email" value="{{user.email}}" required
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+
+        <!-- Telefone -->
+        <div>
+          <label for="telefone" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Telefone</label>
+          <input type="text" id="telefone" name="telefone" value="{{user.telefone}}" placeholder="(00) 00000-0000"
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+
+        {{#if isOng}}
+        <!-- Área de atuação (só ONG) -->
+        <div>
+          <label for="area_atuacao" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Área de atuação</label>
+          <input type="text" id="area_atuacao" name="area_atuacao" value="{{user.area_atuacao}}" placeholder="Ex: Educação, Saúde..."
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+        {{/if}}
+
+        <!-- Dados somente leitura -->
+        {{#unless isOng}}
+        {{#if user.cpf}}
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">CPF</label>
+          <p class="px-4 py-2.5 text-sm rounded-lg bg-[#1D3273]/5 dark:bg-white/5 border border-[#1D3273]/10 dark:border-white/10 text-[#1D3273]/70 dark:text-white/70">
+            {{user.cpf}}
+          </p>
+        </div>
+        {{/if}}
+        {{/unless}}
+
+        {{#if isOng}}
+        {{#if user.cnpj}}
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">CNPJ</label>
+          <p class="px-4 py-2.5 text-sm rounded-lg bg-[#1D3273]/5 dark:bg-white/5 border border-[#1D3273]/10 dark:border-white/10 text-[#1D3273]/70 dark:text-white/70">
+            {{user.cnpj}}
+          </p>
+        </div>
+        {{/if}}
+        {{/if}}
+
+        <hr class="border-[#1D3273]/20 dark:border-white/20" />
+
+        <!-- Nova senha -->
+        <div>
+          <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">
+            Nova senha <span class="normal-case font-normal">(deixe em branco para manter)</span>
+          </label>
+          <input type="password" id="password" name="password" placeholder="********"
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-3 pt-2">
+          <a href="{{backUrl}}"
+            class="px-5 py-2.5 rounded-xl border border-[#1D3273]/20 dark:border-white/20 text-sm font-semibold hover:opacity-80 transition">
+            Voltar
+          </a>
+          <button type="submit"
+            class="px-6 py-2.5 rounded-xl bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] text-sm font-semibold hover:opacity-90 transition shadow">
+            Salvar alterações
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</section>
