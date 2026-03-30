@@ -27,48 +27,6 @@ function getBackUrl(tipo: string) {
 const ALLOWED_MIMES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-async function saveLogoFile(request: FastifyRequest, ongId: number): Promise<string | null> {
-  const data = await request.file();
-  if (!data) return null;
-
-  // Parse text fields from multipart
-  const fields: Record<string, string> = {};
-  for (const [key, field] of Object.entries(data.fields)) {
-    if (field && typeof field === "object" && "value" in field) {
-      fields[key] = (field as any).value;
-    }
-  }
-
-  // Check if there's actually a file (not just empty file input)
-  if (!data.filename || !data.mimetype) {
-    return null;
-  }
-
-  if (!ALLOWED_MIMES.includes(data.mimetype)) {
-    throw new Error("Formato de imagem não suportado. Use JPG, PNG, WebP ou GIF.");
-  }
-
-  const ext = path.extname(data.filename).toLowerCase() || ".jpg";
-  const filename = `ong_${ongId}_${Date.now()}${ext}`;
-  const filepath = path.join(UPLOADS_DIR, filename);
-
-  // Ensure directory exists
-  if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  }
-
-  const writeStream = fs.createWriteStream(filepath);
-  await pipeline(data.file, writeStream);
-
-  // Check file size after write
-  const stats = fs.statSync(filepath);
-  if (stats.size > MAX_FILE_SIZE) {
-    fs.unlinkSync(filepath);
-    throw new Error("Imagem muito grande. O tamanho máximo é 2MB.");
-  }
-
-  return `/public/uploads/logos/${filename}`;
-}
 
 function parseMultipartFields(fields: Record<string, any>): Record<string, string> {
   const result: Record<string, string> = {};
@@ -211,9 +169,9 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
       // Delete old logo if exists
       const currentOng = await perfilService.getOngProfile(userId);
       if (currentOng.ok && currentOng.user.logo) {
-        const oldPath = path.join(__dirname, "..", "..", currentOng.user.logo);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
+        const oldFilePath = path.join(__dirname, "..", "..", "public", currentOng.user.logo.replace("/public/", ""));
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
         }
       }
       await perfilRepo.updateOngLogo(userId, logoPath);
@@ -224,6 +182,7 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
       id: userId,
       nome,
       email,
+      ...(logoPath ? { logo: logoPath } : {}),
     };
 
     return reply.redirect("/perfil/editar?success=1");

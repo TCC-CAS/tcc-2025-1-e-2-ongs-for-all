@@ -43,7 +43,8 @@ export async function login(email: string, password: string, ip: string) {
       id: user.id || user.ong_id,
       nome: user.nome,
       email: user.email,
-      tipo
+      tipo,
+      ...(tipo === "ong" && user.logo ? { logo: user.logo } : {}),
     },
   };
 }

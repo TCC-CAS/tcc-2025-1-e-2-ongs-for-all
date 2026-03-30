@@ -62,7 +62,7 @@ export async function updatePasswordAndClearReset(userId: number, passwordHash: 
 }
 export async function findOngByEmail(email: string) {
   const [rows]: any = await pool.query(
-    "SELECT ong_id, nome, email, senha FROM ongs WHERE email = ? LIMIT 1",
+    "SELECT ong_id, nome, email, senha, logo FROM ongs WHERE email = ? LIMIT 1",
     [email]
   );
   return rows?.[0] ?? null;
