@@ -1,6 +1,7 @@
 import "dotenv/config";
 import fastify from "fastify";
 import formBody from "@fastify/formbody";
+import multipart from "@fastify/multipart";
 import initViewEngine from "./config/view";
 import fastifyStatic from "@fastify/static";
 import fastifyCookie from "@fastify/cookie";
@@ -24,6 +25,11 @@ const server = fastify({
 
 
 server.register(formBody);
+server.register(multipart, {
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB max
+  },
+});
 
 server.register(fastifyCookie);
 server.register(fastifySession, {

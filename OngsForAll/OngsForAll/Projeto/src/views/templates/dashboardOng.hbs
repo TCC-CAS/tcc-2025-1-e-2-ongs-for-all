@@ -1,54 +1,70 @@
 <section id="dashboard-ong" class="min-h-screen">
   <div class="max-w-7xl mx-auto space-y-10">
 
-    <!-- Cabeçalho -->
-    <div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#4886D9] to-pink-500 text-transparent bg-clip-text">
-        Dashboard: {{user.nome}}
-      </h1>
-      <p class="mt-2 text-slate-500 dark:text-white/70">
-        Acompanhe as doações recebidas e o impacto gerado
-      </p>
+    <!-- Hero -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4886D9] to-pink-500 p-8 sm:p-10 shadow-lg">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
+      <div class="relative">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white">
+          Dashboard: {{user.nome}}
+        </h1>
+        <p class="mt-2 text-white/80 text-lg">
+          Acompanhe as doações recebidas e o impacto gerado
+        </p>
+      </div>
     </div>
 
     <!-- Filtro por período -->
-    <form method="GET" action="/dashboard/ong"
-      class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-end gap-4">
-      <div class="flex flex-col flex-1 min-w-0">
-        <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">De</label>
-        <input type="date" name="de" value="{{filtroDe}}"
-          class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
-      </div>
-      <div class="flex flex-col flex-1 min-w-0">
-        <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">Até</label>
-        <input type="date" name="ate" value="{{filtroAte}}"
-          class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
-      </div>
-      <div class="flex gap-2">
-        <button type="submit"
-          class="bg-[#2D4BA6] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-sm">
-          Filtrar
-        </button>
-        <a href="/dashboard/ong"
-          class="border border-slate-200 dark:border-white/15 px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-80 transition text-slate-600 dark:text-white/70">
-          Limpar
-        </a>
-      </div>
-    </form>
+    <div>
+      <button type="button" id="btn-toggle-filtro"
+        class="inline-flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full px-5 py-2.5 shadow-sm text-sm font-semibold text-[#2D4BA6] dark:text-white hover:shadow-md transition-all duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        Filtrar por período
+        <svg xmlns="http://www.w3.org/2000/svg" id="filtro-chevron" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <form method="GET" action="/dashboard/ong" id="filtro-form"
+        class="hidden mt-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm flex-col sm:flex-row items-end gap-4">
+        <div class="flex flex-col flex-1 min-w-0">
+          <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">De</label>
+          <input type="date" name="de" value="{{filtroDe}}"
+            class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
+        </div>
+        <div class="flex flex-col flex-1 min-w-0">
+          <label class="text-sm font-semibold mb-1 text-slate-600 dark:text-white/70">Até</label>
+          <input type="date" name="ate" value="{{filtroAte}}"
+            class="border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] w-full" />
+        </div>
+        <div class="flex gap-2">
+          <button type="submit"
+            class="bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-sm">
+            Filtrar
+          </button>
+          <a href="/dashboard/ong"
+            class="border border-slate-200 dark:border-white/15 px-5 py-2 rounded-full text-sm font-semibold hover:opacity-80 transition text-slate-600 dark:text-white/70">
+            Limpar
+          </a>
+        </div>
+      </form>
+    </div>
 
     <!-- Cards financeiros -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-[#4886D9] hover:shadow-md transition-shadow duration-200">
         <p class="text-sm text-slate-500 dark:text-white/60">Total recebido</p>
         <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">R$ {{totalRecebido}}</p>
       </div>
 
-      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-[#2D4BA6] hover:shadow-md transition-shadow duration-200">
         <p class="text-sm text-slate-500 dark:text-white/60">Quantidade de doações</p>
         <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">{{qtdDoacoes}}</p>
       </div>
 
-      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+      <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-pink-500 hover:shadow-md transition-shadow duration-200">
         <p class="text-sm text-slate-500 dark:text-white/60">Doadores únicos</p>
         <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white mt-1">{{qtdDoadores}}</p>
       </div>
@@ -56,12 +72,12 @@
 
     <!-- Métricas de Impacto -->
     <div>
-      <h2 class="text-2xl font-bold mb-4">Impacto da ONG</h2>
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-[#2D4BA6] to-[#4886D9] dark:from-white dark:to-white/80 text-transparent bg-clip-text">Impacto da ONG</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#4886D9]/20 to-[#2D4BA6]/10 dark:from-[#4886D9]/30 dark:to-[#2D4BA6]/20 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -71,9 +87,9 @@
           <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{necessidadesCriadas}}</p>
         </div>
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#4886D9]/20 to-[#2D4BA6]/10 dark:from-[#4886D9]/30 dark:to-[#2D4BA6]/20 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -83,9 +99,9 @@
           <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{necessidadesConcluidas}}</p>
         </div>
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#4886D9]/20 to-[#2D4BA6]/10 dark:from-[#4886D9]/30 dark:to-[#2D4BA6]/20 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
@@ -95,9 +111,9 @@
           <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{taxaConclusao}}%</p>
         </div>
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-200/50 to-amber-100 dark:from-amber-500/30 dark:to-amber-500/10 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -107,9 +123,9 @@
           <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{interessesPendentes}}</p>
         </div>
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#4886D9]/20 to-[#2D4BA6]/10 dark:from-[#4886D9]/30 dark:to-[#2D4BA6]/20 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-[#4886D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
               </svg>
@@ -119,9 +135,9 @@
           <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{interessesAceitos}}</p>
         </div>
 
-        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-200/50 to-emerald-100 dark:from-emerald-500/30 dark:to-emerald-500/10 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
@@ -159,10 +175,10 @@
     <!-- Necessidades quase completas -->
     {{#if necessidadesQuaseCompletas.length}}
     <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-      <h2 class="text-2xl font-bold mb-4">Quase completas</h2>
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-[#2D4BA6] to-[#4886D9] dark:from-white dark:to-white/80 text-transparent bg-clip-text">Quase completas</h2>
       <div class="space-y-3">
         {{#each necessidadesQuaseCompletas}}
-        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:shadow-sm transition-all duration-200">
           <div class="flex-1 min-w-0">
             <p class="font-semibold truncate text-slate-700 dark:text-white">{{this.titulo}}</p>
             <p class="text-sm text-slate-400 dark:text-white/50">
@@ -200,7 +216,7 @@
 
     <!-- Últimas doações -->
     <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-      <h2 class="text-2xl font-bold">Últimas doações</h2>
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-[#2D4BA6] to-[#4886D9] dark:from-white dark:to-white/80 text-transparent bg-clip-text">Últimas doações</h2>
 
       <div class="mt-6 overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -215,7 +231,7 @@
           <tbody>
             {{#if ultimasDoacoes.length}}
               {{#each ultimasDoacoes}}
-                <tr class="border-b border-slate-100 dark:border-white/5">
+                <tr class="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                   <td class="py-3 pr-4 whitespace-nowrap text-slate-700 dark:text-white">{{this.data}}</td>
                   <td class="py-3 pr-4 text-slate-700 dark:text-white">{{this.doador}}</td>
                   <td class="py-3 pr-4 text-slate-700 dark:text-white">{{this.tipo}}</td>
@@ -236,12 +252,12 @@
 
     <!-- Atividades Recentes -->
     <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
-      <h2 class="text-2xl font-bold mb-4">Atividades recentes</h2>
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-[#2D4BA6] to-[#4886D9] dark:from-white dark:to-white/80 text-transparent bg-clip-text">Atividades recentes</h2>
 
       {{#if atividadesRecentes.length}}
       <div class="space-y-3">
         {{#each atividadesRecentes}}
-        <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:shadow-sm transition-all duration-200">
           <div class="shrink-0 mt-0.5">
             {{#ifCond this.tipo_atividade '==' 'interesse_pendente'}}
             <div class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
@@ -305,6 +321,64 @@
   </div>
 
   <script>
+    // Toggle filtro
+    (function () {
+      const btn = document.getElementById('btn-toggle-filtro');
+      const form = document.getElementById('filtro-form');
+      const chevron = document.getElementById('filtro-chevron');
+      if (!btn || !form) return;
+
+      var filtroDe = '{{filtroDe}}';
+      var filtroAte = '{{filtroAte}}';
+      if (filtroDe || filtroAte) {
+        form.classList.remove('hidden');
+        form.classList.add('flex');
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      }
+
+      btn.addEventListener('click', function () {
+        var aberto = !form.classList.contains('hidden');
+        if (aberto) {
+          form.classList.add('hidden');
+          form.classList.remove('flex');
+          if (chevron) chevron.style.transform = '';
+        } else {
+          form.classList.remove('hidden');
+          form.classList.add('flex');
+          if (chevron) chevron.style.transform = 'rotate(180deg)';
+        }
+      });
+    })();
+
+    // Validação de datas do filtro
+    (function () {
+      var filtroForm = document.getElementById('filtro-form');
+      var inputDe = filtroForm && filtroForm.querySelector('input[name="de"]');
+      var inputAte = filtroForm && filtroForm.querySelector('input[name="ate"]');
+      if (!inputDe || !inputAte) return;
+
+      inputDe.addEventListener('change', function () {
+        if (inputDe.value) {
+          inputAte.min = inputDe.value;
+          if (inputAte.value && inputAte.value < inputDe.value) inputAte.value = '';
+        } else {
+          inputAte.min = '';
+        }
+      });
+
+      inputAte.addEventListener('change', function () {
+        if (inputAte.value) {
+          inputDe.max = inputAte.value;
+          if (inputDe.value && inputDe.value > inputAte.value) inputDe.value = '';
+        } else {
+          inputDe.max = '';
+        }
+      });
+
+      if (inputDe.value) inputAte.min = inputDe.value;
+      if (inputAte.value) inputDe.max = inputAte.value;
+    })();
+
     (function () {
       const labelsMes = {{{ labelsMes }}};
       const valoresMes = {{{ valoresMes }}};

@@ -45,8 +45,8 @@ export async function criarNecessidade(params: {
   return { ok: true as const };
 }
 
-export async function listarNecessidadesAbertas() {
-  const necessidades = await necessidadeRepository.findAllAbertas();
+export async function listarNecessidadesAbertas(ongId?: number) {
+  const necessidades = await necessidadeRepository.findAllAbertas(ongId);
   return { ok: true as const, necessidades };
 }
 

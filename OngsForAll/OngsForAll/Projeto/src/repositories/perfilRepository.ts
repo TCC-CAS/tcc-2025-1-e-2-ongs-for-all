@@ -31,7 +31,7 @@ export async function updateUserProfile(
 
 export async function findOngById(id: number) {
   const [rows]: any = await pool.query(
-    "SELECT ong_id AS id, nome, email, cnpj, area_atuacao, telefone FROM ongs WHERE ong_id = ? LIMIT 1",
+    "SELECT ong_id AS id, nome, email, cnpj, area_atuacao, telefone, logo FROM ongs WHERE ong_id = ? LIMIT 1",
     [id]
   );
   return rows?.[0] ?? null;
@@ -57,4 +57,23 @@ export async function updateOngProfile(
   params.push(id);
 
   await pool.query(query, params);
+}
+
+export async function updateOngLogo(ongId: number, logoPath: string) {
+  await pool.query("UPDATE ongs SET logo = ? WHERE ong_id = ?", [logoPath, ongId]);
+}
+
+export async function listAllOngs(search?: string) {
+  let query = "SELECT ong_id AS id, nome, email, area_atuacao, telefone, logo FROM ongs";
+  const params: any[] = [];
+
+  if (search && search.trim()) {
+    query += " WHERE nome LIKE ? OR area_atuacao LIKE ?";
+    const term = `%${search.trim()}%`;
+    params.push(term, term);
+  }
+
+  query += " ORDER BY nome ASC";
+  const [rows]: any = await pool.query(query, params);
+  return rows;
 }

@@ -40,9 +40,20 @@
 
       <!-- Avatar e nome -->
       <div class="flex items-center gap-4 mb-6">
-        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow">
-          {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
-        </div>
+        {{#if isOng}}
+          {{#if user.logo}}
+          <img src="{{user.logo}}" alt="Logo da ONG"
+            class="w-16 h-16 rounded-full object-cover border-2 border-[#1D3273]/20 dark:border-white/20 shadow" />
+          {{else}}
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white text-2xl font-bold shadow">
+            {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
+          </div>
+          {{/if}}
+        {{else}}
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white text-2xl font-bold shadow">
+            {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
+          </div>
+        {{/if}}
         <div>
           <p class="text-xl font-bold">{{user.nome}}</p>
           <p class="text-sm text-[#1D3273]/60 dark:text-white/60">
@@ -54,7 +65,7 @@
       <hr class="border-[#1D3273]/20 dark:border-white/20 mb-6" />
 
       <!-- Formulário de edição -->
-      <form action="/perfil/editar" method="POST" class="space-y-5">
+      <form action="/perfil/editar" method="POST" {{#if isOng}}enctype="multipart/form-data"{{/if}} class="space-y-5">
 
         <!-- Nome -->
         <div>
@@ -83,6 +94,20 @@
           <label for="area_atuacao" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Área de atuação</label>
           <input type="text" id="area_atuacao" name="area_atuacao" value="{{user.area_atuacao}}" placeholder="Ex: Educação, Saúde..."
             class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
+        </div>
+
+        <!-- Logo da ONG -->
+        <div>
+          <label for="logo" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Logo da ONG</label>
+          {{#if user.logo}}
+          <div class="flex items-center gap-4 mb-3">
+            <img src="{{user.logo}}" alt="Logo atual" class="w-14 h-14 rounded-xl object-cover border border-[#1D3273]/20 dark:border-white/20" />
+            <span class="text-xs text-[#1D3273]/50 dark:text-white/50">Logo atual</span>
+          </div>
+          {{/if}}
+          <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif"
+            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition file:mr-3 file:rounded-lg file:border-0 file:bg-[#2D4BA6] file:text-white file:px-4 file:py-1.5 file:text-sm file:font-semibold file:cursor-pointer" />
+          <p class="text-xs text-[#1D3273]/40 dark:text-white/40 mt-1">JPG, PNG, WebP ou GIF. Máximo 2MB.</p>
         </div>
         {{/if}}
 

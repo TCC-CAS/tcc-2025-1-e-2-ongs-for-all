@@ -14,7 +14,11 @@ export async function renderListaNecessidadesPage(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const result = await necessidadeService.listarNecessidadesAbertas();
+  const { ong } = request.query as { ong?: string };
+  const ongId = ong ? Number(ong) : undefined;
+  const filtroOngId = ongId && !isNaN(ongId) ? ongId : undefined;
+
+  const result = await necessidadeService.listarNecessidadesAbertas(filtroOngId);
 
   if (process.env.NODE_ENV === "test") {
     return reply.send(result);
@@ -23,12 +27,19 @@ export async function renderListaNecessidadesPage(
   const user = request.session.user;
   const naoLidas = user ? await getNaoLidas(user as any) : 0;
 
+  // Se filtrou por ONG, pega o nome da primeira necessidade para mostrar no título
+  const nomeOngFiltrada = filtroOngId && result.necessidades.length > 0
+    ? result.necessidades[0].nome_ong
+    : null;
+
   return reply.view(
     "/templates/necessidades/lista.hbs",
     {
       user,
       naoLidas,
       necessidades: result.necessidades,
+      filtroOngId,
+      nomeOngFiltrada,
     },
     { layout: "layouts/dashboardLayout" }
   );

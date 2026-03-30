@@ -26,10 +26,9 @@ export async function createNecessidade(params: {
   );
 }
 
-export async function findAllAbertas() {
-  const [rows]: any = await pool.query(
-    `
-    SELECT 
+export async function findAllAbertas(ongId?: number) {
+  let query = `
+    SELECT
       n.id,
       n.titulo,
       n.descricao,
@@ -38,6 +37,7 @@ export async function findAllAbertas() {
       n.quantidade_recebida,
       n.status,
       n.criado_em,
+      n.ong_id,
       o.nome AS nome_ong,
       GREATEST(n.quantidade - n.quantidade_recebida, 0) AS faltante,
       LEAST(
@@ -59,11 +59,18 @@ export async function findAllAbertas() {
       END AS quase_completa
     FROM necessidades n
     INNER JOIN ongs o ON o.ong_id = n.ong_id
-    WHERE n.status = 'aberta'
-    ORDER BY n.criado_em DESC
-    `
-  );
+    WHERE n.status = 'aberta'`;
 
+  const params: any[] = [];
+
+  if (ongId) {
+    query += ` AND n.ong_id = ?`;
+    params.push(ongId);
+  }
+
+  query += ` ORDER BY n.criado_em DESC`;
+
+  const [rows]: any = await pool.query(query, params);
   return rows;
 }
 
