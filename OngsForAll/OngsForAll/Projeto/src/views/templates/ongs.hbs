@@ -113,16 +113,26 @@
             {{/if}}
           </div>
 
-          <!-- Botão de ver necessidades -->
-          <a href="/necessidades?ong={{this.id}}"
-            class="mt-4 flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-full bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white text-sm font-semibold shadow-sm hover:opacity-90 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            Ver necessidades
-          </a>
+          <!-- Botões de ação -->
+          <div class="mt-4 flex gap-2">
+            <a href="/necessidades?ong={{this.id}}"
+              class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white text-sm font-semibold shadow-sm hover:opacity-90 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              Necessidades
+            </a>
+            <a href="/ongs/{{this.id}}/transparencia"
+              class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/70 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-white/5 transition"
+              title="Página de transparência">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Impacto
+            </a>
+          </div>
         </div>
       </div>
       {{/each}}

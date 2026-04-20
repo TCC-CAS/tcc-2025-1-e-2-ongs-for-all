@@ -12,6 +12,7 @@ import { evidenciaRoutes } from "./evidenciaRoutes";
 import { relatorioRoutes } from "./relatorioRoutes";
 import { adminRoutes } from "./adminRoutes";
 import { ongDocumentoRoutes } from "./ongDocumentoRoutes";
+import { mensagemRoutes } from "./mensagemRoutes";
 
 export async function registerAllRoutes(fastify: FastifyInstance) {
   await authRoutes(fastify)
@@ -27,4 +28,5 @@ export async function registerAllRoutes(fastify: FastifyInstance) {
   await relatorioRoutes(fastify);
   await adminRoutes(fastify);
   await ongDocumentoRoutes(fastify);
+  await mensagemRoutes(fastify);
 }

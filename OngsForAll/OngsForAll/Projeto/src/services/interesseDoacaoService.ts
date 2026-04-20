@@ -1,6 +1,7 @@
 import * as interesseRepo from "../repositories/interesseDoacaoRepository";
 import * as doacaoRepo from "../repositories/doacaoRepository";
 import * as notificacaoService from "../services/notificacaoService";
+import * as gamificacaoService from "../services/gamificacaoService";
 
 export async function getNovaPaginaInteresse(
     userId: number,
@@ -77,6 +78,9 @@ export async function criarInteresse(params: {
         mensagem: `${nomeUsuario} demonstrou interesse em ajudar a necessidade "${necessidade.titulo}".`,
         tipo: "novo_interesse",
     });
+
+    // Gamificação (fire-and-forget)
+    gamificacaoService.processarAcao({ usuarioId: params.userId, acao: "primeiro_interesse" }).catch(() => {});
 
     return { ok: true as const };
 }
@@ -184,6 +188,10 @@ export async function receberInteresse(params: {
             });
         }
     }
+
+    // Gamificação (fire-and-forget)
+    const acao = interesse.tipo_necessidade === "voluntariado" ? "interesse_voluntariado" : "interesse_confirmado";
+    gamificacaoService.processarAcao({ usuarioId: Number(interesse.usuario_id), acao }).catch(() => {});
 
     return { ok: true as const };
 }

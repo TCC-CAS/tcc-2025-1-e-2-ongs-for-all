@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as dashboardService from "../services/dashboardService";
 import * as notificacaoService from "../services/notificacaoService";
+import * as gamificacaoService from "../services/gamificacaoService";
 
 // =======================
 // DASHBOARD - USUÁRIO
@@ -17,7 +18,10 @@ export async function renderDashBoardPage(
     }
 
     const { de, ate } = request.query as { de?: string; ate?: string };
-    const data = await dashboardService.getDashboardData(Number(sessionUser.id), de, ate);
+    const [data, gamificacao] = await Promise.all([
+      dashboardService.getDashboardData(Number(sessionUser.id), de, ate),
+      gamificacaoService.getDadosGamificacao(Number(sessionUser.id)),
+    ]);
     const totalDoadoNumber = Number(data.totalDoado ?? 0);
 
     if (process.env.NODE_ENV === "test") {
@@ -34,6 +38,7 @@ export async function renderDashBoardPage(
       {
         user: sessionUser,
         naoLidas,
+        gamificacao,
 
         // cards
         totalDoado: totalDoadoNumber.toFixed(2),
@@ -137,6 +142,30 @@ export async function renderDashboardOngPage(
     console.error("Erro ao renderizar dashboard da ONG:", error);
     return reply.status(500).send("Erro ao carregar dashboard da ONG");
   }
+}
+
+// =======================
+// CONQUISTAS (GAMIFICAÇÃO)
+// =======================
+export async function renderConquistasPage(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const sessionUser = request.session.user;
+  if (!sessionUser) return reply.redirect("/login");
+
+  const { naoLidas } = await notificacaoService.contarNaoLidas({
+    tipoConta: sessionUser.tipo as "usuario" | "ong",
+    id: Number(sessionUser.id),
+  });
+
+  const gamificacao = await gamificacaoService.getDadosGamificacaoCompleto(Number(sessionUser.id));
+
+  return reply.view(
+    "/templates/conquistas.hbs",
+    { user: sessionUser, naoLidas, gamificacao },
+    { layout: "layouts/dashboardLayout" }
+  );
 }
 
 // =======================

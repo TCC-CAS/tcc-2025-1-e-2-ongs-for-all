@@ -8,6 +8,7 @@ import {
   renderDashBoardPage,
   renderDashboardOngPage,
   totalDoacoesPorOng,
+  renderConquistasPage,
 } from "../controllers/dashboardController";
 
 export async function dashboardRoutes(fastify: FastifyInstance) {
@@ -31,5 +32,12 @@ export async function dashboardRoutes(fastify: FastifyInstance) {
     "/dashboard/total-por-ong",
     { preHandler: [ensureAuthenticated, ensureOng] },
     totalDoacoesPorOng
+  );
+
+  // Conquistas / gamificação
+  fastify.get(
+    "/conquistas",
+    { preHandler: [ensureAuthenticated, ensureUser] },
+    renderConquistasPage
   );
 }

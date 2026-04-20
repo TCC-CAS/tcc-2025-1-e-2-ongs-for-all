@@ -1,0 +1,87 @@
+<div class="max-w-3xl mx-auto flex flex-col" style="height: calc(100vh - 11rem);">
+
+  <!-- Cabeçalho da conversa -->
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm px-5 py-4 mb-4 flex items-center gap-4">
+    <a href="{{listaUrl}}"
+      class="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/10 hover:opacity-80 transition shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#2D4BA6] dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </a>
+
+    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-sm shrink-0">
+      {{#if isOng}}
+        {{#if conversa.nome_usuario}}{{conversa.nome_usuario.[0]}}{{else}}U{{/if}}
+      {{else}}
+        {{#if conversa.nome_ong}}{{conversa.nome_ong.[0]}}{{else}}O{{/if}}
+      {{/if}}
+    </div>
+
+    <div class="min-w-0 flex-1">
+      <p class="font-semibold text-[#2D4BA6] dark:text-white truncate">
+        {{#if isOng}}{{conversa.nome_usuario}}{{else}}{{conversa.nome_ong}}{{/if}}
+      </p>
+      {{#if conversa.titulo_necessidade}}
+      <p class="text-xs text-[#4886D9] truncate">Sobre: {{conversa.titulo_necessidade}}</p>
+      {{else}}
+      <p class="text-xs text-slate-400 dark:text-white/40">Conversa geral</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Área de mensagens -->
+  <div id="messages-area" class="flex-1 overflow-y-auto space-y-3 pb-2 pr-1">
+    {{#if mensagens.length}}
+      {{#each mensagens}}
+      <div class="flex {{#if isOwn}}justify-end{{else}}justify-start{{/if}}">
+        <div class="max-w-[75%]">
+          <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed
+            {{#if isOwn}}
+              bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] text-white rounded-br-md
+            {{else}}
+              bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white rounded-bl-md shadow-sm
+            {{/if}}">
+            {{conteudo}}
+          </div>
+          <p class="text-[10px] text-slate-400 dark:text-white/30 mt-1 {{#if isOwn}}text-right{{/if}}">
+            {{criado_em}}
+          </p>
+        </div>
+      </div>
+      {{/each}}
+    {{else}}
+    <div class="flex flex-col items-center justify-center h-full text-center py-10">
+      <p class="text-slate-400 dark:text-white/30 text-sm">Nenhuma mensagem ainda. Seja o primeiro a escrever!</p>
+    </div>
+    {{/if}}
+  </div>
+
+  <!-- Formulário de envio -->
+  <div class="mt-4 bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm p-3">
+    <form method="POST" action="/mensagens/{{conversa.id}}/enviar" class="flex items-end gap-3">
+      <textarea
+        name="conteudo"
+        rows="2"
+        placeholder="Escreva sua mensagem..."
+        maxlength="2000"
+        required
+        class="flex-1 resize-none bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 transition"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.form.submit();}"
+      ></textarea>
+      <button type="submit"
+        class="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] text-white hover:opacity-90 transition shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var area = document.getElementById('messages-area');
+    if (area) area.scrollTop = area.scrollHeight;
+  });
+</script>

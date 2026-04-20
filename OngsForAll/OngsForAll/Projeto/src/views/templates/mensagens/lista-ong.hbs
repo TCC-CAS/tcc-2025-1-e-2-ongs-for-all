@@ -1,0 +1,58 @@
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <!-- Cabeçalho -->
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Mensagens</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Conversas com pessoas que querem ajudar</p>
+  </div>
+
+  {{#if conversas.length}}
+  <div class="space-y-3">
+    {{#each conversas}}
+    <a href="/mensagens/{{id}}"
+      class="flex items-center gap-4 p-4 bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md hover:border-[#4886D9]/40 dark:hover:border-[#4886D9]/40 transition-all duration-200">
+
+      <!-- Avatar usuário -->
+      <div class="w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+        {{#if nome_usuario}}{{nome_usuario.[0]}}{{else}}U{{/if}}
+      </div>
+
+      <!-- Conteúdo -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-semibold text-[#2D4BA6] dark:text-white truncate">{{nome_usuario}}</span>
+          <span class="text-xs text-slate-400 dark:text-white/40 shrink-0">{{ultima_em}}</span>
+        </div>
+        {{#if titulo_necessidade}}
+        <span class="inline-block text-xs text-[#4886D9] dark:text-[#4886D9] font-medium mt-0.5">
+          Sobre: {{titulo_necessidade}}
+        </span>
+        {{/if}}
+        <p class="text-sm text-slate-500 dark:text-white/50 truncate mt-0.5">
+          {{#if ultima_mensagem}}{{ultima_mensagem}}{{else}}Nenhuma mensagem ainda{{/if}}
+        </p>
+      </div>
+
+      <!-- Badge não lidas -->
+      {{#if temNaoLidas}}
+      <span class="shrink-0 w-2.5 h-2.5 rounded-full bg-[#4886D9]"></span>
+      {{/if}}
+    </a>
+    {{/each}}
+  </div>
+
+  {{else}}
+  <div class="flex flex-col items-center justify-center py-20 text-center">
+    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 dark:text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+    </div>
+    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhuma conversa ainda</p>
+    <p class="text-sm text-slate-400 dark:text-white/30 mt-1">
+      Quando alguém entrar em contato, as conversas aparecerão aqui.
+    </p>
+  </div>
+  {{/if}}
+
+</div>
