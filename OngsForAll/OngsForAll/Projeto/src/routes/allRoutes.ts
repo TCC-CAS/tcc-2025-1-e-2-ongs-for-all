@@ -8,6 +8,10 @@ import { necessidadeRoutes } from "./necessidadeRoutes";
 import { interesseDoacaoRoutes } from "./interesseDoacaoRoutes";
 import { notificacaoRoutes } from "./notificacaoRoutes";
 import { ongRoutes } from "./ongRoutes";
+import { evidenciaRoutes } from "./evidenciaRoutes";
+import { relatorioRoutes } from "./relatorioRoutes";
+import { adminRoutes } from "./adminRoutes";
+import { ongDocumentoRoutes } from "./ongDocumentoRoutes";
 
 export async function registerAllRoutes(fastify: FastifyInstance) {
   await authRoutes(fastify)
@@ -19,4 +23,8 @@ export async function registerAllRoutes(fastify: FastifyInstance) {
   await interesseDoacaoRoutes(fastify);
   await notificacaoRoutes(fastify);
   await ongRoutes(fastify);
+  await evidenciaRoutes(fastify);
+  await relatorioRoutes(fastify);
+  await adminRoutes(fastify);
+  await ongDocumentoRoutes(fastify);
 }

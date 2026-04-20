@@ -20,7 +20,7 @@ if (!sessionSecret || sessionSecret.length < 32) {
 }
 
 const server = fastify({
-  logger: true, // ajuda muito a debugar
+  logger: false,
 });
 
 
@@ -54,14 +54,14 @@ registerAllRoutes(server);
 
 // (Opcional) Handler global pra você ver erro real ao invés de "Erro no servidor"
 server.setErrorHandler((error, request, reply) => {
-  request.log.error(error);
+  console.error("[ERRO]", error.message);
   reply.status(500).send({ message: "Erro no servidor", error: error.message });
 });
 
 server.listen({ port, host }, (err) => {
   if (err) {
-    server.log.error(err);
+    console.error("[ERRO] Falha ao iniciar servidor:", err);
     process.exit(1);
   }
-  console.log(`Servidor rodando em: http://${host}:${port}`);
+  console.log(`\n🟢 Servidor rodando em: http://${host}:${port}\n`);
 });

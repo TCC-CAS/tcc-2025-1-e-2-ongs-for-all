@@ -1,10 +1,11 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as necessidadeService from "../services/necessidadeService";
 import * as notificacaoService from "../services/notificacaoService";
+import * as ongAprovacaoRepo from "../repositories/ongAprovacaoRepository";
 
 async function getNaoLidas(user: { tipo: string; id: number }) {
   const { naoLidas } = await notificacaoService.contarNaoLidas({
-    tipoConta: user.tipo,
+    tipoConta: user.tipo as "usuario" | "ong",
     id: Number(user.id),
   });
   return naoLidas;
@@ -14,11 +15,12 @@ export async function renderListaNecessidadesPage(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { ong } = request.query as { ong?: string };
+  const { ong, tipo } = request.query as { ong?: string; tipo?: string };
   const ongId = ong ? Number(ong) : undefined;
   const filtroOngId = ongId && !isNaN(ongId) ? ongId : undefined;
+  const filtroTipo = ["bem", "servico", "voluntariado"].includes(tipo || "") ? tipo : undefined;
 
-  const result = await necessidadeService.listarNecessidadesAbertas(filtroOngId);
+  const result = await necessidadeService.listarNecessidadesAbertas(filtroOngId, filtroTipo);
 
   if (process.env.NODE_ENV === "test") {
     return reply.send(result);
@@ -39,7 +41,11 @@ export async function renderListaNecessidadesPage(
       naoLidas,
       necessidades: result.necessidades,
       filtroOngId,
+      filtroTipo,
       nomeOngFiltrada,
+      filtroBem: filtroTipo === "bem",
+      filtroServico: filtroTipo === "servico",
+      filtroVoluntariado: filtroTipo === "voluntariado",
     },
     { layout: "layouts/dashboardLayout" }
   );
@@ -61,11 +67,18 @@ export async function renderNovaNecessidadePage(
 
   const naoLidas = await getNaoLidas(sessionUser as any);
 
+  const aprovacao = await ongAprovacaoRepo.getStatusAprovacao(Number(sessionUser.id));
+  const ongBloqueada = aprovacao?.status_aprovacao !== "aprovada";
+
   return reply.view(
     "/templates/necessidades/nova.hbs",
     {
       user: sessionUser,
       naoLidas,
+      isBem: true,
+      ...(ongBloqueada
+        ? { error: "Sua ONG precisa ser aprovada antes de cadastrar necessidades. Acesse a seção de Aprovação." }
+        : {}),
     },
     { layout: "layouts/ongDashboardLayout" }
   );
@@ -85,11 +98,42 @@ export async function criarNecessidade(
     return reply.redirect("/dashboard");
   }
 
-  const { titulo, descricao, categoria, quantidade } = request.body as {
+  // Bloquear se ONG não estiver aprovada
+  const aprovacao = await ongAprovacaoRepo.getStatusAprovacao(Number(sessionUser.id));
+  if (aprovacao?.status_aprovacao !== "aprovada") {
+    const naoLidas = await getNaoLidas(sessionUser as any);
+    return reply.view(
+      "/templates/necessidades/nova.hbs",
+      {
+        user: sessionUser,
+        naoLidas,
+        error: "Sua ONG precisa ser aprovada antes de cadastrar necessidades. Acesse a seção de Aprovação.",
+        isBem: true,
+      },
+      { layout: "layouts/ongDashboardLayout" }
+    );
+  }
+
+  const {
+    titulo,
+    descricao,
+    categoria,
+    quantidade,
+    tipo_necessidade,
+    local_atividade,
+    turno,
+    data_inicio,
+    data_fim,
+  } = request.body as {
     titulo: string;
     descricao: string;
     categoria: string;
     quantidade: string;
+    tipo_necessidade: string;
+    local_atividade?: string;
+    turno?: string;
+    data_inicio?: string;
+    data_fim?: string;
   };
 
   const result = await necessidadeService.criarNecessidade({
@@ -98,6 +142,11 @@ export async function criarNecessidade(
     descricao,
     categoria,
     quantidade: Number(quantidade),
+    tipo_necessidade: tipo_necessidade || "bem",
+    local_atividade,
+    turno,
+    data_inicio,
+    data_fim,
   });
 
   if (!result.ok) {
@@ -109,7 +158,9 @@ export async function criarNecessidade(
         user: sessionUser,
         naoLidas,
         error: result.error,
-        form: { titulo, descricao, categoria, quantidade },
+        form: { titulo, descricao, categoria, quantidade, tipo_necessidade, local_atividade, turno, data_inicio, data_fim },
+        isVoluntariado: tipo_necessidade === "voluntariado",
+        isBem: !tipo_necessidade || tipo_necessidade === "bem",
       },
       { layout: "layouts/ongDashboardLayout" }
     );

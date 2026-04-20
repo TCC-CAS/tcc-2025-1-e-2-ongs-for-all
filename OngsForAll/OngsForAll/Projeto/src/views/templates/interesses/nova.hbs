@@ -4,7 +4,7 @@
     <!-- Cabeçalho -->
     <div>
       <h1 class="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
-        Quero entregar este item
+        {{#ifCond necessidade.tipo_necessidade 'voluntariado'}}Quero ser voluntário{{else}}Quero ajudar{{/ifCond}}
       </h1>
       <p class="mt-1 text-[#1D3273]/70 dark:text-white/70 text-sm">
         Preencha os dados abaixo para demonstrar seu interesse

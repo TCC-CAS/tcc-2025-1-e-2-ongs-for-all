@@ -12,6 +12,7 @@ export async function buscarNecessidadePorId(necessidadeId: number) {
       n.quantidade,
       n.quantidade_recebida,
       n.status,
+      n.tipo_necessidade,
       o.nome AS nome_ong
     FROM necessidades n
     INNER JOIN ongs o ON n.ong_id = o.ong_id
@@ -69,7 +70,8 @@ export async function listarInteressesPorOng(
       u.email AS email_usuario,
       n.titulo AS titulo_necessidade,
       n.quantidade AS meta,
-      n.quantidade_recebida
+      n.quantidade_recebida,
+      n.tipo_necessidade
     FROM interesses_doacao i
     INNER JOIN usuarios u ON u.id = i.usuario_id
     INNER JOIN necessidades n ON n.id = i.necessidade_id

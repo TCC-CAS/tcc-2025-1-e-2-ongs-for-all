@@ -6,6 +6,11 @@ export async function createNecessidade(params: {
   descricao: string;
   categoria: string;
   quantidade: number;
+  tipo_necessidade: "bem" | "servico" | "voluntariado";
+  local_atividade?: string | null;
+  turno?: string | null;
+  data_inicio?: string | null;
+  data_fim?: string | null;
 }) {
   await pool.query(
     `
@@ -15,18 +20,34 @@ export async function createNecessidade(params: {
       descricao,
       categoria,
       quantidade,
+      tipo_necessidade,
+      local_atividade,
+      turno,
+      data_inicio,
+      data_fim,
       quantidade_recebida,
       status,
       criado_em,
       atualizado_em
     )
-    VALUES (?, ?, ?, ?, ?, 0, 'aberta', NOW(), NOW())
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'aberta', NOW(), NOW())
     `,
-    [params.ongId, params.titulo, params.descricao, params.categoria, params.quantidade]
+    [
+      params.ongId,
+      params.titulo,
+      params.descricao,
+      params.categoria,
+      params.quantidade,
+      params.tipo_necessidade,
+      params.local_atividade ?? null,
+      params.turno ?? null,
+      params.data_inicio ?? null,
+      params.data_fim ?? null,
+    ]
   );
 }
 
-export async function findAllAbertas(ongId?: number) {
+export async function findAllAbertas(ongId?: number, tipoNecessidade?: string) {
   let query = `
     SELECT
       n.id,
@@ -38,6 +59,11 @@ export async function findAllAbertas(ongId?: number) {
       n.status,
       n.criado_em,
       n.ong_id,
+      n.tipo_necessidade,
+      n.local_atividade,
+      n.turno,
+      n.data_inicio,
+      n.data_fim,
       o.nome AS nome_ong,
       GREATEST(n.quantidade - n.quantidade_recebida, 0) AS faltante,
       LEAST(
@@ -68,6 +94,11 @@ export async function findAllAbertas(ongId?: number) {
     params.push(ongId);
   }
 
+  if (tipoNecessidade && ["bem", "servico", "voluntariado"].includes(tipoNecessidade)) {
+    query += ` AND n.tipo_necessidade = ?`;
+    params.push(tipoNecessidade);
+  }
+
   query += ` ORDER BY n.criado_em DESC`;
 
   const [rows]: any = await pool.query(query, params);
@@ -88,6 +119,11 @@ export async function findById(id: number) {
       n.status,
       n.criado_em,
       n.atualizado_em,
+      n.tipo_necessidade,
+      n.local_atividade,
+      n.turno,
+      n.data_inicio,
+      n.data_fim,
       o.nome AS nome_ong,
       o.email AS email_ong,
       GREATEST(n.quantidade - n.quantidade_recebida, 0) AS faltante,
@@ -140,6 +176,11 @@ export async function findByOngId(ongId: number, status?: string) {
       n.status,
       n.criado_em,
       n.atualizado_em,
+      n.tipo_necessidade,
+      n.local_atividade,
+      n.turno,
+      n.data_inicio,
+      n.data_fim,
       GREATEST(n.quantidade - n.quantidade_recebida, 0) AS faltante,
       LEAST(
         ROUND((n.quantidade_recebida / NULLIF(n.quantidade, 0)) * 100, 0),

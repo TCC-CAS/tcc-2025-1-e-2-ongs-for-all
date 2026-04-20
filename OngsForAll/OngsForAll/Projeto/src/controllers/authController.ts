@@ -168,6 +168,7 @@ export async function loginUser(
     }
 
     request.session.user = result.user;
+    console.log(`[LOGIN] ${result.user.tipo.toUpperCase()} | ${result.user.email}`);
 
     if (result.user.tipo === "ong") {
       return reply.redirect("/dashboard/ong");
@@ -186,10 +187,14 @@ export async function loginUser(
 }
 
 export async function logoutUser(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+  const user = request.session.user;
   try {
     await request.session.destroy();
   } catch (err) {
-    // opcional: log
+    // sessão já expirada
+  }
+  if (user) {
+    console.log(`[LOGOUT] ${user.tipo.toUpperCase()} | ${user.email}`);
   }
   return reply.redirect("/login?logout=1");
 }
@@ -214,7 +219,7 @@ export async function handleForgotPassword(request: FastifyRequest, reply: Fasti
     if (result.ok) {
       const baseUrl = process.env.APP_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
       const resetLink = `${baseUrl}/redefinir-senha?token=${result.token}`;
-      console.log("LINK RESET:", resetLink);
+      console.log(`[RESET SENHA] Token gerado para: ${email}\n  Link: ${resetLink}`);
     }
 
     return reply.view(

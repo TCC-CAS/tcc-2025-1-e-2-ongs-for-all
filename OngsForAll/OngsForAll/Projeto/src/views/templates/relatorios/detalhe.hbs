@@ -1,0 +1,44 @@
+<section class="min-h-screen px-6 py-10">
+  <div class="max-w-3xl mx-auto">
+
+    <div class="flex items-center gap-2 mb-3">
+      {{#if relatorio.isPublicado}}
+      <span class="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold">Publicado</span>
+      {{else}}
+      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white/60 text-xs font-semibold">Rascunho</span>
+      {{/if}}
+      {{#if relatorio.titulo_necessidade}}
+      <span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium">{{relatorio.titulo_necessidade}}</span>
+      {{/if}}
+    </div>
+
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">{{relatorio.titulo}}</h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-white/50 mb-6">
+      <span>{{relatorio.nome_ong}}</span>
+      <span>·</span>
+      <span>{{relatorio.data_publicacao}}</span>
+      {{#if relatorio.pessoas_beneficiadas}}
+      <span>·</span>
+      <span class="font-semibold text-slate-700 dark:text-white/70">{{relatorio.pessoas_beneficiadas}} pessoas beneficiadas</span>
+      {{/if}}
+    </div>
+
+    <div class="bg-white dark:bg-[#1D3273]/20 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm mb-6">
+      <p class="text-slate-700 dark:text-white/80 leading-relaxed whitespace-pre-line">{{relatorio.descricao}}</p>
+    </div>
+
+    {{#if relatorio.anexos.length}}
+    <div class="bg-white dark:bg-[#1D3273]/20 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+      <h2 class="text-sm font-semibold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-4">Imagens</h2>
+      <div class="grid grid-cols-2 gap-3">
+        {{#each relatorio.anexos}}
+        <img src="{{arquivo_url}}" alt="Imagem do relatório"
+          class="rounded-xl w-full object-cover max-h-48 border border-slate-200 dark:border-white/10" />
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+</section>
