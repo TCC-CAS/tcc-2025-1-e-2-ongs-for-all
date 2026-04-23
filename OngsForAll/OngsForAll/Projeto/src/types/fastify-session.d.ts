@@ -7,8 +7,9 @@ declare module "fastify" {
       id: number;
       nome: string;
       email: string;
-      tipo: "usuario" | "ong";
+      tipo: "usuario" | "ong" | "empresa";
       ong_id?: number; // opcional
+      logo?: string; // opcional (empresa)
     };
   }
 

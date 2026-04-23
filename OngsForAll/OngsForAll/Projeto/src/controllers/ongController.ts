@@ -18,7 +18,7 @@ export async function renderOngsPage(request: FastifyRequest, reply: FastifyRepl
     ? "layouts/ongDashboardLayout"
     : "layouts/dashboardLayout";
 
-  return reply.view("/templates/ongs.hbs", {
+  return reply.view("/templates/usuario/ongs.hbs", {
     title: "Explorar ONGs",
     ongs,
     busca: busca || "",

@@ -43,7 +43,7 @@ export async function renderNovaDoacaoPage(
     const naoLidas = await getNaoLidas(user);
 
     return reply.view(
-      "/templates/doar.hbs",
+      "/templates/doacao/doar.hbs",
       {
         user,
         naoLidas,
@@ -107,7 +107,7 @@ export async function criarDoacao(
       const naoLidas = await getNaoLidas(user);
 
       return reply.code(400).view(
-        "/templates/doar.hbs",
+        "/templates/doacao/doar.hbs",
         {
           user,
           naoLidas,
@@ -155,7 +155,7 @@ export async function criarDoacao(
       const naoLidas = await getNaoLidas(user);
 
       return reply.code(403).view(
-        "/templates/doar.hbs",
+        "/templates/doacao/doar.hbs",
         {
           user,
           naoLidas,
@@ -196,7 +196,7 @@ export async function criarDoacao(
       const naoLidas = await getNaoLidas(user);
 
       return reply.code(400).view(
-        "/templates/doar.hbs",
+        "/templates/doacao/doar.hbs",
         {
           user,
           naoLidas,
@@ -241,7 +241,7 @@ export async function listarHistoricoDoacoes(
     const naoLidas = await getNaoLidas(user);
 
     return reply.view(
-      "/templates/historicoDoacoes.hbs",
+      "/templates/doacao/historicoDoacoes.hbs",
       { user, naoLidas, doacoes },
       { layout: LAYOUT }
     );

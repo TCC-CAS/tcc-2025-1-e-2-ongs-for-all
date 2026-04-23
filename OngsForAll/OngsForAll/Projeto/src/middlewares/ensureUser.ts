@@ -10,7 +10,6 @@ export async function ensureUser(
     return reply.redirect("/login");
   }
 
-  if (user.tipo !== "usuario") {
-    return reply.redirect("/dashboard/ong");
-  }
+  if (user.tipo === "ong") return reply.redirect("/dashboard/ong");
+  if (user.tipo === "empresa") return reply.redirect("/empresa/dashboard");
 }

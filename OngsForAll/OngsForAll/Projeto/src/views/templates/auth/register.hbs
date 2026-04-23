@@ -10,6 +10,7 @@
       <div class="flex flex-row gap-2 p-2 rounded-full bg-gray-200">
         <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab1">PF/PJ</button>
         <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab2">ONG</button>
+        <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab3">Empresa</button>
       </div>
 
       <div class="mt-4">
@@ -74,6 +75,32 @@
             </button>
           </form>
         </div>
+
+        <!-- Empresa Formulário -->
+        <div id="tab3" class="tab-content text-gray-700 hidden">
+          <p class="text-sm text-gray-500 mb-3">Cadastre sua empresa e apoie ONGs para desbloquear o marketplace social.</p>
+          <form action="/register-empresa" method="POST" class="flex flex-col text-start">
+            <label for="nome_fantasia">Nome fantasia:</label>
+            <input type="text" name="nome_fantasia" id="nome_fantasia" placeholder="Nome da empresa" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="255" />
+
+            <label class="mt-2" for="email_empresa">Email:</label>
+            <input type="email" name="email" id="email_empresa" placeholder="email@empresa.com" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="cnpj_empresa">CNPJ:</label>
+            <input type="text" name="cnpj" id="cnpj_empresa" placeholder="00.000.000/0000-00" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="18" />
+
+            <label class="mt-2" for="senha_empresa">Senha:</label>
+            <input type="password" name="senha" id="senha_empresa" placeholder="************" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" minlength="6" />
+
+            <button type="submit" class="mt-6 rounded-md bg-[#1D3273] hover:bg-[#1D3273]/90 text-lg text-white py-2">
+              Cadastrar empresa
+            </button>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -134,10 +161,24 @@
     });
   }
 
-  // Máscara CNPJ
+  // Máscara CNPJ ONG
   const cnpjInput = document.getElementById('cnpj_ong');
   if (cnpjInput) {
     cnpjInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 14);
+      value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      value = value.replace(/(\d{4})(\d)/, '$1-$2');
+      e.target.value = value;
+    });
+  }
+
+  // Máscara CNPJ Empresa
+  const cnpjEmpresaInput = document.getElementById('cnpj_empresa');
+  if (cnpjEmpresaInput) {
+    cnpjEmpresaInput.addEventListener('input', function (e) {
       let value = e.target.value.replace(/\D/g, '');
       value = value.slice(0, 14);
       value = value.replace(/^(\d{2})(\d)/, '$1.$2');

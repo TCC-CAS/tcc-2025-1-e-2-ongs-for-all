@@ -37,9 +37,13 @@ export async function notificarTodosUsuarios(params: {
 }
 
 export async function listarNotificacoes(params: {
-    tipoConta: "usuario" | "ong";
+    tipoConta: "usuario" | "ong" | "empresa";
     id: number;
 }) {
+    if (params.tipoConta === "empresa") {
+        return { notificacoes: [], naoLidas: 0 };
+    }
+
     if (params.tipoConta === "ong") {
         const notificacoes = await notificacaoRepository.listarNotificacoesOng(params.id);
         const naoLidas = await notificacaoRepository.contarNaoLidasOng(params.id);
@@ -56,9 +60,13 @@ export async function marcarComoLida(id: number) {
 }
 
 export async function contarNaoLidas(params: {
-    tipoConta: "usuario" | "ong";
+    tipoConta: "usuario" | "ong" | "empresa";
     id: number;
 }) {
+    if (params.tipoConta === "empresa") {
+        return { naoLidas: 0 };
+    }
+
     if (params.tipoConta === "ong") {
         const naoLidas = await notificacaoRepository.contarNaoLidasOng(params.id);
         return { naoLidas };

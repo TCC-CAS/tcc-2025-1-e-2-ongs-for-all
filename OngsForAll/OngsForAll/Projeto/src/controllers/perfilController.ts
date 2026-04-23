@@ -8,7 +8,7 @@ import { pipeline } from "stream/promises";
 
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "public", "uploads", "logos");
 
-async function getNaoLidas(user: { tipo: "usuario" | "ong"; id: number }) {
+async function getNaoLidas(user: { tipo: "usuario" | "ong" | "empresa"; id: number }) {
   const { naoLidas } = await notificacaoService.contarNaoLidas({
     tipoConta: user.tipo,
     id: Number(user.id),
@@ -72,7 +72,7 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
     let logoPath: string | null = null;
 
     if (isOng) {
-      // ONG uses multipart form (has file upload)
+      // ONG usa multipart/form-data (tem upload de logo)
       const data = await request.file();
 
       if (data) {
@@ -83,7 +83,6 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
         password = fields.password;
         area_atuacao = fields.area_atuacao;
 
-        // Process logo file if present
         if (data.filename && data.mimetype) {
           if (!ALLOWED_MIMES.includes(data.mimetype)) {
             throw new Error("Formato de imagem não suportado. Use JPG, PNG, WebP ou GIF.");
@@ -109,7 +108,6 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
           logoPath = `/public/uploads/logos/${filename}`;
         }
       } else {
-        // Fallback: no file in the multipart data
         const body = request.body as any;
         nome = body.nome;
         email = body.email;
@@ -118,13 +116,8 @@ export async function updatePerfil(request: FastifyRequest, reply: FastifyReply)
         area_atuacao = body.area_atuacao;
       }
     } else {
-      // User uses regular form body
-      const body = request.body as {
-        nome: string;
-        email: string;
-        telefone?: string;
-        password?: string;
-      };
+      // Usuário usa form normal (sem arquivo)
+      const body = request.body as any;
       nome = body.nome;
       email = body.email;
       telefone = body.telefone;

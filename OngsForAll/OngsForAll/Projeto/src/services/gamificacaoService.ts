@@ -14,8 +14,14 @@ export async function processarAcao(params: {
     interesse_voluntariado: 25,
   };
 
-  const pontos = PONTOS[params.acao] ?? 0;
-  if (pontos > 0) await gamRepo.adicionarPontos(params.usuarioId, pontos);
+  // primeiro_interesse só concede XP se for de fato o primeiro
+  if (params.acao === "primeiro_interesse") {
+    const total = await gamRepo.contarInteressesDoUsuario(params.usuarioId);
+    if (total === 1) await gamRepo.adicionarPontos(params.usuarioId, PONTOS.primeiro_interesse);
+  } else {
+    const pontos = PONTOS[params.acao] ?? 0;
+    if (pontos > 0) await gamRepo.adicionarPontos(params.usuarioId, pontos);
+  }
 
   await verificarEConcederSelos(params.usuarioId);
 }

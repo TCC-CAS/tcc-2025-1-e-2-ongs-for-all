@@ -67,3 +67,11 @@ export async function findOngByEmail(email: string) {
   );
   return rows?.[0] ?? null;
 }
+
+export async function findEmpresaByEmailAuth(email: string) {
+  const [rows]: any = await pool.query(
+    "SELECT id, nome_fantasia AS nome, email, senha, logo FROM empresas WHERE email = ? LIMIT 1",
+    [email]
+  );
+  return rows?.[0] ?? null;
+}

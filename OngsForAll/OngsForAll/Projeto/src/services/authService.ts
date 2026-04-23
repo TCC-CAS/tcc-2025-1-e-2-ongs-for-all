@@ -8,6 +8,7 @@ import {
   findUserIdByValidResetTokenHash,
   updatePasswordAndClearReset,
   findOngByEmail,
+  findEmpresaByEmailAuth,
 } from "../repositories/authRepository";
 
 export function hashResetToken(token: string): string {
@@ -23,12 +24,18 @@ export async function login(email: string, password: string, ip: string) {
   const dataHora = new Date();
 
   let user: any = await findUserByEmail(email);
-  let tipo = "usuario";
+  let tipo: "usuario" | "ong" | "empresa" = "usuario";
 
   // se não encontrou usuário, tenta ONG
   if (!user) {
     user = await findOngByEmail(email);
     tipo = "ong";
+  }
+
+  // se não encontrou ONG, tenta empresa
+  if (!user) {
+    user = await findEmpresaByEmailAuth(email);
+    tipo = "empresa";
   }
 
   const ok = user ? await bcrypt.compare(password, user.senha) : false;

@@ -38,6 +38,15 @@ export default async function (fastify: FastifyInstance) {
     return a === b
   })
 
+  handlebars.registerHelper('array', function (...args: any[]) {
+    // O último argumento é o objeto de opções do Handlebars — removemos ele
+    return args.slice(0, -1)
+  })
+
+  handlebars.registerHelper('isBem', function (tipo: any) {
+    return tipo === 'bem'
+  })
+
   /*
   ========================================
   VIEW ENGINE

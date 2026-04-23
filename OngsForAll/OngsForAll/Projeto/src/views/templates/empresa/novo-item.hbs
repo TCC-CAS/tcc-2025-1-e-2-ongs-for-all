@@ -1,0 +1,92 @@
+<div class="max-w-2xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Novo item na vitrine</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">O item será enviado para moderação antes de ser publicado</p>
+  </div>
+
+  {{#if error}}
+  <div class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
+    {{error}}
+  </div>
+  {{/if}}
+
+  <form method="POST" action="/empresa/vitrine/novo" enctype="multipart/form-data"
+    class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-5">
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Título *</label>
+      <input type="text" name="titulo" value="{{form.titulo}}" required maxlength="255"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Descrição *</label>
+      <textarea name="descricao" rows="4" required maxlength="2000"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none">{{form.descricao}}</textarea>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-2">Tipo *</label>
+        <div class="grid grid-cols-2 gap-2">
+          {{#each (array "produto" "servico" "campanha" "banner" "link")}}
+          <label class="cursor-pointer">
+            <input type="radio" name="tipo" value="{{this}}" class="sr-only peer" {{#ifCond ../form.tipo this}}checked{{/ifCond}} />
+            <div class="px-3 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-600 dark:text-white/70 text-center capitalize peer-checked:border-violet-500 peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20 peer-checked:text-violet-700 dark:peer-checked:text-violet-300 transition">
+              {{this}}
+            </div>
+          </label>
+          {{/each}}
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Categoria</label>
+        <select name="categoria_id"
+          class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400">
+          <option value="">— Selecione —</option>
+          {{#each categorias}}
+          <option value="{{id}}" {{#ifCond ../form.categoriaId id}}selected{{/ifCond}}>{{nome}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Link externo</label>
+      <input type="url" name="link_externo" value="{{form.linkExterno}}" placeholder="https://..."
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Imagem</label>
+      <input type="file" name="file" accept="image/jpeg,image/png,image/webp"
+        class="w-full text-sm text-slate-500 dark:text-white/50 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 dark:file:bg-violet-900/30 file:text-violet-700 dark:file:text-violet-300 hover:file:opacity-80" />
+      <p class="text-xs text-slate-400 dark:text-white/30 mt-1">JPG, PNG ou WebP · máx. 3MB</p>
+    </div>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+        class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white font-bold text-sm shadow hover:opacity-90 transition">
+        Enviar para moderação
+      </button>
+      <a href="/empresa/vitrine"
+        class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/70 text-sm font-semibold hover:opacity-80 transition">
+        Cancelar
+      </a>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  // Seleciona tipo "produto" por padrão
+  document.addEventListener('DOMContentLoaded', function() {
+    const radios = document.querySelectorAll('input[name="tipo"]');
+    if (![...radios].some(r => r.checked)) {
+      const first = document.querySelector('input[name="tipo"][value="produto"]');
+      if (first) first.checked = true;
+    }
+  });
+</script>

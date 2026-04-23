@@ -34,7 +34,7 @@ export async function renderDashBoardPage(
     });
 
     return reply.view(
-      "/templates/dashboard.hbs",
+      "/templates/usuario/dashboard.hbs",
       {
         user: sessionUser,
         naoLidas,
@@ -100,7 +100,7 @@ export async function renderDashboardOngPage(
     });
 
     return reply.view(
-      "/templates/dashboardOng.hbs",
+      "/templates/ong/dashboard.hbs",
       {
         user: sessionUser,
         isOng: true,
@@ -162,7 +162,7 @@ export async function renderConquistasPage(
   const gamificacao = await gamificacaoService.getDadosGamificacaoCompleto(Number(sessionUser.id));
 
   return reply.view(
-    "/templates/conquistas.hbs",
+    "/templates/usuario/conquistas.hbs",
     { user: sessionUser, naoLidas, gamificacao },
     { layout: "layouts/dashboardLayout" }
   );
@@ -183,7 +183,7 @@ export async function totalDoacoesPorOng(
     }
 
     return reply.view(
-      "/templates/totalPorOng.hbs",
+      "/templates/doacao/totalPorOng.hbs",
       {
         user: request.session.user,
         isOng: true,

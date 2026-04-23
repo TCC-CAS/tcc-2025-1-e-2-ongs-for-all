@@ -13,6 +13,8 @@ import { relatorioRoutes } from "./relatorioRoutes";
 import { adminRoutes } from "./adminRoutes";
 import { ongDocumentoRoutes } from "./ongDocumentoRoutes";
 import { mensagemRoutes } from "./mensagemRoutes";
+import { empresaRoutes } from "./empresaRoutes";
+import { marketplaceRoutes } from "./marketplaceRoutes";
 
 export async function registerAllRoutes(fastify: FastifyInstance) {
   await authRoutes(fastify)
@@ -29,4 +31,6 @@ export async function registerAllRoutes(fastify: FastifyInstance) {
   await adminRoutes(fastify);
   await ongDocumentoRoutes(fastify);
   await mensagemRoutes(fastify);
+  await empresaRoutes(fastify);
+  await marketplaceRoutes(fastify);
 }

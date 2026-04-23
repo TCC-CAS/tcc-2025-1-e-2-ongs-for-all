@@ -1,0 +1,118 @@
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <!-- Hero -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 to-purple-800 p-8 text-white shadow-lg">
+    <div class="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/5"></div>
+    <div class="absolute -bottom-12 -left-8 w-64 h-64 rounded-full bg-white/5"></div>
+    <div class="relative flex items-center gap-5">
+      {{#if empresa.logo}}
+      <img src="{{empresa.logo}}" class="w-16 h-16 rounded-2xl object-cover border-2 border-white/30 shadow-md shrink-0" />
+      {{else}}
+      <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-md">
+        {{empresa.nome_fantasia.[0]}}
+      </div>
+      {{/if}}
+      <div>
+        <p class="text-white/70 text-sm font-medium">Bem-vinda ao ONGs For All</p>
+        <h1 class="text-2xl font-extrabold mt-0.5">{{empresa.nome_fantasia}}</h1>
+        {{#if empresa.setor}}<p class="text-white/70 text-sm mt-0.5">{{empresa.setor}}</p>{{/if}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Status da vitrine -->
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40 mb-1">Status no marketplace</p>
+        {{#if isAtiva}}
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-bold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Vitrine ativa
+        </span>
+        {{else if isElegivel}}
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-sm font-bold">
+          <span class="w-2 h-2 rounded-full bg-amber-500"></span> Elegível — aguardando ativação
+        </span>
+        {{else}}
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white/60 text-sm font-bold">
+          <span class="w-2 h-2 rounded-full bg-slate-400"></span> Bloqueada — apoie para desbloquear
+        </span>
+        {{/if}}
+      </div>
+      {{#if podePubilcar}}
+      <a href="/empresa/vitrine/novo"
+        class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white text-sm font-bold shadow hover:opacity-90 transition">
+        + Publicar item
+      </a>
+      {{/if}}
+    </div>
+
+    {{#if isBloqueada}}
+    <!-- Progresso para elegibilidade -->
+    <div class="mt-5 pt-5 border-t border-slate-100 dark:border-white/5">
+      <div class="flex justify-between text-sm mb-2">
+        <span class="font-semibold text-slate-700 dark:text-white/80">Meta de apoios</span>
+        <span class="text-slate-500 dark:text-white/50">{{metricas.total_apoios}} / {{META_APOIOS}} necessidades</span>
+      </div>
+      <div class="h-2.5 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full transition-all duration-700"
+          style="width: {{progressoMeta}}%"></div>
+      </div>
+      <p class="text-xs text-slate-400 dark:text-white/40 mt-2">
+        {{#if faltam}}Apoie mais {{faltam}} necessidade(s) para desbloquear a vitrine.{{else}}Meta atingida! Aguardando ativação.{{/if}}
+      </p>
+    </div>
+    {{/if}}
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-3 gap-4">
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm text-center">
+      <p class="text-3xl font-extrabold text-violet-600">{{metricas.total_apoios}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Necessidades apoiadas</p>
+    </div>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm text-center">
+      <p class="text-3xl font-extrabold text-[#2D4BA6] dark:text-white">{{metricas.ongs_apoiadas}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">ONGs apoiadas</p>
+    </div>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm text-center">
+      <p class="text-3xl font-extrabold text-emerald-500">{{metricas.tipos_apoiados}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Tipos de apoio</p>
+    </div>
+  </div>
+
+  <!-- Apoios recentes -->
+  {{#if apoiosRecentes.length}}
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-bold text-[#2D4BA6] dark:text-white">Apoios recentes</h2>
+      <a href="/empresa/necessidades" class="text-xs text-violet-600 dark:text-violet-400 font-semibold hover:underline">Ver mais</a>
+    </div>
+    <div class="space-y-3">
+      {{#each apoiosRecentes}}
+      <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+        <div class="w-2 h-2 rounded-full bg-violet-500 shrink-0"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-slate-800 dark:text-white truncate">{{titulo_necessidade}}</p>
+          <p class="text-xs text-slate-400 dark:text-white/30">{{nome_ong}} · {{criado_em}}</p>
+        </div>
+        <span class="text-xs px-2 py-1 rounded-full shrink-0
+          {{#if (isBem tipo_necessidade)}}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300{{/if}}
+          {{#unless (isBem tipo_necessidade)}}bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300{{/unless}}">
+          {{tipo_necessidade}}
+        </span>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{else}}
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-8 shadow-sm text-center">
+    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhum apoio registrado ainda</p>
+    <a href="/empresa/necessidades"
+      class="mt-4 inline-block px-5 py-2.5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white text-sm font-bold shadow hover:opacity-90 transition">
+      Explorar necessidades
+    </a>
+  </div>
+  {{/if}}
+
+</div>

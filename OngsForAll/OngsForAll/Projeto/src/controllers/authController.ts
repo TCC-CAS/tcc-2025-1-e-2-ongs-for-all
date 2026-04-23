@@ -174,6 +174,10 @@ export async function loginUser(
       return reply.redirect("/dashboard/ong");
     }
 
+    if (result.user.tipo === "empresa") {
+      return reply.redirect("/empresa/dashboard");
+    }
+
     return reply.redirect("/dashboard");
   } catch (error) {
     console.error("Erro ao fazer login:", error);

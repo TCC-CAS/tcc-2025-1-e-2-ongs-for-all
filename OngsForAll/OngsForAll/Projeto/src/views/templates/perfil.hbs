@@ -1,164 +1,134 @@
-<section class="min-h-screen px-6 py-12 transition-colors duration-300 bg-white text-[#1D3273] dark:bg-[#0D1B2A] dark:text-white">
-  <div class="max-w-2xl mx-auto space-y-8">
+<div class="max-w-2xl mx-auto space-y-6">
 
-    <!-- Cabeçalho -->
-    <div>
-      <h1 class="text-3xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-600 text-transparent bg-clip-text">
-        Meu Perfil
-      </h1>
-      <p class="mt-1 text-[#1D3273]/70 dark:text-white/70 text-sm">
-        Visualize e edite suas informações
-      </p>
-    </div>
-
-    {{#if success}}
-    <div id="toast-success"
-      class="p-3 rounded-xl bg-green-500/20 border border-green-500/30 text-green-700 dark:text-green-300 text-sm text-center font-medium">
-      Perfil atualizado com sucesso!
-    </div>
-    <script>
-      (function () {
-        var el = document.getElementById("toast-success");
-        if (!el) return;
-        setTimeout(function () { el.classList.add("opacity-0"); el.style.transition = "opacity 0.5s"; }, 2500);
-        setTimeout(function () { el.remove(); }, 3100);
-        var url = new URL(window.location.href);
-        url.searchParams.delete("success");
-        window.history.replaceState({}, document.title, url.toString());
-      })();
-    </script>
-    {{/if}}
-
-    {{#if message}}
-    <div class="p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-700 dark:text-red-300 text-sm text-center font-medium">
-      {{message}}
-    </div>
-    {{/if}}
-
-    <!-- Card de informações -->
-    <div class="bg-[#1D3273]/10 dark:bg-white/10 border border-[#1D3273]/20 dark:border-white/20 rounded-xl p-8 shadow-lg">
-
-      <!-- Avatar e nome -->
-      <div class="flex items-center gap-4 mb-6">
-        {{#if isOng}}
-          {{#if user.logo}}
-          <img src="{{user.logo}}" alt="Logo da ONG"
-            class="w-16 h-16 rounded-full object-cover border-2 border-[#1D3273]/20 dark:border-white/20 shadow" />
-          {{else}}
-          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white text-2xl font-bold shadow">
-            {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
-          </div>
-          {{/if}}
-        {{else}}
-          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white text-2xl font-bold shadow">
-            {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
-          </div>
-        {{/if}}
-        <div>
-          <p class="text-xl font-bold">{{user.nome}}</p>
-          <p class="text-sm text-[#1D3273]/60 dark:text-white/60">
-            {{#if isOng}}Conta ONG{{else}}Conta pessoal{{/if}}
-          </p>
-        </div>
-      </div>
-
-      <hr class="border-[#1D3273]/20 dark:border-white/20 mb-6" />
-
-      <!-- Formulário de edição -->
-      <form action="/perfil/editar" method="POST" {{#if isOng}}enctype="multipart/form-data"{{/if}} class="space-y-5">
-
-        <!-- Nome -->
-        <div>
-          <label for="nome" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Nome</label>
-          <input type="text" id="nome" name="nome" value="{{user.nome}}" required
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
-        </div>
-
-        <!-- Email -->
-        <div>
-          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">E-mail</label>
-          <input type="email" id="email" name="email" value="{{user.email}}" required
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
-        </div>
-
-        <!-- Telefone -->
-        <div>
-          <label for="telefone" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Telefone</label>
-          <input type="text" id="telefone" name="telefone" value="{{user.telefone}}" placeholder="(00) 00000-0000"
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
-        </div>
-
-        {{#if isOng}}
-        <!-- Área de atuação (só ONG) -->
-        <div>
-          <label for="area_atuacao" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Área de atuação</label>
-          <input type="text" id="area_atuacao" name="area_atuacao" value="{{user.area_atuacao}}" placeholder="Ex: Educação, Saúde..."
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
-        </div>
-
-        <!-- Logo da ONG -->
-        <div>
-          <label for="logo" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">Logo da ONG</label>
-          {{#if user.logo}}
-          <div class="flex items-center gap-4 mb-3">
-            <img src="{{user.logo}}" alt="Logo atual" class="w-14 h-14 rounded-xl object-cover border border-[#1D3273]/20 dark:border-white/20" />
-            <span class="text-xs text-[#1D3273]/50 dark:text-white/50">Logo atual</span>
-          </div>
-          {{/if}}
-          <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif"
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition file:mr-3 file:rounded-lg file:border-0 file:bg-[#2D4BA6] file:text-white file:px-4 file:py-1.5 file:text-sm file:font-semibold file:cursor-pointer" />
-          <p class="text-xs text-[#1D3273]/40 dark:text-white/40 mt-1">JPG, PNG, WebP ou GIF. Máximo 2MB.</p>
-        </div>
-        {{/if}}
-
-        <!-- Dados somente leitura -->
-        {{#unless isOng}}
-        {{#if user.cpf}}
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">CPF</label>
-          <p class="px-4 py-2.5 text-sm rounded-lg bg-[#1D3273]/5 dark:bg-white/5 border border-[#1D3273]/10 dark:border-white/10 text-[#1D3273]/70 dark:text-white/70">
-            {{user.cpf}}
-          </p>
-        </div>
-        {{/if}}
-        {{/unless}}
-
-        {{#if isOng}}
-        {{#if user.cnpj}}
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">CNPJ</label>
-          <p class="px-4 py-2.5 text-sm rounded-lg bg-[#1D3273]/5 dark:bg-white/5 border border-[#1D3273]/10 dark:border-white/10 text-[#1D3273]/70 dark:text-white/70">
-            {{user.cnpj}}
-          </p>
-        </div>
-        {{/if}}
-        {{/if}}
-
-        <hr class="border-[#1D3273]/20 dark:border-white/20" />
-
-        <!-- Nova senha -->
-        <div>
-          <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-[#1D3273]/50 dark:text-white/50 mb-1">
-            Nova senha <span class="normal-case font-normal">(deixe em branco para manter)</span>
-          </label>
-          <input type="password" id="password" name="password" placeholder="********"
-            class="w-full rounded-lg border border-[#1D3273]/20 dark:border-white/20 bg-white dark:bg-white/5 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3273] dark:focus:ring-white/40 transition" />
-        </div>
-
-        <!-- Botões -->
-        <div class="flex justify-end gap-3 pt-2">
-          <a href="{{backUrl}}"
-            class="px-5 py-2.5 rounded-xl border border-[#1D3273]/20 dark:border-white/20 text-sm font-semibold hover:opacity-80 transition">
-            Voltar
-          </a>
-          <button type="submit"
-            class="px-6 py-2.5 rounded-xl bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273] text-sm font-semibold hover:opacity-90 transition shadow">
-            Salvar alterações
-          </button>
-        </div>
-
-      </form>
-    </div>
-
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">
+      {{#if isOng}}Perfil da ONG{{else}}Meu perfil{{/if}}
+    </h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Atualize suas informações pessoais</p>
   </div>
-</section>
+
+  {{#if success}}
+  <div class="px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
+    Perfil atualizado com sucesso!
+  </div>
+  <script>
+    (function () {
+      var url = new URL(window.location.href);
+      url.searchParams.delete("success");
+      window.history.replaceState({}, document.title, url.toString());
+    })();
+  </script>
+  {{/if}}
+
+  {{#if message}}
+  <div class="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
+    {{message}}
+  </div>
+  {{/if}}
+
+  <form action="/perfil/editar" method="POST" {{#if isOng}}enctype="multipart/form-data"{{/if}}
+    class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-5">
+
+    <!-- Avatar / Logo -->
+    <div class="flex items-center gap-5">
+      {{#if isOng}}
+        {{#if user.logo}}
+        <img src="{{user.logo}}" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 dark:border-white/10 shadow-sm shrink-0" />
+        {{else}}
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-2xl shadow-sm shrink-0">
+          {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
+        </div>
+        {{/if}}
+        <div class="flex-1">
+          <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Logo da ONG</label>
+          <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/gif"
+            class="w-full text-sm text-slate-500 dark:text-white/50 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#2D4BA6]/10 dark:file:bg-[#4886D9]/20 file:text-[#2D4BA6] dark:file:text-[#4886D9] hover:file:opacity-80" />
+          <p class="text-xs text-slate-400 dark:text-white/30 mt-1">JPG, PNG, WebP ou GIF · máx. 2MB</p>
+        </div>
+      {{else}}
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-2xl shadow-sm shrink-0">
+          {{#if user.nome}}{{user.nome.[0]}}{{else}}?{{/if}}
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-700 dark:text-white/80">{{user.nome}}</p>
+          <p class="text-xs text-slate-400 dark:text-white/40 mt-0.5">Conta pessoal</p>
+        </div>
+      {{/if}}
+    </div>
+
+    <!-- Nome -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Nome *</label>
+      <input type="text" name="nome" value="{{user.nome}}" required maxlength="255"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4886D9]" />
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">E-mail *</label>
+      <input type="email" name="email" value="{{user.email}}" required maxlength="255"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4886D9]" />
+    </div>
+
+    <!-- Telefone -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Telefone</label>
+      <input type="tel" name="telefone" value="{{user.telefone}}" maxlength="20" placeholder="(00) 00000-0000"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4886D9]" />
+    </div>
+
+    {{#if isOng}}
+    <!-- Área de atuação (somente ONG) -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Área de atuação</label>
+      <input type="text" name="area_atuacao" value="{{user.area_atuacao}}" maxlength="100" placeholder="Ex: Educação, Saúde, Meio Ambiente..."
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4886D9]" />
+    </div>
+    {{/if}}
+
+    <!-- CPF somente leitura (usuário) -->
+    {{#unless isOng}}
+    {{#if user.cpf}}
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">CPF</label>
+      <input type="text" value="{{user.cpf}}" disabled
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/40 text-sm cursor-not-allowed" />
+    </div>
+    {{/if}}
+    {{/unless}}
+
+    <!-- CNPJ somente leitura (ONG) -->
+    {{#if isOng}}
+    {{#if user.cnpj}}
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">CNPJ</label>
+      <input type="text" value="{{user.cnpj}}" disabled
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/40 text-sm cursor-not-allowed" />
+    </div>
+    {{/if}}
+    {{/if}}
+
+    <!-- Separador senha -->
+    <div class="pt-1 border-t border-slate-100 dark:border-white/5">
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">
+        Nova senha
+        <span class="text-slate-400 dark:text-white/30 font-normal text-xs ml-1">(deixe em branco para manter)</span>
+      </label>
+      <input type="password" name="password" placeholder="••••••••" minlength="6"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4886D9]" />
+    </div>
+
+    <!-- Botões -->
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+        class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white font-bold text-sm shadow hover:opacity-90 transition">
+        Salvar alterações
+      </button>
+      <a href="{{backUrl}}"
+        class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/70 text-sm font-semibold hover:opacity-80 transition">
+        Cancelar
+      </a>
+    </div>
+  </form>
+
+</div>

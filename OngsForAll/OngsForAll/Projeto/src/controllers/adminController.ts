@@ -35,8 +35,8 @@ export async function renderAdminOngsPage(request: FastifyRequest, reply: Fastif
 
   return reply.view(
     "/templates/admin/ongs.hbs",
-    { ongs, sucesso },
-    { layout: "layouts/authLayout" }
+    { ongs, sucesso, adminPageOngs: true },
+    { layout: "layouts/adminLayout" }
   );
 }
 
