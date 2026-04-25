@@ -1,0 +1,151 @@
+<div class="max-w-2xl mx-auto space-y-6">
+
+  <div>
+    <a href="/empresa/vitrine"
+      class="inline-flex items-center gap-1.5 text-sm text-slate-400 dark:text-white/40 hover:text-[#2D4BA6] dark:hover:text-[#4886D9] transition mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+      Voltar a vitrine
+    </a>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Editar item</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">
+      {{#if isRejeitado}}Edite o item e reenvie para nova moderacao.{{else if isRascunho}}Edite e mantenha em rascunho ou reenvie para moderacao.{{else}}Salvar alteracoes enviara o item para re-moderacao.{{/if}}
+    </p>
+  </div>
+
+  {{#if error}}
+  <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+    </svg>
+    {{error}}
+  </div>
+  {{/if}}
+
+  <form method="POST" action="/empresa/vitrine/{{item.id}}/editar" enctype="multipart/form-data"
+    class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-5">
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Titulo *</label>
+      <input type="text" name="titulo" value="{{item.titulo}}" required maxlength="255"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Descricao *</label>
+      <textarea name="descricao" rows="4" required maxlength="2000"
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none transition">{{item.descricao}}</textarea>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-2">Tipo *</label>
+        <div class="grid grid-cols-2 gap-2">
+          {{#each (array "produto" "servico" "campanha" "banner" "link")}}
+          <label class="cursor-pointer">
+            <input type="radio" name="tipo" value="{{this}}" class="sr-only peer" {{#ifCond ../item.tipo this}}checked{{/ifCond}} />
+            <div class="px-3 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-600 dark:text-white/70 text-center capitalize
+              peer-checked:border-violet-500 peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20 peer-checked:text-violet-700 dark:peer-checked:text-violet-300 transition">
+              {{this}}
+            </div>
+          </label>
+          {{/each}}
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Categoria</label>
+        <select name="categoria_id"
+          class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition">
+          <option value="">-- Selecione --</option>
+          {{#each categorias}}
+          <option value="{{id}}" {{#ifCond ../item.categoria_id id}}selected{{/ifCond}}>{{nome}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1">Link externo</label>
+      <input type="url" name="link_externo" value="{{item.link_externo}}" placeholder="https://..."
+        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 transition" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-2">Imagem</label>
+
+      {{#if item.imagem_url}}
+      <div class="mb-3 flex items-center gap-4 p-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl">
+        <img src="{{item.imagem_url}}" alt="Imagem atual do item {{item.titulo}}"
+          class="w-16 h-16 rounded-lg object-cover border border-slate-200 dark:border-white/10 shrink-0" />
+        <div class="flex-1 min-w-0">
+          <p class="text-xs text-slate-500 dark:text-white/50 mb-1.5">Imagem atual</p>
+          <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" name="remover_imagem" value="1" id="removerImg"
+              class="w-4 h-4 rounded border-slate-300 dark:border-white/20 text-red-500 focus:ring-red-400 bg-white dark:bg-white/5" />
+            <span class="text-xs text-red-500 dark:text-red-400 font-medium">Remover imagem atual</span>
+          </label>
+        </div>
+      </div>
+      {{/if}}
+
+      <input type="file" name="file" id="fileInput" accept="image/jpeg,image/png,image/webp"
+        class="w-full text-sm text-slate-500 dark:text-white/50
+          file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0
+          file:text-sm file:font-semibold
+          file:bg-violet-100 dark:file:bg-violet-900/30
+          file:text-violet-700 dark:file:text-violet-300
+          hover:file:opacity-80" />
+      <p class="text-xs text-slate-400 dark:text-white/30 mt-1.5">
+        Deixe em branco para manter a imagem atual. JPG, PNG ou WebP. Maximo 3MB.
+      </p>
+    </div>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit" name="acao" value="salvar"
+        class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white font-bold text-sm shadow hover:opacity-90 transition">
+        {{#if isRejeitado}}Salvar edicao{{else if isRascunho}}Salvar rascunho{{else}}Salvar alteracoes{{/if}}
+      </button>
+      {{#if isRejeitado}}
+      <button type="submit" name="acao" value="reenviar"
+        class="px-5 py-3 rounded-2xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition shadow-sm">
+        Salvar e reenviar
+      </button>
+      {{/if}}
+      {{#if isRascunho}}
+      <button type="submit" name="acao" value="reenviar"
+        class="px-5 py-3 rounded-2xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition shadow-sm">
+        Reenviar para moderacao
+      </button>
+      {{/if}}
+      <a href="/empresa/vitrine"
+        class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-white/15 text-slate-600 dark:text-white/70 text-sm font-semibold hover:opacity-80 transition">
+        Cancelar
+      </a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  (function () {
+    var removerCheckbox = document.getElementById('removerImg');
+    var fileInput = document.getElementById('fileInput');
+    if (!removerCheckbox || !fileInput) return;
+
+    removerCheckbox.addEventListener('change', function () {
+      fileInput.style.opacity = this.checked ? '0.4' : '1';
+      fileInput.style.pointerEvents = this.checked ? 'none' : '';
+      if (this.checked) fileInput.value = '';
+    });
+
+    fileInput.addEventListener('change', function () {
+      if (this.files && this.files.length > 0) {
+        removerCheckbox.checked = false;
+        fileInput.style.opacity = '1';
+        fileInput.style.pointerEvents = '';
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,175 @@
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <!-- Hero da ONG -->
+  <div class="relative bg-gradient-to-br from-[#2D4BA6] to-[#4886D9] rounded-3xl p-8 text-white overflow-hidden shadow-lg">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white"></div>
+      <div class="absolute -bottom-12 -left-8 w-64 h-64 rounded-full bg-white"></div>
+    </div>
+    <div class="relative flex items-center gap-6">
+      {{#if ong.logo}}
+      <img src="{{ong.logo}}" alt="Logo {{ong.nome}}"
+        class="w-20 h-20 rounded-2xl object-cover border-2 border-white/30 shadow-md shrink-0" />
+      {{else}}
+      <div class="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center text-white font-bold text-2xl shadow-md shrink-0">
+        {{ong.nome.[0]}}
+      </div>
+      {{/if}}
+      <div class="min-w-0">
+        <h1 class="text-3xl font-bold leading-tight">{{ong.nome}}</h1>
+        {{#if ong.area_atuacao}}
+        <p class="text-white/80 mt-1 text-sm font-medium">{{ong.area_atuacao}}</p>
+        {{/if}}
+        {{#if ong.email}}
+        <p class="text-white/60 text-sm mt-0.5">{{ong.email}}</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- CTA Mensagem -->
+    {{#unless user.tipo}}{{else}}
+    {{#ifCond user.tipo 'usuario'}}
+    <form method="POST" action="/mensagens/iniciar" class="relative mt-5 flex items-end gap-3 max-w-xl">
+      <input type="hidden" name="ong_id" value="{{ong.ong_id}}" />
+      <input
+        type="text"
+        name="mensagem"
+        placeholder="Envie uma mensagem para esta ONG..."
+        required
+        maxlength="500"
+        class="flex-1 bg-white/20 border border-white/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40"
+      />
+      <button type="submit"
+        class="shrink-0 px-4 py-2.5 rounded-xl bg-white text-[#2D4BA6] font-semibold text-sm hover:opacity-90 transition shadow">
+        Enviar
+      </button>
+    </form>
+    {{/ifCond}}
+    {{/unless}}
+  </div>
+
+  <!-- Indicadores -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-center shadow-sm">
+      <p class="text-3xl font-bold text-[#2D4BA6] dark:text-white">{{stats.totalNecessidades}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Necessidades criadas</p>
+    </div>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-center shadow-sm">
+      <p class="text-3xl font-bold text-emerald-500">{{stats.necessidadesConcluidas}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Concluídas</p>
+    </div>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-center shadow-sm">
+      <p class="text-3xl font-bold text-[#4886D9]">{{stats.totalApoios}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Apoios recebidos</p>
+    </div>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-center shadow-sm">
+      <p class="text-3xl font-bold text-amber-500">{{stats.pessoasBeneficiadas}}</p>
+      <p class="text-xs text-slate-500 dark:text-white/50 mt-1 font-medium">Pessoas beneficiadas</p>
+    </div>
+  </div>
+
+  <!-- Necessidades abertas -->
+  {{#if temNecessidades}}
+  <section>
+    <h2 class="text-lg font-bold text-[#2D4BA6] dark:text-white mb-4">Necessidades abertas</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {{#each necessidades}}
+      <a href="/necessidades/{{id}}"
+        class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-[#4886D9]/40 dark:hover:border-[#4886D9]/40 transition-all duration-200 block">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <p class="font-semibold text-[#2D4BA6] dark:text-white text-sm leading-snug">{{titulo}}</p>
+          <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold
+            {{#if isBem}}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300{{/if}}
+            {{#if isServico}}bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300{{/if}}
+            {{#if isVoluntariado}}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{{/if}}">
+            {{tipoLabel}}
+          </span>
+        </div>
+        {{#if quantidade}}
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs text-slate-500 dark:text-white/50">
+            <span>Progresso</span>
+            <span>{{progresso}}%</span>
+          </div>
+          <div class="h-1.5 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] rounded-full transition-all duration-500"
+              style="width: {{progresso}}%"></div>
+          </div>
+        </div>
+        {{/if}}
+      </a>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <!-- Relatórios de impacto -->
+  {{#if temRelatorios}}
+  <section>
+    <h2 class="text-lg font-bold text-[#2D4BA6] dark:text-white mb-4">Relatórios de impacto</h2>
+    <div class="space-y-4">
+      {{#each relatorios}}
+      <a href="/relatorios/{{id}}"
+        class="flex gap-5 bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-[#4886D9]/40 dark:hover:border-[#4886D9]/40 transition-all duration-200">
+        {{#if imagem_url}}
+        <img src="{{imagem_url}}" alt="{{titulo}}"
+          class="w-20 h-20 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-white/10" />
+        {{else}}
+        <div class="w-20 h-20 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300 dark:text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        {{/if}}
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-[#2D4BA6] dark:text-white text-sm">{{titulo}}</p>
+          <p class="text-xs text-slate-500 dark:text-white/50 mt-0.5">{{data_publicacao}}</p>
+          <p class="text-sm text-slate-600 dark:text-white/70 mt-2 line-clamp-2">{{descricao}}</p>
+          {{#if pessoas_beneficiadas}}
+          <p class="text-xs text-amber-600 dark:text-amber-400 font-medium mt-2">
+            {{pessoas_beneficiadas}} pessoas beneficiadas
+          </p>
+          {{/if}}
+        </div>
+      </a>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <!-- Atividades recentes -->
+  {{#if temAtividades}}
+  <section>
+    <h2 class="text-lg font-bold text-[#2D4BA6] dark:text-white mb-4">Atividades recentes</h2>
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl divide-y divide-slate-100 dark:divide-white/5 shadow-sm">
+      {{#each atividades}}
+      <div class="px-5 py-4 flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-[#4886D9] shrink-0"></div>
+        <p class="text-sm text-slate-700 dark:text-white/80 flex-1">
+          Recebeu apoio de {{tipoLabel}} na necessidade
+          <span class="font-semibold text-[#2D4BA6] dark:text-white">{{titulo_necessidade}}</span>
+        </p>
+        <span class="text-xs text-slate-400 dark:text-white/30 shrink-0">{{criado_em}}</span>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{#unless temNecessidades}}
+  {{#unless temRelatorios}}
+  {{#unless temAtividades}}
+  <div class="flex flex-col items-center justify-center py-16 text-center">
+    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300 dark:text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    </div>
+    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhuma atividade publicada ainda</p>
+    <p class="text-sm text-slate-400 dark:text-white/30 mt-1">Esta ONG ainda não possui dados públicos de impacto.</p>
+  </div>
+  {{/unless}}
+  {{/unless}}
+  {{/unless}}
+
+</div>

@@ -1,0 +1,206 @@
+<section class="flex text-gray-700 flex-col justify-center min-h-screen items-center">
+  <div class="flex flex-col max-w-md bg-gray-100 shadow-md text-center w-full p-6 rounded-xl">
+    <h1 class="flex justify-center py-4 text-2xl font-extrabold text-[#1D3273]">
+      <a href="/" class="flex items-center gap-2">
+        <box-icon color="#1D3273" name="world"></box-icon> ONG For All
+      </a>
+    </h1>
+
+    <div class="tab-section bg-gray-100 p-5 rounded-lg min-h-[400px]">
+      <div class="flex flex-row gap-2 p-2 rounded-full bg-gray-200">
+        <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab1">PF/PJ</button>
+        <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab2">ONG</button>
+        <button class="py-2 rounded-full font-bold hover:bg-gray-400 flex-grow" data-tab-target="#tab3">Empresa</button>
+      </div>
+
+      <div class="mt-4">
+        <!-- PF/PJ Formulário -->
+        <div id="tab1" class="tab-content text-gray-700 hidden">
+          <form action="/register-user" method="POST" class="flex flex-col text-start">
+            <label for="nome">Nome/Razão social:</label>
+            <input type="text" name="nome" id="nome" placeholder="Nome" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="email">Email:</label>
+            <input type="email" name="email" id="email" placeholder="email@email.com" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="cpf">CPF:</label>
+            <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="14" />
+
+            <label class="mt-2" for="telefone">Telefone:</label>
+            <input type="tel" name="telefone" id="telefone" placeholder="(11) 99999-9999" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="15" />
+
+            <label class="mt-2" for="password">Senha:</label>
+            <input type="password" name="password" id="password" placeholder="************" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" minlength="6" />
+
+            <button type="submit" class="mt-6 rounded-md bg-[#1D3273] hover:bg-[#1D3273]/90 text-lg text-white py-2">
+              Registrar
+            </button>
+          </form>
+        </div>
+
+        <!-- ONG Formulário -->
+        <div id="tab2" class="tab-content text-gray-700 hidden">
+          <form action="/register-ong" method="POST" class="flex flex-col text-start">
+            <label for="nomeong">Nome da ONG:</label>
+            <input type="text" name="nomeong" id="nomeong" placeholder="Nome da ONG" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="emailong">Email:</label>
+            <input type="email" name="emailong" id="emailong" placeholder="email@ong.com" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="cnpj_ong">CNPJ:</label>
+            <input type="text" name="cnpj_ong" id="cnpj_ong" placeholder="00.000.000/0000-00" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="18" />
+
+            <label class="mt-2" for="areadeatuacao">Área de Atuação:</label>
+            <input type="text" name="areadeatuacao" id="areadeatuacao" placeholder="Educação, Saúde, Meio ambiente..."
+              required class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="telefoneong">Telefone:</label>
+            <input type="tel" name="telefoneong" id="telefoneong" placeholder="(11) 99999-9999" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="15" />
+
+            <label class="mt-2" for="passwordong">Senha:</label>
+            <input type="password" name="passwordong" id="passwordong" placeholder="************" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" minlength="6" />
+
+            <button type="submit" class="mt-6 rounded-md bg-[#1D3273] hover:bg-[#1D3273]/90 text-lg text-white py-2">
+              Registrar ONG
+            </button>
+          </form>
+        </div>
+
+        <!-- Empresa Formulário -->
+        <div id="tab3" class="tab-content text-gray-700 hidden">
+          <p class="text-sm text-gray-500 mb-3">Cadastre sua empresa e apoie ONGs para desbloquear o marketplace social.</p>
+          <form action="/register-empresa" method="POST" class="flex flex-col text-start">
+            <label for="nome_fantasia">Nome fantasia:</label>
+            <input type="text" name="nome_fantasia" id="nome_fantasia" placeholder="Nome da empresa" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="255" />
+
+            <label class="mt-2" for="email_empresa">Email:</label>
+            <input type="email" name="email" id="email_empresa" placeholder="email@empresa.com" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="100" />
+
+            <label class="mt-2" for="cnpj_empresa">CNPJ:</label>
+            <input type="text" name="cnpj" id="cnpj_empresa" placeholder="00.000.000/0000-00" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" maxlength="18" />
+
+            <label class="mt-2" for="senha_empresa">Senha:</label>
+            <input type="password" name="senha" id="senha_empresa" placeholder="************" required
+              class="border-2 py-2 border-blue-300 rounded-lg p-1" minlength="6" />
+
+            <button type="submit" class="mt-6 rounded-md bg-[#1D3273] hover:bg-[#1D3273]/90 text-lg text-white py-2">
+              Cadastrar empresa
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-4">
+      Possui uma conta?
+      <a href="/login" class="text-[#1D3273] font-semibold">Entrar</a>
+    </p>
+  </div>
+</section>
+
+<!-- SCRIPT Abas e Máscaras -->
+<script>
+  const tabs = document.querySelectorAll('[data-tab-target]');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const activeClasses = ['tabativa', 'bg-[#1D3273]', 'text-white', 'hover:text-gray-700'];
+
+  // Seleciona a primeira aba
+  if (tabs.length && tabContents.length) {
+    tabs[0].classList.add(...activeClasses);
+    tabContents[0].classList.remove('hidden');
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetContent = document.querySelector(tab.dataset.tabTarget);
+      tabContents.forEach(content => content.classList.add('hidden'));
+      if (targetContent) targetContent.classList.remove('hidden');
+      tabs.forEach(t => t.classList.remove(...activeClasses));
+      tab.classList.add(...activeClasses);
+    });
+  });
+
+  // Máscara CPF
+  const cpfInput = document.getElementById('cpf');
+  if (cpfInput) {
+    cpfInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 11);
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      e.target.value = value;
+    });
+  }
+
+  // Máscara Telefone PF
+  const telefoneInput = document.getElementById('telefone');
+  if (telefoneInput) {
+    telefoneInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 11);
+      if (value.length <= 10) {
+        value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      } else {
+        value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      }
+      e.target.value = value;
+    });
+  }
+
+  // Máscara CNPJ ONG
+  const cnpjInput = document.getElementById('cnpj_ong');
+  if (cnpjInput) {
+    cnpjInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 14);
+      value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      value = value.replace(/(\d{4})(\d)/, '$1-$2');
+      e.target.value = value;
+    });
+  }
+
+  // Máscara CNPJ Empresa
+  const cnpjEmpresaInput = document.getElementById('cnpj_empresa');
+  if (cnpjEmpresaInput) {
+    cnpjEmpresaInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 14);
+      value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      value = value.replace(/(\d{4})(\d)/, '$1-$2');
+      e.target.value = value;
+    });
+  }
+
+  // Máscara Telefone ONG
+  const telefoneOngInput = document.getElementById('telefoneong');
+  if (telefoneOngInput) {
+    telefoneOngInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = value.slice(0, 11);
+      if (value.length <= 10) {
+        value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      } else {
+        value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      }
+      e.target.value = value;
+    });
+  }
+</script>

@@ -1,0 +1,65 @@
+<div class="max-w-xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">
+      {{#ifCond necessidade.tipo_necessidade 'voluntariado'}}Quero ser voluntário{{else}}Quero ajudar{{/ifCond}}
+    </h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">
+      Preencha os dados abaixo para demonstrar seu interesse
+    </p>
+  </div>
+
+  <div class="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40 mb-3">
+      Necessidade selecionada
+    </h3>
+    <div class="space-y-1 text-sm text-slate-700 dark:text-white/80">
+      <p><span class="font-semibold">Título:</span> {{necessidade.titulo}}</p>
+      <p><span class="font-semibold">ONG:</span> {{necessidade.nome_ong}}</p>
+      <p><span class="font-semibold">Categoria:</span> {{necessidade.categoria}}</p>
+      <p><span class="font-semibold">Quantidade:</span> {{necessidade.quantidade}}</p>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
+    <form action="/interesses" method="POST" class="space-y-5">
+      <input type="hidden" name="necessidade_id" value="{{formData.necessidade_id}}" />
+
+      <div>
+        <label for="quantidade" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-white/50 mb-1">
+          Quantidade que você pode entregar
+        </label>
+        <input type="number" name="quantidade" id="quantidade" min="1" placeholder="Ex.: 1"
+          class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4886D9] transition" />
+      </div>
+
+      <div>
+        <label for="data_prevista" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-white/50 mb-1">
+          Data prevista para entrega
+        </label>
+        <input type="date" name="data_prevista" id="data_prevista"
+          class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9] transition" />
+      </div>
+
+      <div>
+        <label for="observacao" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-white/50 mb-1">
+          Observação
+        </label>
+        <textarea name="observacao" id="observacao" rows="3" placeholder="Ex.: Posso entregar no período da tarde."
+          class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4886D9] transition resize-none"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <a href="/necessidades/{{necessidade.id}}"
+          class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-sm font-semibold text-slate-600 dark:text-white/70 hover:opacity-80 transition">
+          Voltar
+        </a>
+        <button type="submit"
+          class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white text-sm font-bold hover:opacity-90 transition shadow">
+          Confirmar interesse
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>

@@ -1,0 +1,75 @@
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <div>
+    <a href="/marketplace" class="inline-flex items-center gap-1.5 text-sm text-slate-400 dark:text-white/40 hover:text-violet-600 dark:hover:text-violet-400 transition mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+      Voltar ao marketplace
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm">
+
+    {{#if item.imagem_url}}
+    <div class="h-64 overflow-hidden">
+      <img src="{{item.imagem_url}}" alt="Imagem do item {{item.titulo}}" class="w-full h-full object-cover" />
+    </div>
+    {{else}}
+    <div class="h-48 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-violet-200 dark:text-violet-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    </div>
+    {{/if}}
+
+    <div class="p-6 space-y-4">
+
+      <!-- Titulo e tipo -->
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <h1 class="text-xl font-bold text-[#2D4BA6] dark:text-white leading-snug">{{item.titulo}}</h1>
+        <span class="shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 capitalize">
+          {{item.tipoLabel}}
+        </span>
+      </div>
+
+      <!-- Empresa -->
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+        {{#if item.logo_empresa}}
+        <img src="{{item.logo_empresa}}" alt="Logo da empresa {{item.nome_empresa}}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-white/10" />
+        {{else}}
+        <div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-300 font-bold text-sm">
+          {{item.nome_empresa.[0]}}
+        </div>
+        {{/if}}
+        <div>
+          <p class="text-sm font-semibold text-slate-800 dark:text-white">{{item.nome_empresa}}</p>
+          {{#if item.setor_empresa}}<p class="text-xs text-slate-400 dark:text-white/40">{{item.setor_empresa}}</p>{{/if}}
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      {{#if item.descricao}}
+      <div>
+        <h2 class="text-sm font-bold text-slate-700 dark:text-white/80 mb-2">Sobre este item</h2>
+        <p class="text-sm text-slate-600 dark:text-white/60 leading-relaxed whitespace-pre-line">{{item.descricao}}</p>
+      </div>
+      {{/if}}
+
+      <!-- Link externo -->
+      {{#if item.link_externo}}
+      <div class="pt-2">
+        <a href="{{item.link_externo}}" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white text-sm font-bold shadow hover:opacity-90 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Acessar link externo
+        </a>
+      </div>
+      {{/if}}
+
+    </div>
+  </div>
+
+</div>

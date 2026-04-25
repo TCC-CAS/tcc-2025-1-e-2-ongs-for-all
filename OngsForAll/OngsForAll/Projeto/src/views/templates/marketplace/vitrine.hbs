@@ -1,0 +1,128 @@
+<div class="max-w-5xl mx-auto space-y-8">
+
+  <!-- Header -->
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Marketplace Social</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Conheça empresas que apoiam o terceiro setor</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap gap-3 items-center">
+    <!-- Categoria -->
+    <div class="flex gap-2 flex-wrap">
+      <a href="/marketplace{{#if filtroTipo}}?tipo={{filtroTipo}}{{/if}}"
+        class="px-4 py-2 rounded-full text-sm font-semibold border transition
+          {{#unless filtroCategoria}}bg-[#2D4BA6] text-white border-[#2D4BA6]{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-[#2D4BA6]{{/unless}}">
+        Todas categorias
+      </a>
+      {{#each categorias}}
+      <a href="/marketplace?categoria={{codigo}}{{#if ../filtroTipo}}&tipo={{../filtroTipo}}{{/if}}"
+        class="px-4 py-2 rounded-full text-sm font-semibold border transition
+          {{#ifCond ../filtroCategoria codigo}}bg-[#2D4BA6] text-white border-[#2D4BA6]{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-[#2D4BA6]{{/ifCond}}">
+        {{nome}}
+      </a>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- Tipo filter -->
+  <div class="flex gap-2 flex-wrap">
+    <a href="/marketplace{{#if filtroCategoria}}?categoria={{filtroCategoria}}{{/if}}"
+      class="px-4 py-2 rounded-full text-xs font-semibold border transition
+        {{#unless filtroTipo}}bg-violet-600 text-white border-violet-600{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-violet-400{{/unless}}">
+      Todos os tipos
+    </a>
+    {{#each (array "produto" "servico" "campanha" "banner" "link")}}
+    <a href="/marketplace?tipo={{this}}{{#if ../filtroCategoria}}&categoria={{../filtroCategoria}}{{/if}}"
+      class="px-4 py-2 rounded-full text-xs font-semibold border capitalize transition
+        {{#ifCond ../filtroTipo this}}bg-violet-600 text-white border-violet-600{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-violet-400{{/ifCond}}">
+      {{this}}
+    </a>
+    {{/each}}
+  </div>
+
+  <!-- Destaques -->
+  {{#if destaques.length}}
+  <div>
+    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-white/40 mb-4">Em destaque</h3>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {{#each destaques}}
+      <a href="/marketplace/{{id}}"
+        class="group relative bg-white dark:bg-[#102235] border-2 border-violet-300 dark:border-violet-500/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition block">
+        {{#if imagem_url}}
+        <div class="h-40 overflow-hidden">
+          <img src="{{imagem_url}}" alt="Imagem do item {{titulo}}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+        </div>
+        {{else}}
+        <div class="h-40 bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/20 dark:to-purple-900/20 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-violet-300 dark:text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span class="sr-only">Item sem imagem</span>
+        </div>
+        {{/if}}
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <p class="font-bold text-[#2D4BA6] dark:text-white text-sm leading-snug line-clamp-2">{{titulo}}</p>
+            <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 capitalize">{{tipoLabel}}</span>
+          </div>
+          <p class="text-xs text-slate-400 dark:text-white/40">{{nome_empresa}}</p>
+          {{#if descricao}}
+          <p class="text-xs text-slate-500 dark:text-white/50 mt-2 line-clamp-2">{{descricao}}</p>
+          {{/if}}
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Destaque</span>
+        </div>
+      </a>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <!-- Demais itens -->
+  {{#if itens.length}}
+  <div>
+    {{#if destaques.length}}
+    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-white/40 mb-4">Mais itens</h3>
+    {{/if}}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {{#each itens}}
+      <a href="/marketplace/{{id}}"
+        class="group bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition block">
+        {{#if imagem_url}}
+        <div class="h-36 overflow-hidden">
+          <img src="{{imagem_url}}" alt="Imagem do item {{titulo}}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+        </div>
+        {{else}}
+        <div class="h-36 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-white/5 dark:to-blue-900/10 border-b border-slate-100 dark:border-white/5 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-200 dark:text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span class="sr-only">Item sem imagem</span>
+        </div>
+        {{/if}}
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <p class="font-semibold text-[#2D4BA6] dark:text-white text-sm leading-snug line-clamp-2">{{titulo}}</p>
+            <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white/60 capitalize">{{tipoLabel}}</span>
+          </div>
+          <p class="text-xs text-slate-400 dark:text-white/40">{{nome_empresa}}</p>
+        </div>
+      </a>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#unless totalItens}}
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-16 shadow-sm text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-slate-200 dark:text-white/10 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhum item publicado ainda</p>
+    <p class="text-sm text-slate-400 dark:text-white/30 mt-1">Empresas que apoiam ONGs poderão publicar aqui</p>
+  </div>
+  {{/unless}}
+
+</div>

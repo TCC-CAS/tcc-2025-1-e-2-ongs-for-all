@@ -1,0 +1,98 @@
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Apoiar necessidades</h2>
+      <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Cada apoio conta para desbloquear sua vitrine</p>
+    </div>
+    {{#if statusMarketplace}}
+    <span class="px-3 py-1.5 rounded-full text-xs font-bold
+      {{#ifCond statusMarketplace 'ativa'}}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{{/ifCond}}
+      {{#ifCond statusMarketplace 'elegivel'}}bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300{{/ifCond}}
+      {{#ifCond statusMarketplace 'bloqueada'}}bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-white/60{{/ifCond}}">
+      Vitrine: {{statusMarketplace}}
+    </span>
+    {{/if}}
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex gap-2 flex-wrap">
+    <a href="/empresa/necessidades"
+      class="px-4 py-2 rounded-full text-sm font-semibold border transition
+        {{#unless filtroTipo}}bg-[#2D4BA6] text-white border-[#2D4BA6]{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-[#4886D9]{{/unless}}">
+      Todos
+    </a>
+    <a href="/empresa/necessidades?tipo=bem"
+      class="px-4 py-2 rounded-full text-sm font-semibold border transition
+        {{#if filtroBem}}bg-blue-600 text-white border-blue-600{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-blue-400{{/if}}">
+      Doação
+    </a>
+    <a href="/empresa/necessidades?tipo=servico"
+      class="px-4 py-2 rounded-full text-sm font-semibold border transition
+        {{#if filtroServico}}bg-purple-600 text-white border-purple-600{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-purple-400{{/if}}">
+      Serviço
+    </a>
+    <a href="/empresa/necessidades?tipo=voluntariado"
+      class="px-4 py-2 rounded-full text-sm font-semibold border transition
+        {{#if filtroVoluntariado}}bg-emerald-600 text-white border-emerald-600{{else}}bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/70 hover:border-emerald-400{{/if}}">
+      Voluntariado
+    </a>
+  </div>
+
+  {{#if necessidades.length}}
+  <div class="grid sm:grid-cols-2 gap-4">
+    {{#each necessidades}}
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm
+      {{#if ja_apoiou}}opacity-70{{/if}}">
+
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="min-w-0 flex-1">
+          <p class="font-bold text-[#2D4BA6] dark:text-white text-sm leading-snug truncate">{{titulo}}</p>
+          <p class="text-xs text-slate-400 dark:text-white/40 mt-0.5">{{nome_ong}}</p>
+        </div>
+        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold
+          {{#if isBem}}bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300{{/if}}
+          {{#if isServico}}bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300{{/if}}
+          {{#if isVoluntariado}}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{{/if}}">
+          {{tipoLabel}}
+        </span>
+      </div>
+
+      {{#if descricao}}
+      <p class="text-xs text-slate-500 dark:text-white/50 line-clamp-2 mb-3">{{descricao}}</p>
+      {{/if}}
+
+      {{#if quantidade}}
+      <div class="mb-3">
+        <div class="h-1.5 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] rounded-full" style="width: {{progresso}}%"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 dark:text-white/30 mt-1">{{progresso}}% concluído</p>
+      </div>
+      {{/if}}
+
+      {{#if ja_apoiou}}
+      <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        Apoio registrado
+      </div>
+      {{else}}
+      <form method="POST" action="/empresa/necessidades/{{id}}/apoiar">
+        <input type="hidden" name="observacao" value="" />
+        <button type="submit"
+          class="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-700 text-white text-sm font-bold hover:opacity-90 transition shadow-sm">
+          Apoiar esta necessidade
+        </button>
+      </form>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+
+  {{else}}
+  {{> emptyState message="Nenhuma necessidade aberta encontrada"}}
+  {{/if}}
+
+</div>

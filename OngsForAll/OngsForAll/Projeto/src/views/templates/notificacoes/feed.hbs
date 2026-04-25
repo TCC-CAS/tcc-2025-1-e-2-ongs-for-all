@@ -1,0 +1,380 @@
+<section class="min-h-screen">
+  <div class="max-w-3xl mx-auto space-y-6">
+
+    <!-- Cabeçalho compacto da página -->
+    <div class="flex items-start justify-between gap-4 pb-5 border-b border-slate-200 dark:border-white/10">
+      <div class="flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center shadow-md shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-[#2D4BA6] dark:text-white tracking-tight">Feed de Atividades</h1>
+          <p class="text-sm text-slate-500 dark:text-white/50 mt-0.5">Acompanhe o que está acontecendo na plataforma</p>
+        </div>
+      </div>
+
+      <div class="shrink-0 mt-1">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#2D4BA6]/10 dark:bg-[#4886D9]/20 text-[#2D4BA6] dark:text-[#4886D9] text-xs font-bold">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          {{totalEventos}} atividades
+        </span>
+      </div>
+    </div>
+
+    <!-- Área de filtros -->
+    <div>
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button type="button" id="btn-toggle-filtro"
+            class="inline-flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full px-4 py-2 shadow-sm text-sm font-semibold text-[#2D4BA6] dark:text-white hover:shadow-md transition-all duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Filtrar
+            <svg xmlns="http://www.w3.org/2000/svg" id="filtro-chevron" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {{#if temFiltro}}
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#4886D9]/12 dark:bg-[#4886D9]/20 text-[#2D4BA6] dark:text-[#4886D9] text-xs font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#4886D9] dark:bg-[#4886D9]"></span>
+            Filtros ativos
+          </span>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- Painel de filtros -->
+      <form method="GET" action="/feed" id="filtro-form" class="hidden mt-3">
+        <div class="bg-white dark:bg-[#0f1e30] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm space-y-4">
+
+          <!-- Erro de período (backend) -->
+          {{#if erroPeriodo}}
+          <div class="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 text-sm font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{erroPeriodo}}
+          </div>
+          {{/if}}
+
+          <!-- Erro de período (frontend JS) -->
+          <div id="erro-periodo-js" class="hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 text-sm font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            A data de início não pode ser posterior à data de término.
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <!-- ONG -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">ONG</label>
+              <select name="ong"
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
+                <option value="">Todas as ONGs</option>
+                {{#each filtroOngOptions}}
+                <option value="{{id}}" {{#if selected}}selected{{/if}}>{{nome}}</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <!-- Tipo -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">Tipo</label>
+              <select name="tipo"
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
+                {{#each filtroTipoOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <!-- De -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">De</label>
+              <input type="date" name="de" id="filtro-de" value="{{filtroDe}}"
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
+            </div>
+
+            <!-- Até -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">Até</label>
+              <input type="date" name="ate" id="filtro-ate" value="{{filtroAte}}"
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
+            </div>
+
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-white/8">
+            <a href="/feed"
+              class="px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 dark:border-white/10 text-slate-500 dark:text-white/60 hover:opacity-80 transition">
+              Limpar
+            </a>
+            <button type="submit"
+              class="bg-gradient-to-r from-[#4886D9] to-[#2D4BA6] text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-sm">
+              Aplicar filtros
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Timeline de eventos -->
+    {{#if eventos.length}}
+    <div class="space-y-1">
+      {{#each eventos}}
+
+      {{#if showGrupo}}
+      <div class="flex items-center gap-3 {{#unless @first}}pt-4{{/unless}} pb-2">
+        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40 whitespace-nowrap">{{grupoLabel}}</span>
+        <div class="flex-1 h-px bg-slate-200 dark:bg-white/10"></div>
+      </div>
+      {{/if}}
+
+      <!-- Card de atividade -->
+      <div class="group relative bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/8 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-px transition-all duration-200
+
+        {{#if isNovaNecessidade}}border-l-[3px] border-l-blue-500{{/if}}
+        {{#if isNovoInteresse}}border-l-[3px] border-l-emerald-500{{/if}}
+        {{#if isInteresseAceito}}border-l-[3px] border-l-green-500{{/if}}
+        {{#if isInteresseRecebido}}border-l-[3px] border-l-purple-500{{/if}}
+        {{#if isInteresseCancelado}}border-l-[3px] border-l-red-500{{/if}}
+        {{#if isDoacaoRealizada}}border-l-[3px] border-l-yellow-500{{/if}}
+        {{#if isMetaAtingida}}border-l-[3px] border-l-amber-500{{/if}}
+      ">
+        <div class="flex items-start gap-4 p-4 sm:p-5">
+
+          <!-- Ícone do tipo -->
+          <div class="shrink-0 mt-0.5">
+            {{#if isNovaNecessidade}}
+            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isNovoInteresse}}
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isInteresseAceito}}
+            <div class="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isInteresseRecebido}}
+            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l-3-3m3 3l3-3" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isInteresseCancelado}}
+            <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isDoacaoRealizada}}
+            <div class="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            {{/if}}
+            {{#if isMetaAtingida}}
+            <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            {{/if}}
+          </div>
+
+          <!-- Corpo do card -->
+          <div class="flex-1 min-w-0">
+
+            <!-- Tipo label (micro, acima do título) -->
+            <p class="text-[10px] font-bold uppercase tracking-widest mb-1
+              {{#if isNovaNecessidade}}text-blue-600 dark:text-blue-400{{/if}}
+              {{#if isNovoInteresse}}text-emerald-600 dark:text-emerald-400{{/if}}
+              {{#if isInteresseAceito}}text-green-600 dark:text-green-400{{/if}}
+              {{#if isInteresseRecebido}}text-purple-600 dark:text-purple-400{{/if}}
+              {{#if isInteresseCancelado}}text-red-600 dark:text-red-400{{/if}}
+              {{#if isDoacaoRealizada}}text-yellow-600 dark:text-yellow-400{{/if}}
+              {{#if isMetaAtingida}}text-amber-600 dark:text-amber-400{{/if}}
+            ">{{tipoLabel}}</p>
+
+            <!-- Título -->
+            <p class="font-bold text-[#1e2d5e] dark:text-white text-sm sm:text-[15px] leading-snug">{{titulo}}</p>
+
+            <!-- Descrição -->
+            <p class="text-sm text-slate-500 dark:text-white/55 mt-1.5 leading-relaxed">{{mensagem}}</p>
+
+            <!-- Rodapé -->
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-white/8 flex-wrap gap-y-1.5 gap-x-3">
+
+              <!-- ONG info -->
+              <div class="flex items-center gap-2 min-w-0">
+                {{#if logo_ong}}
+                <img src="{{logo_ong}}" alt="{{nome_ong}}" class="w-5 h-5 rounded-md object-cover shrink-0 border border-slate-200 dark:border-white/10" />
+                {{/if}}
+                {{#if nome_ong}}
+                <span class="text-xs font-semibold text-slate-600 dark:text-white/60 truncate">{{nome_ong}}</span>
+                {{/if}}
+              </div>
+
+              <!-- Ações e hora -->
+              <div class="flex items-center gap-3 shrink-0">
+                {{#if necessidade_id}}
+                <a href="/necessidades/{{necessidade_id}}"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#4886D9] dark:text-[#4886D9] hover:underline">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Ver necessidade
+                </a>
+                {{/if}}
+                <span class="flex items-center gap-1 text-[11px] text-slate-400 dark:text-white/30 tabular-nums">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {{data_formatada}}
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{/each}}
+    </div>
+
+    {{else}}
+
+    <!-- Estado vazio -->
+    <div class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/8 rounded-2xl">
+      <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/8 flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300 dark:text-white/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <p class="text-sm font-bold text-slate-500 dark:text-white/50 mb-1">
+        {{#if temFiltro}}Nenhuma atividade encontrada{{else}}Nenhuma atividade ainda{{/if}}
+      </p>
+      <p class="text-xs text-slate-400 dark:text-white/30 max-w-[220px] leading-relaxed">
+        {{#if temFiltro}}Tente ajustar ou limpar os filtros.{{else}}As atividades aparecerão aqui conforme acontecerem.{{/if}}
+      </p>
+      {{#if temFiltro}}
+      <a href="/feed"
+        class="mt-5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-500 dark:text-white/60 hover:opacity-80 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Limpar filtros
+      </a>
+      {{/if}}
+    </div>
+
+    {{/if}}
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var btn = document.getElementById('btn-toggle-filtro');
+    var form = document.getElementById('filtro-form');
+    var chevron = document.getElementById('filtro-chevron');
+
+    if (!btn || !form) return;
+
+    // Abrir automaticamente se filtros estiverem ativos
+    {{#if temFiltro}}
+    form.classList.remove('hidden');
+    form.classList.add('block');
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+    {{/if}}
+
+    // Toggle abrir/fechar
+    btn.addEventListener('click', function () {
+      var aberto = !form.classList.contains('hidden');
+      if (aberto) {
+        form.classList.add('hidden');
+        form.classList.remove('block');
+        if (chevron) chevron.style.transform = '';
+      } else {
+        form.classList.remove('hidden');
+        form.classList.add('block');
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      }
+    });
+
+    // --- Validação de período ---
+    var inputDe = document.getElementById('filtro-de');
+    var inputAte = document.getElementById('filtro-ate');
+    var erroJs = document.getElementById('erro-periodo-js');
+
+    function mostrarErroPeriodo() {
+      if (erroJs) { erroJs.style.display = 'flex'; }
+      if (inputDe) { inputDe.style.borderColor = '#f87171'; }
+      if (inputAte) { inputAte.style.borderColor = '#f87171'; }
+    }
+
+    function limparErroPeriodo() {
+      if (erroJs) { erroJs.style.display = 'none'; }
+      if (inputDe) { inputDe.style.borderColor = ''; }
+      if (inputAte) { inputAte.style.borderColor = ''; }
+    }
+
+    // Sincroniza atributos min/max nativos para bloqueio pelo browser
+    function sincronizarMinMax() {
+      if (!inputDe || !inputAte) return;
+      if (inputDe.value) { inputAte.min = inputDe.value; }
+      else { inputAte.removeAttribute('min'); }
+      if (inputAte.value) { inputDe.max = inputAte.value; }
+      else { inputDe.removeAttribute('max'); }
+    }
+
+    // Inicializa min/max com valores já preenchidos (filtros ativos)
+    sincronizarMinMax();
+
+    if (inputDe) {
+      inputDe.addEventListener('change', function () {
+        sincronizarMinMax();
+        limparErroPeriodo();
+      });
+    }
+
+    if (inputAte) {
+      inputAte.addEventListener('change', function () {
+        sincronizarMinMax();
+        limparErroPeriodo();
+      });
+    }
+
+    // Segunda camada: validação JS no submit (fallback caso min/max não bloqueie)
+    form.addEventListener('submit', function (e) {
+      var de = inputDe ? inputDe.value : '';
+      var ate = inputAte ? inputAte.value : '';
+      if (de && ate && de > ate) {
+        e.preventDefault();
+        mostrarErroPeriodo();
+      }
+    });
+  })();
+</script>

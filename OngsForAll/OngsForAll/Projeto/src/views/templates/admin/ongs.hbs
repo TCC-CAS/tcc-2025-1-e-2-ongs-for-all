@@ -1,0 +1,76 @@
+<div class="max-w-5xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Moderação — ONGs</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Revise e gerencie as organizações cadastradas na plataforma</p>
+  </div>
+
+  {{#if sucesso}}
+  <div class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm font-medium">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    Ação realizada com sucesso.
+  </div>
+  {{/if}}
+
+  <div>
+    <h3 class="text-base font-bold text-slate-700 dark:text-white mb-3">ONGs cadastradas ({{ongs.length}})</h3>
+
+    {{#if ongs.length}}
+    <div class="space-y-3">
+      {{#each ongs}}
+      <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              {{#if isPendente}}
+              <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-xs font-semibold">Pendente</span>
+              {{else if isAprovada}}
+              <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-xs font-semibold">Aprovada</span>
+              {{else}}
+              <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 text-xs font-semibold">Rejeitada</span>
+              {{/if}}
+            </div>
+            <p class="font-bold text-slate-800 dark:text-white text-sm">{{nome}}</p>
+            <p class="text-xs text-slate-400 dark:text-white/40 mt-0.5">{{email}} · CNPJ: {{cnpj}}</p>
+            {{#if area_atuacao}}<p class="text-xs text-slate-400 dark:text-white/40">{{area_atuacao}}{{#if telefone}} · {{telefone}}{{/if}}</p>{{/if}}
+            {{#if observacao_admin}}
+            <p class="text-xs text-red-500 mt-1">Obs: {{observacao_admin}}</p>
+            {{/if}}
+          </div>
+
+          <div class="flex flex-col gap-2 shrink-0 min-w-[220px]">
+            {{#unless isAprovada}}
+            <form method="POST" action="/admin/ongs/{{id}}/aprovar" class="flex gap-2">
+              <input type="text" name="observacao" placeholder="Observação (opcional)"
+                class="flex-1 text-xs rounded-xl px-3 py-2 border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+              <button type="submit"
+                class="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:opacity-90 transition shadow-sm whitespace-nowrap">
+                Aprovar
+              </button>
+            </form>
+            {{/unless}}
+            {{#unless isRejeitada}}
+            <form method="POST" action="/admin/ongs/{{id}}/rejeitar" class="flex gap-2">
+              <input type="text" name="observacao" placeholder="Motivo (opcional)"
+                class="flex-1 text-xs rounded-xl px-3 py-2 border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-400" />
+              <button type="submit"
+                class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-bold hover:opacity-90 transition shadow-sm whitespace-nowrap">
+                Rejeitar
+              </button>
+            </form>
+            {{/unless}}
+          </div>
+
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    {{> emptyState message="Nenhuma ONG cadastrada ainda"}}
+    {{/if}}
+  </div>
+
+</div>
