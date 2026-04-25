@@ -92,9 +92,7 @@
   </div>
 
   {{else}}
-  <div class="flex flex-col items-center justify-center py-16 text-center">
-    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhuma necessidade aberta encontrada</p>
-  </div>
+  {{> emptyState message="Nenhuma necessidade aberta encontrada"}}
   {{/if}}
 
 </div>

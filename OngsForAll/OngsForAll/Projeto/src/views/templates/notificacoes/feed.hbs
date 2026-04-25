@@ -77,7 +77,7 @@
             <div class="flex flex-col gap-1.5">
               <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">ONG</label>
               <select name="ong"
-                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-[#1a3050] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
                 <option value="">Todas as ONGs</option>
                 {{#each filtroOngOptions}}
                 <option value="{{id}}" {{#if selected}}selected{{/if}}>{{nome}}</option>
@@ -89,7 +89,7 @@
             <div class="flex flex-col gap-1.5">
               <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">Tipo</label>
               <select name="tipo"
-                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-[#1a3050] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full">
                 {{#each filtroTipoOptions}}
                 <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
                 {{/each}}
@@ -100,14 +100,14 @@
             <div class="flex flex-col gap-1.5">
               <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">De</label>
               <input type="date" name="de" id="filtro-de" value="{{filtroDe}}"
-                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-[#1a3050] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
             </div>
 
             <!-- Até -->
             <div class="flex flex-col gap-1.5">
               <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/40">Até</label>
               <input type="date" name="ate" id="filtro-ate" value="{{filtroAte}}"
-                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-[#1a3050] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
+                class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 dark:[color-scheme:dark] text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#4886D9]/50 w-full" />
             </div>
 
           </div>

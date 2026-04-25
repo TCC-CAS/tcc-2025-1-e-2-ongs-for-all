@@ -15,9 +15,14 @@
       class="flex items-center gap-4 p-4 bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md hover:border-[#4886D9]/40 dark:hover:border-[#4886D9]/40 transition-all duration-200 group">
 
       <!-- Avatar ONG -->
+      {{#if logo_ong}}
+      <img src="{{logo_ong}}" alt="{{nome_ong}}"
+        class="w-12 h-12 shrink-0 rounded-2xl object-cover border border-slate-200 dark:border-white/10 shadow-sm" />
+      {{else}}
       <div class="w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-sm shadow-sm">
         {{#if nome_ong}}{{nome_ong.[0]}}{{else}}O{{/if}}
       </div>
+      {{/if}}
 
       <!-- Conteúdo -->
       <div class="flex-1 min-w-0">

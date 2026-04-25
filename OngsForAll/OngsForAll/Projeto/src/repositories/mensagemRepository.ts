@@ -29,6 +29,7 @@ export async function buscarConversaPorId(id: number) {
     `SELECT c.id, c.usuario_id, c.ong_id, c.necessidade_id,
             u.nome AS nome_usuario,
             o.nome AS nome_ong,
+            o.logo AS logo_ong,
             n.titulo AS titulo_necessidade
      FROM conversas c
      INNER JOIN usuarios u ON u.id = c.usuario_id
@@ -45,6 +46,7 @@ export async function listarConversasDoUsuario(usuarioId: number) {
   const [rows]: any = await pool.query(
     `SELECT c.id, c.usuario_id, c.ong_id, c.necessidade_id,
             o.nome AS nome_ong,
+            o.logo AS logo_ong,
             n.titulo AS titulo_necessidade,
             (SELECT m.conteudo FROM mensagens m WHERE m.conversa_id = c.id ORDER BY m.criado_em DESC LIMIT 1) AS ultima_mensagem,
             (SELECT DATE_FORMAT(m.criado_em, '%d/%m/%Y %H:%i') FROM mensagens m WHERE m.conversa_id = c.id ORDER BY m.criado_em DESC LIMIT 1) AS ultima_em,

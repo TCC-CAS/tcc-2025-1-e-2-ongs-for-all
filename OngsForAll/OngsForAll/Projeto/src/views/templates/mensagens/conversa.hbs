@@ -9,13 +9,20 @@
       </svg>
     </a>
 
+    {{#if isOng}}
     <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-sm shrink-0">
-      {{#if isOng}}
-        {{#if conversa.nome_usuario}}{{conversa.nome_usuario.[0]}}{{else}}U{{/if}}
-      {{else}}
-        {{#if conversa.nome_ong}}{{conversa.nome_ong.[0]}}{{else}}O{{/if}}
-      {{/if}}
+      {{#if conversa.nome_usuario}}{{conversa.nome_usuario.[0]}}{{else}}U{{/if}}
     </div>
+    {{else}}
+      {{#if conversa.logo_ong}}
+      <img src="{{conversa.logo_ong}}" alt="{{conversa.nome_ong}}"
+        class="w-10 h-10 rounded-2xl object-cover border border-slate-200 dark:border-white/10 shadow-sm shrink-0" />
+      {{else}}
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#4886D9] to-[#2D4BA6] flex items-center justify-center text-white font-bold text-sm shrink-0">
+        {{#if conversa.nome_ong}}{{conversa.nome_ong.[0]}}{{else}}O{{/if}}
+      </div>
+      {{/if}}
+    {{/if}}
 
     <div class="min-w-0 flex-1">
       <p class="font-semibold text-[#2D4BA6] dark:text-white truncate">

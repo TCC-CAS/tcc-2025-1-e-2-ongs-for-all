@@ -17,7 +17,7 @@ export async function renderDashBoardPage(
       return reply.redirect("/login");
     }
 
-    const { de, ate } = request.query as { de?: string; ate?: string };
+    const { de, ate, interesse } = request.query as { de?: string; ate?: string; interesse?: string };
     const [data, gamificacao] = await Promise.all([
       dashboardService.getDashboardData(Number(sessionUser.id), de, ate),
       gamificacaoService.getDadosGamificacao(Number(sessionUser.id)),
@@ -63,6 +63,9 @@ export async function renderDashBoardPage(
         // filtro de período
         filtroDe: de ?? "",
         filtroAte: ate ?? "",
+
+        // feedback de ações
+        sucessoInteresse: interesse === "1",
       },
       { layout: "layouts/dashboardLayout" }
     );

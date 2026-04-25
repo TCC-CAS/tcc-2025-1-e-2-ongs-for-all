@@ -82,32 +82,42 @@
         {{#if conquistado}}
           border-[#4886D9]/30 dark:border-[#4886D9]/30 bg-[#2D4BA6]/5 dark:bg-[#4886D9]/10
         {{else}}
-          border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/2 opacity-50
+          border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5
         {{/if}}">
 
         <!-- Ícone -->
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl
+        <div class="relative w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl
           {{#if conquistado}}
             bg-white dark:bg-[#0D1B2A] shadow-sm border border-[#4886D9]/20
           {{else}}
-            bg-slate-100 dark:bg-white/5
+            bg-slate-100 dark:bg-white/10 grayscale
           {{/if}}">
-          {{#if conquistado}}{{icone}}{{else}}🔒{{/if}}
+          {{icone}}
+          {{#unless conquistado}}
+          <div class="absolute inset-0 rounded-2xl bg-slate-200/60 dark:bg-black/40 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 dark:text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          {{/unless}}
         </div>
 
         <!-- Info -->
         <div class="min-w-0 flex-1">
           <p class="font-semibold text-sm
-            {{#if conquistado}}text-[#2D4BA6] dark:text-white{{else}}text-slate-400 dark:text-white/30{{/if}}">
+            {{#if conquistado}}text-[#2D4BA6] dark:text-white{{else}}text-slate-500 dark:text-white/60{{/if}}">
             {{nome}}
           </p>
           <p class="text-xs mt-0.5
-            {{#if conquistado}}text-slate-500 dark:text-white/50{{else}}text-slate-300 dark:text-white/20{{/if}}">
+            {{#if conquistado}}text-slate-500 dark:text-white/50{{else}}text-slate-400 dark:text-white/40{{/if}}">
             {{descricao}}
           </p>
           {{#if conquistado_em}}
           <p class="text-[10px] text-[#4886D9]/70 dark:text-[#4886D9]/60 mt-1 font-medium">Conquistado em {{conquistado_em}}</p>
           {{/if}}
+          {{#unless conquistado}}
+          <p class="text-[10px] text-slate-400 dark:text-white/30 mt-1">Ainda não desbloqueado</p>
+          {{/unless}}
         </div>
 
         {{#if conquistado}}
