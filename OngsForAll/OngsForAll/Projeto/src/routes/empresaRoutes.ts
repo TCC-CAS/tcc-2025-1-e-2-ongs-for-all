@@ -8,6 +8,10 @@ import {
   renderVitrineEmpresa,
   renderNovoItemPage,
   criarItemMarketplace,
+  renderEditarItemPage,
+  editarItemMarketplace,
+  desativarItemMarketplace,
+  reenviarItemMarketplace,
   renderPerfilEmpresaPage,
   atualizarPerfilEmpresa,
   renderNotificacoesEmpresa,
@@ -31,6 +35,10 @@ export async function empresaRoutes(fastify: FastifyInstance) {
   fastify.get("/empresa/vitrine", { preHandler: [ensureAuthenticated, ensureEmpresa] }, renderVitrineEmpresa);
   fastify.get("/empresa/vitrine/novo", { preHandler: [ensureAuthenticated, ensureEmpresa] }, renderNovoItemPage);
   fastify.post("/empresa/vitrine/novo", { preHandler: [ensureAuthenticated, ensureEmpresa] }, criarItemMarketplace);
+  fastify.get("/empresa/vitrine/:id/editar", { preHandler: [ensureAuthenticated, ensureEmpresa] }, renderEditarItemPage);
+  fastify.post("/empresa/vitrine/:id/editar", { preHandler: [ensureAuthenticated, ensureEmpresa] }, editarItemMarketplace);
+  fastify.post("/empresa/vitrine/:id/desativar", { preHandler: [ensureAuthenticated, ensureEmpresa] }, desativarItemMarketplace);
+  fastify.post("/empresa/vitrine/:id/reenviar", { preHandler: [ensureAuthenticated, ensureEmpresa] }, reenviarItemMarketplace);
 
   // Perfil
   fastify.get("/empresa/perfil", { preHandler: [ensureAuthenticated, ensureEmpresa] }, renderPerfilEmpresaPage);

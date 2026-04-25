@@ -63,11 +63,22 @@ export async function renderDetalheItemPage(request: FastifyRequest, reply: Fast
     : 0;
 
   const { id } = request.params as { id: string };
-  const item = await marketplaceRepo.findItemById(Number(id));
+  const rawItem = await marketplaceRepo.findItemById(Number(id));
 
-  if (!item || item.status_publicacao !== "aprovado" || item.empresa_status_marketplace !== "ativa") {
+  if (!rawItem || rawItem.status_publicacao !== "aprovado" || rawItem.empresa_status_marketplace !== "ativa") {
     return reply.status(404).send({ message: "Item não encontrado." });
   }
+
+  const item = {
+    ...rawItem,
+    tipoLabel: ({
+      produto: "Produto",
+      servico: "Serviço",
+      campanha: "Campanha",
+      banner: "Institucional",
+      link: "Link",
+    } as Record<string, string>)[rawItem.tipo] ?? rawItem.tipo,
+  };
 
   const layout = sessionUser?.tipo === "ong"
     ? "layouts/ongDashboardLayout"

@@ -8,6 +8,7 @@ import fs from "fs";
 import { pipeline } from "stream/promises";
 
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "public", "uploads", "empresa_logos");
+const MARKETPLACE_UPLOADS_DIR = path.join(__dirname, "..", "..", "public", "uploads", "marketplace_itens");
 const ALLOWED_MIMES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 3 * 1024 * 1024;
 
@@ -158,6 +159,11 @@ export async function renderVitrineEmpresa(request: FastifyRequest, reply: Fasti
       isElegivel: empresa?.status_marketplace === "elegivel",
       isAtiva: empresa?.status_marketplace === "ativa",
       success: (request.query as any)?.sucesso === "1",
+      successComImagem: (request.query as any)?.comImagem === "1",
+      successEditado: (request.query as any)?.editado === "1",
+      successDesativado: (request.query as any)?.desativado === "1",
+      successReenviado: (request.query as any)?.reenviado === "1",
+      erro: (request.query as any)?.erro || "",
     },
     { layout: "layouts/empresaDashboardLayout" }
   );
@@ -182,6 +188,25 @@ export async function renderNovoItemPage(request: FastifyRequest, reply: Fastify
   );
 }
 
+async function renderNovoItemComErro(
+  reply: FastifyReply,
+  empresaId: number,
+  user: any,
+  error: string,
+  form: { titulo: string; descricao: string; tipo: string; categoriaId: string; linkExterno: string }
+) {
+  const [categorias, naoLidas] = await Promise.all([
+    marketplaceRepo.getCategorias(),
+    getNaoLidas(empresaId),
+  ]);
+
+  return reply.view(
+    "/templates/empresa/novo-item.hbs",
+    { user, naoLidas, categorias, error, form },
+    { layout: "layouts/empresaDashboardLayout" }
+  );
+}
+
 export async function criarItemMarketplace(request: FastifyRequest, reply: FastifyReply) {
   const sessionUser = request.session.user;
   if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");
@@ -199,18 +224,37 @@ export async function criarItemMarketplace(request: FastifyRequest, reply: Fasti
       categoriaId = fields.categoria_id?.value ?? "";
       linkExterno = fields.link_externo?.value ?? "";
 
-      if (data.filename && ALLOWED_MIMES.includes(data.mimetype)) {
-        if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      if (data.filename) {
+        if (!ALLOWED_MIMES.includes(data.mimetype)) {
+          data.file.resume();
+          return renderNovoItemComErro(
+            reply,
+            Number(sessionUser.id),
+            sessionUser,
+            "Formato de imagem inválido. Use JPG, PNG ou WebP.",
+            { titulo, descricao, tipo, categoriaId, linkExterno }
+          );
+        }
+
+        if (!fs.existsSync(MARKETPLACE_UPLOADS_DIR)) fs.mkdirSync(MARKETPLACE_UPLOADS_DIR, { recursive: true });
         const ext = path.extname(data.filename).toLowerCase() || ".jpg";
         const filename = `item_${Date.now()}${ext}`;
-        const filepath = path.join(UPLOADS_DIR, filename);
+        const filepath = path.join(MARKETPLACE_UPLOADS_DIR, filename);
         await pipeline(data.file, fs.createWriteStream(filepath));
+
         const stats = fs.statSync(filepath);
-        if (stats.size <= MAX_SIZE) {
-          imagemUrl = `/public/uploads/empresa_logos/${filename}`;
-        } else {
+        if (stats.size > MAX_SIZE) {
           fs.unlinkSync(filepath);
+          return renderNovoItemComErro(
+            reply,
+            Number(sessionUser.id),
+            sessionUser,
+            "A imagem excede o limite de 3MB. Envie um arquivo menor.",
+            { titulo, descricao, tipo, categoriaId, linkExterno }
+          );
         }
+
+        imagemUrl = `/public/uploads/marketplace_itens/${filename}`;
       }
     } else {
       const body = request.body as any;
@@ -232,18 +276,35 @@ export async function criarItemMarketplace(request: FastifyRequest, reply: Fasti
     });
 
     if (!result.ok) {
-      const categorias = await marketplaceRepo.getCategorias();
-      return reply.view(
-        "/templates/empresa/novo-item.hbs",
-        { user: sessionUser, categorias, error: result.error, form: { titulo, descricao, tipo, categoriaId, linkExterno } },
-        { layout: "layouts/empresaDashboardLayout" }
+      return renderNovoItemComErro(
+        reply,
+        Number(sessionUser.id),
+        sessionUser,
+        result.error,
+        { titulo, descricao, tipo, categoriaId, linkExterno }
       );
     }
 
-    return reply.redirect("/empresa/vitrine?sucesso=1");
-  } catch (err) {
+    return reply.redirect(`/empresa/vitrine?sucesso=1${imagemUrl ? "&comImagem=1" : ""}`);
+  } catch (err: any) {
     console.error("Erro ao criar item:", err);
-    return reply.redirect("/empresa/vitrine");
+    if (err?.code === "FST_REQ_FILE_TOO_LARGE" || err?.statusCode === 413 || err?.name === "RequestFileTooLargeError") {
+      return renderNovoItemComErro(
+        reply,
+        Number(sessionUser.id),
+        sessionUser,
+        "A imagem excede o limite permitido no upload. Envie um arquivo de até 3MB.",
+        { titulo: "", descricao: "", tipo: "produto", categoriaId: "", linkExterno: "" }
+      );
+    }
+
+    return renderNovoItemComErro(
+      reply,
+      Number(sessionUser.id),
+      sessionUser,
+      "Não foi possível processar o upload da imagem. Tente novamente.",
+      { titulo: "", descricao: "", tipo: "produto", categoriaId: "", linkExterno: "" }
+    );
   }
 }
 
@@ -318,8 +379,248 @@ export async function atualizarPerfilEmpresa(request: FastifyRequest, reply: Fas
 }
 
 // ----------------------------------------------------------
+// Edição de item da vitrine
+// ----------------------------------------------------------
+export async function renderEditarItemPage(request: FastifyRequest, reply: FastifyReply) {
+  const sessionUser = request.session.user;
+  if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");
+
+  const { id } = request.params as { id: string };
+
+  const [item, categorias, naoLidas] = await Promise.all([
+    marketplaceRepo.findItemByIdDaEmpresa(Number(id), Number(sessionUser.id)),
+    marketplaceRepo.getCategorias(),
+    getNaoLidas(Number(sessionUser.id)),
+  ]);
+
+  if (!item) {
+    return reply.status(404).send({ message: "Item não encontrado." });
+  }
+
+  return reply.view(
+    "/templates/empresa/editar-item.hbs",
+    {
+      user: sessionUser,
+      naoLidas,
+      categorias,
+      item,
+      isRejeitado: item.status_publicacao === "rejeitado",
+      isRascunho: item.status_publicacao === "rascunho",
+    },
+    { layout: "layouts/empresaDashboardLayout" }
+  );
+}
+
+async function renderEditarComErro(
+  reply: FastifyReply,
+  user: any,
+  itemId: number,
+  error: string,
+  form: { titulo: string; descricao: string; tipo: string; categoriaId: string; linkExterno: string }
+) {
+  const [item, categorias, naoLidas] = await Promise.all([
+    marketplaceRepo.findItemByIdDaEmpresa(itemId, Number(user.id)),
+    marketplaceRepo.getCategorias(),
+    getNaoLidas(Number(user.id)),
+  ]);
+
+  return reply.view(
+    "/templates/empresa/editar-item.hbs",
+    {
+      user,
+      naoLidas,
+      categorias,
+      error,
+      item: item
+        ? {
+            ...item,
+            titulo: form.titulo,
+            descricao: form.descricao,
+            tipo: form.tipo,
+            categoria_id: form.categoriaId ? Number(form.categoriaId) : item.categoria_id,
+            link_externo: form.linkExterno,
+          }
+        : null,
+      isRejeitado: item?.status_publicacao === "rejeitado",
+      isRascunho: item?.status_publicacao === "rascunho",
+    },
+    { layout: "layouts/empresaDashboardLayout" }
+  );
+}
+
+export async function editarItemMarketplace(request: FastifyRequest, reply: FastifyReply) {
+  const sessionUser = request.session.user;
+  if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");
+
+  const { id } = request.params as { id: string };
+  const itemId = Number(id);
+
+  try {
+    const data = await request.file();
+    let titulo = "", descricao = "", tipo = "produto", categoriaId = "", linkExterno = "";
+    let removerImagem = false;
+    let acao: "salvar" | "reenviar" = "salvar";
+    let novaImagemUrl: string | undefined;
+
+    if (data) {
+      const fields = data.fields as Record<string, any>;
+      titulo = fields.titulo?.value ?? "";
+      descricao = fields.descricao?.value ?? "";
+      tipo = fields.tipo?.value ?? "produto";
+      categoriaId = fields.categoria_id?.value ?? "";
+      linkExterno = fields.link_externo?.value ?? "";
+      removerImagem = fields.remover_imagem?.value === "1";
+      acao = fields.acao?.value === "reenviar" ? "reenviar" : "salvar";
+
+      if (data.filename) {
+        if (!ALLOWED_MIMES.includes(data.mimetype)) {
+          data.file.resume();
+          return renderEditarComErro(reply, sessionUser, itemId, "Formato de imagem inválido. Use JPG, PNG ou WebP.", { titulo, descricao, tipo, categoriaId, linkExterno });
+        }
+
+        if (!fs.existsSync(MARKETPLACE_UPLOADS_DIR)) fs.mkdirSync(MARKETPLACE_UPLOADS_DIR, { recursive: true });
+        const ext = path.extname(data.filename).toLowerCase() || ".jpg";
+        const filename = `item_${itemId}_${Date.now()}${ext}`;
+        const filepath = path.join(MARKETPLACE_UPLOADS_DIR, filename);
+        await pipeline(data.file, fs.createWriteStream(filepath));
+
+        const stats = fs.statSync(filepath);
+        if (stats.size > MAX_SIZE) {
+          fs.unlinkSync(filepath);
+          return renderEditarComErro(reply, sessionUser, itemId, "A imagem excede o limite de 3MB. Envie um arquivo menor.", { titulo, descricao, tipo, categoriaId, linkExterno });
+        }
+
+        novaImagemUrl = `/public/uploads/marketplace_itens/${filename}`;
+      }
+    } else {
+      const body = request.body as any;
+      titulo = body?.titulo ?? "";
+      descricao = body?.descricao ?? "";
+      tipo = body?.tipo ?? "produto";
+      categoriaId = body?.categoria_id ?? "";
+      linkExterno = body?.link_externo ?? "";
+      removerImagem = body?.remover_imagem === "1";
+      acao = body?.acao === "reenviar" ? "reenviar" : "salvar";
+    }
+
+    const itemAtual = await marketplaceRepo.findItemByIdDaEmpresa(itemId, Number(sessionUser.id));
+    if (!itemAtual) {
+      return reply.status(403).send({ message: "Acesso não autorizado." });
+    }
+
+    let imagemUrl: string | null;
+    if (novaImagemUrl) {
+      if (itemAtual.imagem_url) {
+        const oldPath = path.join(__dirname, "..", "..", itemAtual.imagem_url.replace(/^\//, ""));
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      imagemUrl = novaImagemUrl;
+    } else if (removerImagem) {
+      if (itemAtual.imagem_url) {
+        const oldPath = path.join(__dirname, "..", "..", itemAtual.imagem_url.replace(/^\//, ""));
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      imagemUrl = null;
+    } else {
+      imagemUrl = itemAtual.imagem_url ?? null;
+    }
+
+    const result = await empresaService.editarItemMarketplace({
+      empresaId: Number(sessionUser.id),
+      itemId,
+      titulo,
+      descricao,
+      tipo,
+      categoriaId: categoriaId ? Number(categoriaId) : undefined,
+      imagemUrl,
+      linkExterno: linkExterno || undefined,
+      acao,
+    });
+
+    if (!result.ok) {
+      if (novaImagemUrl) {
+        const newPath = path.join(__dirname, "..", "..", novaImagemUrl.replace(/^\//, ""));
+        if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
+      }
+      const [categorias, naoLidas] = await Promise.all([
+        marketplaceRepo.getCategorias(),
+        getNaoLidas(Number(sessionUser.id)),
+      ]);
+      return reply.view(
+        "/templates/empresa/editar-item.hbs",
+        {
+          user: sessionUser,
+          naoLidas,
+          categorias,
+          error: result.error,
+          item: {
+            ...itemAtual,
+            titulo,
+            descricao,
+            tipo,
+            categoria_id: categoriaId ? Number(categoriaId) : itemAtual.categoria_id,
+            link_externo: linkExterno,
+            imagem_url: itemAtual.imagem_url,
+          },
+          isRejeitado: itemAtual.status_publicacao === "rejeitado",
+          isRascunho: itemAtual.status_publicacao === "rascunho",
+        },
+        { layout: "layouts/empresaDashboardLayout" }
+      );
+    }
+
+    return reply.redirect(`/empresa/vitrine?${acao === "reenviar" ? "reenviado=1" : "editado=1"}`);
+  } catch (err: any) {
+    console.error("Erro ao editar item:", err);
+    const errorMsg =
+      err?.code === "FST_REQ_FILE_TOO_LARGE" || err?.statusCode === 413
+        ? "A imagem excede o limite permitido. Envie um arquivo de até 3MB."
+        : "Não foi possível processar a edição. Tente novamente.";
+    return renderEditarComErro(reply, sessionUser, itemId, errorMsg, {
+      titulo: "",
+      descricao: "",
+      tipo: "produto",
+      categoriaId: "",
+      linkExterno: "",
+    });
+  }
+}
+
+// ----------------------------------------------------------
 // Notificações
 // ----------------------------------------------------------
+export async function desativarItemMarketplace(request: FastifyRequest, reply: FastifyReply) {
+  const sessionUser = request.session.user;
+  if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");
+
+  const { id } = request.params as { id: string };
+  const result = await empresaService.desativarItemMarketplace({
+    empresaId: Number(sessionUser.id),
+    itemId: Number(id),
+  });
+
+  if (!result.ok) {
+    return reply.redirect(`/empresa/vitrine?erro=${encodeURIComponent(result.error)}`);
+  }
+  return reply.redirect("/empresa/vitrine?desativado=1");
+}
+
+export async function reenviarItemMarketplace(request: FastifyRequest, reply: FastifyReply) {
+  const sessionUser = request.session.user;
+  if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");
+
+  const { id } = request.params as { id: string };
+  const result = await empresaService.reenviarItemMarketplace({
+    empresaId: Number(sessionUser.id),
+    itemId: Number(id),
+  });
+
+  if (!result.ok) {
+    return reply.redirect(`/empresa/vitrine?erro=${encodeURIComponent(result.error)}`);
+  }
+  return reply.redirect("/empresa/vitrine?reenviado=1");
+}
+
 export async function renderNotificacoesEmpresa(request: FastifyRequest, reply: FastifyReply) {
   const sessionUser = request.session.user;
   if (!sessionUser || sessionUser.tipo !== "empresa") return reply.redirect("/login");

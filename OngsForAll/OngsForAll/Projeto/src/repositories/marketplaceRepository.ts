@@ -51,12 +51,28 @@ export async function listarItensDaEmpresa(empresaId: number) {
 export async function findItemById(id: number) {
   const [rows]: any = await pool.query(
     `SELECT mi.*, mc.nome AS categoria_nome,
-            e.nome_fantasia AS nome_empresa, e.logo AS logo_empresa, e.status_marketplace AS empresa_status_marketplace
+            e.nome_fantasia AS nome_empresa, e.logo AS logo_empresa, e.setor AS setor_empresa,
+            e.status_marketplace AS empresa_status_marketplace
      FROM marketplace_itens mi
      LEFT JOIN marketplace_categorias mc ON mc.id = mi.categoria_id
      INNER JOIN empresas e ON e.id = mi.empresa_id
      WHERE mi.id = ? LIMIT 1`,
     [id]
+  );
+  return rows[0] ?? null;
+}
+
+export async function findItemByIdDaEmpresa(id: number, empresaId: number) {
+  const [rows]: any = await pool.query(
+    `SELECT mi.id, mi.empresa_id, mi.titulo, mi.descricao, mi.tipo, mi.categoria_id, mi.imagem_url, mi.link_externo,
+            mi.status_publicacao, mi.destaque, mi.observacao_admin,
+            DATE_FORMAT(mi.criado_em, '%d/%m/%Y') AS criado_em,
+            mc.nome AS categoria_nome
+     FROM marketplace_itens mi
+     LEFT JOIN marketplace_categorias mc ON mc.id = mi.categoria_id
+     WHERE mi.id = ? AND mi.empresa_id = ?
+     LIMIT 1`,
+    [id, empresaId]
   );
   return rows[0] ?? null;
 }
@@ -94,7 +110,7 @@ export async function listarItensAprovados(params: { categoriaId?: number; tipo?
 // Admin
 export async function listarItensPendentes() {
   const [rows]: any = await pool.query(
-    `SELECT mi.id, mi.titulo, mi.tipo, mi.status_publicacao, mi.observacao_admin,
+    `SELECT mi.id, mi.titulo, mi.descricao, mi.tipo, mi.imagem_url, mi.status_publicacao, mi.observacao_admin,
             DATE_FORMAT(mi.criado_em, '%d/%m/%Y') AS criado_em,
             mc.nome AS categoria_nome,
             e.nome_fantasia AS nome_empresa, e.id AS empresa_id
@@ -150,4 +166,79 @@ export async function listarItensComStatus(empresaId: number) {
     [empresaId]
   );
   return rows as any[];
+}
+
+export async function updateItem(params: {
+  id: number;
+  titulo: string;
+  descricao: string;
+  tipo: string;
+  categoriaId: number | null;
+  imagemUrl: string | null;
+  linkExterno: string | null;
+  statusPublicacao: string;
+}): Promise<void> {
+  await pool.query(
+    `UPDATE marketplace_itens
+     SET titulo = ?, descricao = ?, tipo = ?, categoria_id = ?, imagem_url = ?, link_externo = ?, status_publicacao = ?, atualizado_em = NOW()
+     WHERE id = ?`,
+    [
+      params.titulo,
+      params.descricao,
+      params.tipo,
+      params.categoriaId,
+      params.imagemUrl,
+      params.linkExterno,
+      params.statusPublicacao,
+      params.id,
+    ]
+  );
+}
+
+export async function updateItemDaEmpresa(params: {
+  id: number;
+  empresaId: number;
+  titulo: string;
+  descricao: string;
+  tipo: string;
+  categoriaId: number | null;
+  imagemUrl: string | null;
+  linkExterno: string | null;
+  statusPublicacao: "rascunho" | "pendente" | "rejeitado" | "aprovado";
+}): Promise<boolean> {
+  const [result]: any = await pool.query(
+    `UPDATE marketplace_itens
+     SET titulo = ?, descricao = ?, tipo = ?, categoria_id = ?, imagem_url = ?, link_externo = ?,
+         status_publicacao = ?, observacao_admin = CASE WHEN ? = 'pendente' THEN NULL ELSE observacao_admin END, atualizado_em = NOW()
+     WHERE id = ? AND empresa_id = ?`,
+    [
+      params.titulo,
+      params.descricao,
+      params.tipo,
+      params.categoriaId,
+      params.imagemUrl,
+      params.linkExterno,
+      params.statusPublicacao,
+      params.statusPublicacao,
+      params.id,
+      params.empresaId,
+    ]
+  );
+  return Number(result?.affectedRows ?? 0) > 0;
+}
+
+export async function atualizarStatusItemDaEmpresa(
+  id: number,
+  empresaId: number,
+  status: "rascunho" | "pendente"
+): Promise<boolean> {
+  const [result]: any = await pool.query(
+    `UPDATE marketplace_itens
+     SET status_publicacao = ?, destaque = 0,
+         observacao_admin = CASE WHEN ? = 'pendente' THEN NULL ELSE observacao_admin END,
+         atualizado_em = NOW()
+     WHERE id = ? AND empresa_id = ?`,
+    [status, status, id, empresaId]
+  );
+  return Number(result?.affectedRows ?? 0) > 0;
 }

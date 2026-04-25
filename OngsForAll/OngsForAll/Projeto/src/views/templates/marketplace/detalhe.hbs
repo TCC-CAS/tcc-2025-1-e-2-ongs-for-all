@@ -13,7 +13,7 @@
 
     {{#if item.imagem_url}}
     <div class="h-64 overflow-hidden">
-      <img src="{{item.imagem_url}}" class="w-full h-full object-cover" />
+      <img src="{{item.imagem_url}}" alt="Imagem do item {{item.titulo}}" class="w-full h-full object-cover" />
     </div>
     {{else}}
     <div class="h-48 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 flex items-center justify-center">
@@ -36,15 +36,15 @@
       <!-- Empresa -->
       <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
         {{#if item.logo_empresa}}
-        <img src="{{item.logo_empresa}}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-white/10" />
+        <img src="{{item.logo_empresa}}" alt="Logo da empresa {{item.nome_empresa}}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-white/10" />
         {{else}}
         <div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-300 font-bold text-sm">
-          {{item.nome_fantasia.[0]}}
+          {{item.nome_empresa.[0]}}
         </div>
         {{/if}}
         <div>
-          <p class="text-sm font-semibold text-slate-800 dark:text-white">{{item.nome_fantasia}}</p>
-          {{#if item.setor}}<p class="text-xs text-slate-400 dark:text-white/40">{{item.setor}}</p>{{/if}}
+          <p class="text-sm font-semibold text-slate-800 dark:text-white">{{item.nome_empresa}}</p>
+          {{#if item.setor_empresa}}<p class="text-xs text-slate-400 dark:text-white/40">{{item.setor_empresa}}</p>{{/if}}
         </div>
       </div>
 

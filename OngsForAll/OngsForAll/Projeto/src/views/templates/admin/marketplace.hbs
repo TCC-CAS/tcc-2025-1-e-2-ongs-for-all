@@ -16,7 +16,7 @@
         <div class="flex items-start gap-4 flex-wrap">
 
           {{#if imagem_url}}
-          <img src="{{imagem_url}}" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-white/10" />
+          <img src="{{imagem_url}}" alt="Imagem do item {{titulo}}" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-white/10" />
           {{else}}
           <div class="w-16 h-16 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0 text-slate-300 dark:text-white/20">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -35,7 +35,7 @@
                 {{status_publicacao}}
               </span>
             </div>
-            <p class="text-xs text-slate-400 dark:text-white/40 mb-1">{{nome_fantasia}} · tipo: {{tipo}}</p>
+            <p class="text-xs text-slate-400 dark:text-white/40 mb-1">{{nome_empresa}} · tipo: {{tipo}}</p>
             {{#if descricao}}
             <p class="text-xs text-slate-500 dark:text-white/50 line-clamp-2">{{descricao}}</p>
             {{/if}}
@@ -81,7 +81,7 @@
       <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm flex items-center gap-4 flex-wrap">
 
         {{#if logo}}
-        <img src="{{logo}}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-white/10" />
+        <img src="{{logo}}" alt="Logo da empresa {{nome_fantasia}}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-white/10" />
         {{else}}
         <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center shrink-0 text-violet-600 dark:text-violet-300 font-bold text-lg">
           {{nome_fantasia.[0]}}
