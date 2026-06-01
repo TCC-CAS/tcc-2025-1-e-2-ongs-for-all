@@ -1,0 +1,164 @@
+<section class="min-h-screen px-4 sm:px-6 py-6 sm:py-10">
+
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+            <h1 class="text-3xl font-bold">
+                Minhas necessidades
+            </h1>
+
+            <div class="flex gap-3 items-center flex-wrap justify-end">
+                <form method="GET" action="/ong/necessidades" class="flex gap-3 items-center flex-wrap justify-end">
+                    <input type="text" name="busca" value="{{buscaAtual}}" placeholder="Buscar por titulo, descricao ou categoria"
+                        class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm min-w-[280px] bg-white dark:bg-white/5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6B8F71]" />
+
+                    <select name="status"
+                        class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-white/5 dark:[color-scheme:dark] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B8F71]">
+                        <option value="todos" {{#ifCond filtroAtual 'todos'}}selected{{/ifCond}}>Todas</option>
+                        <option value="aberta" {{#ifCond filtroAtual 'aberta'}}selected{{/ifCond}}>Abertas</option>
+                        <option value="em_andamento" {{#ifCond filtroAtual 'em_andamento'}}selected{{/ifCond}}>Em andamento</option>
+                        <option value="concluida" {{#ifCond filtroAtual 'concluida'}}selected{{/ifCond}}>Concluidas</option>
+                        <option value="cancelada" {{#ifCond filtroAtual 'cancelada'}}selected{{/ifCond}}>Canceladas</option>
+                    </select>
+
+                    <button type="submit"
+                        class="bg-[#3F5F45] hover:bg-[#2F3E34] text-white px-4 py-2 rounded-lg font-medium transition shadow text-sm">
+                        Buscar
+                    </button>
+                </form>
+
+                <a href="/necessidades/nova"
+                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition shadow text-sm">
+                    Nova necessidade
+                </a>
+            </div>
+
+        </div>
+
+        {{#if success}}
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+            Alteracao realizada com sucesso.
+        </div>
+        {{/if}}
+
+        {{#if necessidades.length}}
+
+        <div class="space-y-4">
+
+            {{#each necessidades}}
+
+            <div
+                class="bg-white dark:bg-[#3F5F45]/20 border border-slate-200 dark:border-white/20 rounded-xl p-5 shadow">
+
+                <div class="flex justify-between items-start mb-3">
+
+                    <div>
+                        <h2 class="text-lg font-bold">
+                            {{titulo}}
+                        </h2>
+
+                        <p class="text-sm opacity-80 mt-1">
+                            {{descricao}}
+                        </p>
+                    </div>
+
+                    <div class="flex gap-2 flex-wrap justify-end">
+                        {{#if isVoluntariado}}
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">Voluntariado</span>
+                        {{else if isServico}}
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#DDEADB] dark:bg-[#6B8F71]/20 text-[#3F5F45] dark:text-[#DDEADB]">Serviço</span>
+                        {{else}}
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#EAF3EC] dark:bg-[#6B8F71]/20 text-[#3F5F45] dark:text-[#DDEADB]">Bem</span>
+                        {{/if}}
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white/70">
+                            {{status}}
+                        </span>
+
+                        {{#if meta_atingida}}
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
+                            Meta atingida
+                        </span>
+                        {{/if}}
+
+                        {{#if quase_completa}}
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-700">
+                            Quase completa
+                        </span>
+                        {{/if}}
+                    </div>
+
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-3 text-sm mb-3">
+                    <div>
+                        <span class="font-semibold">Meta:</span>
+                        {{quantidade}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Recebido:</span>
+                        {{quantidade_recebida}}
+                    </div>
+
+                    <div>
+                        <span class="font-semibold">Faltam:</span>
+                        {{faltante}}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="font-semibold">Progresso</span>
+                        <span>{{percentual}}%</span>
+                    </div>
+
+                    <div class="w-full bg-slate-200 dark:bg-white/10 rounded-full h-3 overflow-hidden">
+                        <div class="bg-green-500 h-3 rounded-full transition-all duration-500"
+                            style="width: {{percentual}}%;"></div>
+                    </div>
+
+                    <p class="text-sm mt-2 opacity-80">
+                        {{quantidade_recebida}} de {{quantidade}} atendidos
+                    </p>
+                </div>
+
+                <div class="flex gap-2 items-center flex-wrap mt-4">
+                    <a href="/necessidades/{{id}}/editar"
+                        class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        Editar
+                    </a>
+
+                    <form method="POST" action="/necessidades/{{id}}/status" class="flex gap-2 items-center flex-wrap">
+                        <select name="status"
+                            class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-white/5 dark:[color-scheme:dark] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B8F71]">
+                            <option value="aberta" {{#ifCond status 'aberta'}}selected{{/ifCond}}>Aberta</option>
+                            <option value="em_andamento" {{#ifCond status 'em_andamento'}}selected{{/ifCond}}>Em andamento</option>
+                            <option value="concluida" {{#ifCond status 'concluida'}}selected{{/ifCond}}>Concluida</option>
+                            <option value="cancelada" {{#ifCond status 'cancelada'}}selected{{/ifCond}}>Cancelada</option>
+                        </select>
+
+                        <button type="submit"
+                            class="bg-[#3F5F45] hover:bg-[#2F3E34] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            Atualizar
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            {{/each}}
+
+        </div>
+
+        {{> paginationControls}}
+
+        {{else}}
+
+        {{> emptyState message="Nenhuma necessidade encontrada para este filtro."}}
+
+        {{/if}}
+
+    </div>
+
+</section>

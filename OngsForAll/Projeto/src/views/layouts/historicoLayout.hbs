@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="bg-[#1D3273] text-white dark:bg-white dark:text-[#1D3273]">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Histórico de Doações</title>
+    <link rel="stylesheet" href="/public/dist/global.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="transition-colors duration-500">
+
+    {{{body}}}
+
+    <script>
+        // Script de troca de tema, se precisar
+        const html = document.documentElement;
+        if (localStorage.getItem('theme') === 'dark') {
+            html.classList.add('dark');
+        }
+    </script>
+
+</body>
+
+</html>

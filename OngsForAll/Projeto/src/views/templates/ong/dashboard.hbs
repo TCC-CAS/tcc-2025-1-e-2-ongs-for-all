@@ -1,0 +1,161 @@
+<section id="dashboard-ong" class="min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Hero -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#6B8F71] to-[#3F5F45] p-6 sm:p-10 shadow-lg">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
+      <div class="relative flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl sm:text-4xl font-extrabold text-white break-words">
+            Dashboard: {{user.nome}}
+          </h1>
+          <p class="mt-2 text-white/80 text-sm sm:text-lg">Gerencie suas necessidades e acompanhe as doações recebidas</p>
+        </div>
+        <a href="/ong/necessidades/nova"
+          class="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Nova necessidade
+        </a>
+      </div>
+    </div>
+
+    <!-- Cards de resumo — necessidades -->
+    <div class="grid grid-cols-3 gap-3 sm:gap-4">
+      <div class="flex-1 bg-white dark:bg-white/5 p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-[#6B8F71]">
+        <p class="text-xs font-semibold text-slate-500 dark:text-white/50 mb-1">Total</p>
+        <p class="text-3xl font-extrabold text-[#2F3E34] dark:text-white">{{necessidadesCriadas}}</p>
+      </div>
+      <div class="flex-1 bg-white dark:bg-white/5 p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-blue-500">
+        <p class="text-xs font-semibold text-slate-500 dark:text-white/50 mb-1">Abertas</p>
+        <p class="text-3xl font-extrabold text-[#2F3E34] dark:text-white">{{necessidadesAbertas}}</p>
+      </div>
+      <div class="flex-1 bg-white dark:bg-white/5 p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm border-l-4 border-l-emerald-500">
+        <p class="text-xs font-semibold text-slate-500 dark:text-white/50 mb-1">Concluídas</p>
+        <p class="text-3xl font-extrabold text-[#2F3E34] dark:text-white">{{necessidadesConcluidas}}</p>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm">
+      <form method="GET" action="/dashboard/ong" class="flex flex-wrap items-end gap-3">
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500 dark:text-white/50">Tipo</label>
+          <select name="tipo"
+            class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B8F71]/40">
+            <option value="">Todos</option>
+            <option value="bem"          {{#if filtroTipoBem}}selected{{/if}}>Doação de bem</option>
+            <option value="servico"      {{#if filtroTipoServico}}selected{{/if}}>Serviço</option>
+            <option value="voluntariado" {{#if filtroTipoVoluntariado}}selected{{/if}}>Voluntariado</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-500 dark:text-white/50">Status</label>
+          <select name="status"
+            class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#6B8F71]/40">
+            <option value="">Todos</option>
+            <option value="aberta"       {{#if filtroStatusAberta}}selected{{/if}}>Aberta</option>
+            <option value="em_andamento" {{#if filtroStatusAndamento}}selected{{/if}}>Em andamento</option>
+            <option value="concluida"    {{#if filtroStatusConcluida}}selected{{/if}}>Concluída</option>
+            <option value="cancelada"    {{#if filtroStatusCancelada}}selected{{/if}}>Cancelada</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1 flex-1 min-w-[160px]">
+          <label class="text-xs font-semibold text-slate-500 dark:text-white/50">Buscar</label>
+          <input type="text" name="busca" value="{{filtroBusca}}" placeholder="ID ou título da necessidade"
+            class="border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6B8F71]/40" />
+        </div>
+
+        <div class="flex gap-2 pb-0.5">
+          <button type="submit"
+            class="bg-gradient-to-r from-[#6B8F71] to-[#3F5F45] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-sm">
+            Filtrar
+          </button>
+          {{#if temFiltroAtivo}}
+          <a href="/dashboard/ong"
+            class="border border-slate-200 dark:border-white/10 px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-80 transition text-slate-600 dark:text-white/70">
+            Limpar
+          </a>
+          {{/if}}
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Tabela de necessidades -->
+    <div class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-white/8 flex items-center justify-between gap-3">
+        <h2 class="text-base font-bold text-[#2F3E34] dark:text-white">Necessidades</h2>
+        <a href="/ong/necessidades"
+          class="text-xs font-semibold text-[#6B8F71] hover:underline">Ver todas →</a>
+      </div>
+
+      {{#if necessidadesList.length}}
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[700px] text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-100 dark:border-white/8 bg-slate-50 dark:bg-white/[0.03]">
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">ID</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">Título</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">Tipo</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">Categoria</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60 text-right">Qtd.</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60 text-right">Recebido</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60 text-right">Pendente</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">Status</th>
+              <th class="px-4 py-3 font-semibold text-slate-600 dark:text-white/60">Criado em</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+            {{#each necessidadesList}}
+            <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-colors">
+              <td class="px-4 py-3 font-mono text-xs text-slate-400 dark:text-white/30 whitespace-nowrap">#{{this.id}}</td>
+              <td class="px-4 py-3 font-medium text-slate-800 dark:text-white max-w-[200px] truncate">{{this.titulo}}</td>
+              <td class="px-4 py-3 text-slate-600 dark:text-white/70 whitespace-nowrap">{{this.tipoLabel}}</td>
+              <td class="px-4 py-3 text-slate-600 dark:text-white/70">{{this.categoria}}</td>
+              <td class="px-4 py-3 text-right text-slate-700 dark:text-white/80 font-medium">{{this.quantidade}}</td>
+              <td class="px-4 py-3 text-right font-semibold text-emerald-600 dark:text-emerald-400">{{this.quantidade_recebida}}</td>
+              <td class="px-4 py-3 text-right text-slate-600 dark:text-white/60">{{this.pendente}}</td>
+              <td class="px-4 py-3">
+                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap
+                  {{#if this.isAberta}}bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300{{/if}}
+                  {{#if this.isEmAndamento}}bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300{{/if}}
+                  {{#if this.isConcluida}}bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300{{/if}}
+                  {{#if this.isCancelada}}bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300{{/if}}
+                ">{{this.statusLabel}}</span>
+              </td>
+              <td class="px-4 py-3 text-slate-500 dark:text-white/50 whitespace-nowrap">{{this.criado_em}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      {{> paginationControls}}
+      {{else}}
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/8 flex items-center justify-center mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-300 dark:text-white/25" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+        <p class="text-sm font-bold text-slate-500 dark:text-white/50 mb-1">
+          {{#if temFiltroAtivo}}Nenhuma necessidade encontrada com esses filtros.{{else}}Nenhuma necessidade cadastrada ainda.{{/if}}
+        </p>
+        {{#if temFiltroAtivo}}
+        <a href="/dashboard/ong" class="mt-3 text-xs font-semibold text-[#6B8F71] hover:underline">Limpar filtros</a>
+        {{else}}
+        <a href="/ong/necessidades/nova"
+          class="mt-4 inline-block bg-gradient-to-r from-[#6B8F71] to-[#3F5F45] text-white font-bold px-5 py-2.5 rounded-xl shadow hover:opacity-90 transition text-sm">
+          Criar primeira necessidade
+        </a>
+        {{/if}}
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</section>

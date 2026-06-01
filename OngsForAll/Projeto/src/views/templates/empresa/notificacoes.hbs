@@ -1,0 +1,106 @@
+<div class="max-w-2xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-[#2D4BA6] dark:text-white">Notificações</h2>
+    <p class="text-sm text-slate-500 dark:text-white/60 mt-0.5">Acompanhe o status dos seus itens enviados para moderação</p>
+  </div>
+
+  {{#if itens.length}}
+  <div class="space-y-3">
+    {{#each itens}}
+    <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-start gap-4">
+
+        <!-- Ícone de status -->
+        <div class="shrink-0 mt-0.5">
+          {{#if isAprovado}}
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          {{else if isRejeitado}}
+          <div class="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          {{else if isPendente}}
+          <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          {{else}}
+          <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 dark:text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          {{/if}}
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <p class="font-semibold text-slate-800 dark:text-white text-sm">{{titulo}}</p>
+              <p class="text-xs text-slate-400 dark:text-white/40 mt-0.5">{{tipoLabel}} · enviado em {{criado_em}}</p>
+            </div>
+            <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold
+              {{#if isAprovado}}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{{/if}}
+              {{#if isRejeitado}}bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300{{/if}}
+              {{#if isPendente}}bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300{{/if}}
+              {{#if isRascunho}}bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-white/60{{/if}}">
+              {{status_publicacao}}
+            </span>
+          </div>
+
+          {{#if isAprovado}}
+          <p class="text-sm text-emerald-600 dark:text-emerald-400 mt-2 font-medium">
+            Seu item foi aprovado e está visível no marketplace.
+          </p>
+          {{/if}}
+
+          {{#if isRejeitado}}
+          <p class="text-sm text-red-500 dark:text-red-400 mt-2 font-medium">
+            Seu item foi rejeitado pela moderação.
+          </p>
+          {{#if observacao_admin}}
+          <p class="text-xs text-slate-500 dark:text-white/50 mt-1 bg-red-50 dark:bg-red-900/10 px-3 py-2 rounded-xl border border-red-100 dark:border-red-900/30">
+            Obs. do admin: {{observacao_admin}}
+          </p>
+          {{/if}}
+          {{/if}}
+
+          {{#if isPendente}}
+          <p class="text-sm text-amber-600 dark:text-amber-400 mt-2">
+            Aguardando revisão da moderação.
+          </p>
+          {{/if}}
+
+          {{#if atualizado_em}}
+          <p class="text-xs text-slate-300 dark:text-white/20 mt-2">Atualizado em {{atualizado_em}}</p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  {{else}}
+  <div class="bg-white dark:bg-[#102235] border border-slate-200 dark:border-white/10 rounded-2xl p-16 shadow-sm text-center">
+    <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-300 dark:text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    </div>
+    <p class="text-slate-500 dark:text-white/50 font-medium">Nenhuma notificação ainda</p>
+    <p class="text-sm text-slate-400 dark:text-white/30 mt-1">Publique itens na vitrine para receber atualizações aqui.</p>
+    <a href="/empresa/vitrine/novo"
+      class="mt-5 inline-block px-5 py-2.5 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-700 text-white text-sm font-bold shadow hover:opacity-90 transition">
+      Publicar item
+    </a>
+  </div>
+  {{/if}}
+
+</div>
